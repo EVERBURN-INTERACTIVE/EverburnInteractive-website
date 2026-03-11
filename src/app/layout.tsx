@@ -7,7 +7,7 @@ import { CampsiteScene } from '@/components/scene/CampsiteScene';
 export const metadata: Metadata = {
   metadataBase: new URL('https://everburninteractive.com'),
   title: 'Everburn Interactive',
-  description: 'Everburn Interactive - an indie game studio forged in fire.',
+  description: 'Everburn Interactive - an independent software and game studio.',
   icons: {
     icon: '/EverFlame.png',
     shortcut: '/EverFlame.png',
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Everburn Interactive',
-    description: 'Indie game studio. Forged in fire.',
+    description: 'Indipendent Software and Game studio.',
     url: 'https://everburninteractive.com',
     siteName: 'Everburn Interactive',
     images: [{ url: '/og-image.svg', width: 1200, height: 630 }],
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Everburn Interactive',
-    description: 'Indie game studio. Forged in fire.',
+    description: 'Indipendent Software and Game studio.',
     images: ['/og-image.png'],
   },
   robots: { index: true, follow: true },
