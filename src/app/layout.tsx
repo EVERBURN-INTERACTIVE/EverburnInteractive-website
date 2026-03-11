@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Everburn Interactive',
-    description: 'Indipendent Software and Game studio.',
+    description: 'Independent Software and Game studio.',
     url: 'https://everburninteractive.com',
     siteName: 'Everburn Interactive',
     images: [{ url: '/og-image.svg', width: 1200, height: 630 }],
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Everburn Interactive',
-    description: 'Indipendent Software and Game studio.',
+    description: 'Independent Software and Game studio.',
     images: ['/og-image.png'],
   },
   robots: { index: true, follow: true },
