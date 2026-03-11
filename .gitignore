@@ -1,1 +1,11 @@
 .vs
+node_modules
+.next
+out
+dist
+.vercel
+npm-debug.log*
+.env
+.env.*
+!.env.example
+.github

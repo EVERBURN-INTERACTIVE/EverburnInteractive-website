@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="45%" r="60%">
+      <stop offset="0%" stop-color="#1a1108"/>
+      <stop offset="100%" stop-color="#050505"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ff6a00" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#ff6a00" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <ellipse cx="600" cy="380" rx="220" ry="120" fill="url(#glow)"/>
+  <!-- Flame mark -->
+  <path d="M600 155 C630 205 670 225 670 265 C670 305 648 335 600 335 C552 335 530 305 530 265 C530 225 570 205 600 155Z"
+        fill="#ff6a00" opacity="0.92"/>
+  <path d="M600 175 C622 212 650 228 650 262 C650 296 632 322 600 322 C568 322 550 296 550 262 C550 228 578 212 600 175Z"
+        fill="#ffb347" opacity="0.72"/>
+  <path d="M600 200 C614 222 634 232 634 258 C634 284 618 302 600 302 C582 302 566 284 566 258 C566 232 586 222 600 200Z"
+        fill="#ffffff" opacity="0.55"/>
+  <!-- Studio name -->
+  <text x="600" y="400" font-family="Georgia, serif" font-size="52" font-weight="700"
+        fill="#ffd6a5" text-anchor="middle" letter-spacing="6">EVERBURN</text>
+  <text x="600" y="450" font-family="Georgia, serif" font-size="26"
+        fill="#a08060" text-anchor="middle" letter-spacing="10">INTERACTIVE</text>
+  <!-- Tagline -->
+  <text x="600" y="510" font-family="Georgia, serif" font-size="18"
+        fill="#5c3a1e" text-anchor="middle" font-style="italic">Indie game studio. Forged in fire.</text>
+  <!-- Border lines -->
+  <rect x="80" y="60" width="1040" height="510" rx="8" fill="none" stroke="#5c3a1e" stroke-width="1" opacity="0.5"/>
+</svg>

@@ -1,0 +1,49 @@
+{
+  "name": "everburninteractive-website",
+  "version": "1.0.0",
+  "description": "Everburn Interactive website",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "audit": "npm audit --audit-level=high"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EVERBURN-INTERACTIVE/EverburnInteractive-website.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/EVERBURN-INTERACTIVE/EverburnInteractive-website/issues"
+  },
+  "homepage": "https://everburninteractive.com",
+  "engines": {
+    "node": ">=20.11.1",
+    "npm": ">=10"
+  },
+  "dependencies": {
+    "@react-spring/three": "10.0.3",
+    "@react-three/drei": "10.7.7",
+    "@react-three/fiber": "9.5.0",
+    "gsap": "3.14.2",
+    "next": "16.1.6",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "tailwindcss": "4.2.1",
+    "three": "0.183.2"
+  },
+  "devDependencies": {
+    "@types/node": "25.4.0",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "eslint": "9.39.4",
+    "eslint-config-next": "16.1.6",
+    "leva": "0.10.1",
+    "typescript": "5.9.3"
+  }
+}
