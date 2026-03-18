@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
-import { MOUSE } from 'three';
+import { MathUtils } from 'three';
 import type { OrthographicCamera } from 'three';
 
 import Image from 'next/image';
@@ -26,7 +26,7 @@ const Birds = dynamic(() => import('./Birds').then((m) => m.Birds), { ssr: false
 const Stars = dynamic(() => import('./Stars').then((m) => m.Stars), { ssr: false });
 const ShootingStars = dynamic(() => import('./ShootingStars').then((m) => m.ShootingStars), { ssr: false });
 
-const CAMERA_POSITION: [number, number, number] = [6, 150, 10];
+const CAMERA_POSITION: [number, number, number] = [6, 5, 10];
 const FOCUS_ZOOM = 168;
 const FOCUS_CAMERA_Y = 6;
 const FOCUS_CAMERA_Z_OFFSET = 6;
@@ -297,55 +297,62 @@ function CameraRig({
   resetSignal,
   baseZoom,
   onFocusSettled,
+  onResetComplete,
 }: {
   focus: FocusState | null;
   resetSignal: number;
   baseZoom: number;
   onFocusSettled: () => void;
+  onResetComplete: () => void;
 }) {
   const { camera } = useThree();
-  const [isResetting, setIsResetting] = useState<boolean>(false);
+  const isAnimatingRef = useRef<boolean>(false);
   const hasReportedFocusRef = useRef<boolean>(false);
+  const isInitialMountRef = useRef<boolean>(true);
 
   useEffect(() => {
     hasReportedFocusRef.current = false;
-  }, [focus?.href]);
+    if (focus) {
+      isAnimatingRef.current = true;
+    }
+  }, [focus]);
 
   useEffect(() => {
-    setIsResetting(true);
-  }, [resetSignal]);
-
-  useFrame(() => {
-    const activeCamera = camera as OrthographicCamera;
-
-    if (!focus && !isResetting) {
+    // Skip the initial mount — camera is already at CAMERA_POSITION from Canvas init.
+    if (isInitialMountRef.current) {
+      isInitialMountRef.current = false;
       return;
     }
+    isAnimatingRef.current = true;
+  }, [resetSignal]);
 
+  useFrame((_, delta) => {
+    if (!isAnimatingRef.current) return;
+
+    const activeCamera = camera as OrthographicCamera;
     const targetX = focus ? focus.tilePosition[0] : CAMERA_POSITION[0];
     const targetY = focus ? FOCUS_CAMERA_Y : CAMERA_POSITION[1];
     const targetZ = focus ? focus.tilePosition[2] + FOCUS_CAMERA_Z_OFFSET : CAMERA_POSITION[2];
     const targetZoom = focus ? FOCUS_ZOOM : baseZoom;
-    const lerp = focus ? 0.12 : 0.08;
+    const lambda = focus ? 6 : 4;
 
-    // eslint-disable-next-line react-hooks/immutability
-    activeCamera.position.x += (targetX - activeCamera.position.x) * lerp;
-    activeCamera.position.y += (targetY - activeCamera.position.y) * lerp;
-    activeCamera.position.z += (targetZ - activeCamera.position.z) * lerp;
-    // eslint-disable-next-line react-hooks/immutability
-    activeCamera.zoom += (targetZoom - activeCamera.zoom) * lerp;
+    activeCamera.position.x = MathUtils.damp(activeCamera.position.x, targetX, lambda, delta);
+    activeCamera.position.y = MathUtils.damp(activeCamera.position.y, targetY, lambda, delta);
+    activeCamera.position.z = MathUtils.damp(activeCamera.position.z, targetZ, lambda, delta);
+    activeCamera.zoom = MathUtils.damp(activeCamera.zoom, targetZoom, lambda, delta);
     activeCamera.lookAt(focus ? focus.tilePosition[0] : 0, 0, focus ? focus.tilePosition[2] : 0);
     activeCamera.updateProjectionMatrix();
 
     if (focus && !hasReportedFocusRef.current) {
       const focusCloseEnough =
-        Math.abs(activeCamera.position.x - focus.tilePosition[0]) < 0.22
-        && Math.abs(activeCamera.position.y - FOCUS_CAMERA_Y) < 0.22
-        && Math.abs(activeCamera.position.z - (focus.tilePosition[2] + FOCUS_CAMERA_Z_OFFSET)) < 0.22
-        && Math.abs(activeCamera.zoom - FOCUS_ZOOM) < 0.45;
+        Math.abs(activeCamera.position.x - targetX) < 0.22
+        && Math.abs(activeCamera.position.y - targetY) < 0.22
+        && Math.abs(activeCamera.position.z - targetZ) < 0.22
+        && Math.abs(activeCamera.zoom - targetZoom) < 0.45;
 
       if (focusCloseEnough) {
         hasReportedFocusRef.current = true;
+        isAnimatingRef.current = false;
         onFocusSettled();
       }
     }
@@ -358,7 +365,8 @@ function CameraRig({
         && Math.abs(activeCamera.zoom - baseZoom) < 0.4;
 
       if (closeEnough) {
-        setIsResetting(false);
+        isAnimatingRef.current = false;
+        onResetComplete();
       }
     }
   });
@@ -384,6 +392,8 @@ export function SceneCanvas({ isActive }: SceneCanvasProps) {
   const settleFallbackTimerRef = useRef<number | null>(null);
   const overlayHideTimerRef = useRef<number | null>(null);
   const panelRef = useRef<HTMLElement | null>(null);
+  const controlsRef = useRef<React.ComponentRef<typeof OrbitControls>>(null);
+  const [isResettingCamera, setIsResettingCamera] = useState<boolean>(false);
   const [supportsWebGl] = useState<boolean>(() => {
     if (typeof window === 'undefined') {
       return true;
@@ -472,11 +482,20 @@ export function SceneCanvas({ isActive }: SceneCanvasProps) {
     setFocusSettled(false);
     setShowFocusOverlay(false);
     setFocus(null);
+    setIsResettingCamera(true);
     setResetSignal((current) => current + 1);
 
     overlayHideTimerRef.current = window.setTimeout(() => {
       setOverlayHref(null);
     }, 320);
+  }, []);
+
+  const handleResetComplete = useCallback(() => {
+    setIsResettingCamera(false);
+    if (controlsRef.current) {
+      controlsRef.current.target.set(0, 0, 0);
+      controlsRef.current.update();
+    }
   }, []);
 
   const effectiveShowFocusOverlay = isActive && overlayHref !== null;
@@ -560,23 +579,22 @@ export function SceneCanvas({ isActive }: SceneCanvasProps) {
             shadow-normalBias={0.015}
           />
           <OrbitControls
-            enabled={isActive && !effectiveFocus}
-            enableRotate={false}
+            ref={controlsRef}
+            enabled={isActive && !effectiveFocus && !isResettingCamera}
+            enableRotate={isActive && !effectiveFocus && !isResettingCamera}
             enableZoom={false}
-            enablePan={isActive && !effectiveFocus && !isMobile}
-            // Use left-drag panning with damping for smoother camera motion.
-            mouseButtons={{ LEFT: MOUSE.PAN, MIDDLE: MOUSE.DOLLY, RIGHT: MOUSE.ROTATE }}
-            panSpeed={0.72}
+            enablePan={false}
             enableDamping
             dampingFactor={0.14}
-            screenSpacePanning
-            maxPolarAngle={Math.PI / 2.05}
-            minPolarAngle={Math.PI / 2.05}
+            rotateSpeed={0.5}
+            minPolarAngle={0}
+            maxPolarAngle={Math.PI / 2}
           />
           <CameraRig
             focus={effectiveFocus}
             resetSignal={resetSignal}
             baseZoom={baseZoom}
+            onResetComplete={handleResetComplete}
             onFocusSettled={() => {
               if (settleFallbackTimerRef.current !== null) {
                 window.clearTimeout(settleFallbackTimerRef.current);

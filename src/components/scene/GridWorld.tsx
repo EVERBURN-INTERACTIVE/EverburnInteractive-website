@@ -197,9 +197,6 @@ function PageMarker({
             <boxGeometry args={[0.58, 0.04, 0.03]} />
             <meshStandardMaterial color="#dbc89d" roughness={0.92} />
           </mesh>
-          <Html position={[0, 0.03, 0.085]} center transform distanceFactor={11}>
-            <span style={{ fontFamily: 'var(--font-display)', color: '#4a2e18', fontSize: '0.8rem', fontWeight: 900 }}>@</span>
-          </Html>
         </group>
       );
     }
