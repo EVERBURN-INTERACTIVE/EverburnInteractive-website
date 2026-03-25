@@ -44,6 +44,6 @@
     "eslint": "9.39.4",
     "eslint-config-next": "16.1.6",
     "leva": "0.10.1",
-    "typescript": "5.9.3"
+    "typescript": "6.0.2"
   }
 }
