@@ -45,11 +45,66 @@ Then open http://localhost:4173.
 
 The static output is generated in `out/`.
 
+## Supabase auth setup
+
+This site uses Supabase Auth with Google OAuth and a browser publishable key so the repository can stay public.
+
+1. Create a Supabase project.
+2. In Supabase, open **SQL Editor**, paste the contents of `supabase/schema.sql`, and run it. This creates the `profiles` table and RLS policies.
+3. In Google Cloud Console, create an OAuth Client ID for a web app. In **Authorized redirect URIs**, paste the Supabase callback URL from your Supabase Google provider page. It looks like:
+
+```text
+https://YOUR_PROJECT_REF.supabase.co/auth/v1/callback
+```
+
+4. In Supabase, open **Authentication > Sign In / Providers > Google**, enable Google, then paste the Google **Client ID** and **Client Secret** there.
+5. In Supabase, open **Authentication > URL Configuration**. Set **Site URL** to:
+
+```text
+https://everburninteractive.com/
+```
+
+6. In the same Supabase URL Configuration page, add these **Redirect URLs**:
+
+```text
+http://localhost:3000/
+http://localhost:3000/**
+https://everburninteractive.com/
+```
+
+7. For local development, create `.env.local` from `.env.example` and paste the public Supabase values from **Supabase > Project Settings > API**:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=YOUR_SUPABASE_PUBLISHABLE_OR_ANON_KEY
+```
+
+After editing `.env.local`, restart `npm run dev`.
+
+8. For GitHub Pages deployment, add the same public values in **GitHub repository > Settings > Secrets and variables > Actions > Variables**.
+
+Recommended: create two repository variables:
+
+```text
+NEXT_PUBLIC_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+```
+
+Supported alternative: create one repository variable named `DBVARS` and paste the same `.env.local` contents into it:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=YOUR_SUPABASE_PUBLISHABLE_OR_ANON_KEY
+```
+
+Never commit Supabase service-role keys, Google OAuth client secrets, or any other private credentials.
+
 ## Security baseline
 
 - Dependency versions are pinned exactly in `package.json`.
 - CI runs `npm audit --audit-level=high` before deployment.
 - Dependabot is enabled for weekly npm security updates.
+- Supabase user data is protected by Row Level Security policies in `supabase/schema.sql`.
 
 ## Deployment
 

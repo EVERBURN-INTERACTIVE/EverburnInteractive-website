@@ -33,6 +33,23 @@ jobs:
       - name: Security Audit
         run: npm run audit
 
+      - name: Configure public environment
+        env:
+          DBVARS: ${{ vars.DBVARS }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          touch .env.local
+          if [ -n "$DBVARS" ]; then
+            printf '%s\n' "$DBVARS" >> .env.local
+          fi
+          if [ -n "$NEXT_PUBLIC_SUPABASE_URL" ]; then
+            printf 'NEXT_PUBLIC_SUPABASE_URL=%s\n' "$NEXT_PUBLIC_SUPABASE_URL" >> .env.local
+          fi
+          if [ -n "$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY" ]; then
+            printf 'NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=%s\n' "$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY" >> .env.local
+          fi
+
       - name: Build
         run: npm run build
 

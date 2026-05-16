@@ -5,6 +5,7 @@ out
 dist
 .vercel
 npm-debug.log*
+tsconfig.tsbuildinfo
 .env
 .env.*
 !.env.example

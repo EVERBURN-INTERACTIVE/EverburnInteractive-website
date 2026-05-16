@@ -39,26 +39,181 @@ body {
   z-index: 5;
 }
 
+.account-control {
+  position: fixed;
+  top: max(0.85rem, env(safe-area-inset-top));
+  right: max(0.85rem, env(safe-area-inset-right));
+  z-index: 180;
+}
+
+.account-button,
+.account-primary-action {
+  border: 1px solid rgba(255, 214, 165, 0.55);
+  background: rgba(20, 14, 8, 0.9);
+  color: #ffe2b3;
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.account-button {
+  min-height: 2.55rem;
+  padding: 0.62rem 1rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+}
+
+.google-auth-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  white-space: nowrap;
+}
+
+.google-mark {
+  width: 1.15rem;
+  height: 1.15rem;
+  flex: 0 0 auto;
+}
+
+.google-auth-label-short {
+  display: none;
+}
+
+.account-button:hover,
+.account-primary-action:hover {
+  border-color: rgba(255, 153, 68, 0.85);
+  background: rgba(45, 28, 13, 0.96);
+  transform: translateY(-1px);
+}
+
+.account-button:disabled,
+.account-primary-action:disabled {
+  cursor: default;
+  opacity: 0.62;
+  transform: none;
+}
+
+.account-button:focus-visible,
+.account-primary-action:focus-visible,
+.account-menu-item:focus-visible {
+  outline: 2px solid #ff6a00;
+  outline-offset: 3px;
+}
+
+.account-button-profile {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  max-width: min(18rem, calc(100vw - 1.7rem));
+  padding: 0.35rem 0.78rem 0.35rem 0.4rem;
+}
+
+.account-avatar {
+  display: inline-grid;
+  width: 1.9rem;
+  height: 1.9rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid rgba(255, 214, 165, 0.35);
+  background:
+    linear-gradient(135deg, rgba(255, 106, 0, 0.55), rgba(120, 42, 10, 0.92)),
+    center / cover no-repeat;
+  border-radius: 50%;
+  color: #fff3d8;
+}
+
+.account-name {
+  overflow: hidden;
+  max-width: 12rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-menu {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  display: grid;
+  min-width: 10.5rem;
+  overflow: hidden;
+  border: 1px solid rgba(255, 214, 165, 0.4);
+  background: rgba(17, 12, 8, 0.98);
+  border-radius: 8px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.48);
+  backdrop-filter: blur(8px);
+}
+
+.account-menu-item {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: #ffe2b3;
+  cursor: pointer;
+  font: inherit;
+  padding: 0.78rem 0.9rem;
+  text-align: left;
+  text-decoration: none;
+}
+
+.account-menu-item:hover {
+  background: rgba(255, 106, 0, 0.16);
+}
+
+.account-setup-menu {
+  width: min(18rem, calc(100vw - 1.7rem));
+  color: #ffe2b3;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  padding: 0.85rem;
+}
+
 .path-label {
   font-family: var(--font-display);
   font-size: var(--path-label-size);
-  color: var(--color-text-primary);
+  color: #e8f7ff;
   letter-spacing: 0.3em;
+  text-shadow:
+    0 0 12px rgba(84, 203, 255, 0.4),
+    0 0 26px rgba(255, 171, 92, 0.18);
   transition: opacity 0.2s ease;
 }
 
 .grid-page-pill {
-  border: 1px solid rgba(255, 214, 165, 0.7);
-  background: rgba(14, 10, 8, 0.92);
-  color: #fff3d8;
+  border: 1px solid rgba(132, 220, 255, 0.72);
+  background: linear-gradient(135deg, rgba(9, 18, 34, 0.94), rgba(33, 12, 22, 0.9));
+  color: #edf7ff;
   border-radius: 999px;
-  padding: 0.24rem 0.78rem;
+  padding: 0.3rem 0.9rem;
   font-family: var(--font-display);
-  font-size: 0.52rem;
+  font-size: 0.54rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.18em;
   cursor: pointer;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
+  text-shadow: 0 0 14px rgba(84, 203, 255, 0.32);
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.3),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(8px);
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.grid-page-pill:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: rgba(255, 183, 106, 0.88);
+  box-shadow:
+    0 14px 30px rgba(0, 0, 0, 0.35),
+    0 0 18px rgba(84, 203, 255, 0.2),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
 .grid-page-pill:disabled {
@@ -349,7 +504,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.75rem 0;
+  padding: 0.75rem min(15rem, 42vw) 0.75rem 0;
 }
 
 .back-link,
@@ -429,6 +584,47 @@ body {
 
 .notice-board a {
   color: var(--color-accent);
+}
+
+.account-page-panel {
+  max-width: 980px;
+  margin-inline: auto;
+}
+
+.account-detail-list {
+  display: grid;
+  gap: 0.8rem;
+  margin: 0;
+}
+
+.account-detail-list div {
+  display: grid;
+  gap: 0.25rem;
+  border-bottom: 1px solid rgba(255, 214, 165, 0.12);
+  padding-bottom: 0.75rem;
+}
+
+.account-detail-list dt {
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+}
+
+.account-detail-list dd {
+  overflow-wrap: anywhere;
+  margin: 0;
+}
+
+.account-primary-action {
+  margin-top: 0.75rem;
+  padding: 0.62rem 1rem;
+}
+
+.account-status {
+  border: 1px solid rgba(255, 106, 0, 0.38);
+  background: rgba(255, 106, 0, 0.1);
+  color: #ffe2b3;
+  padding: 0.7rem 0.85rem;
 }
 
 .notice-board ul {
@@ -627,6 +823,35 @@ body {
 }
 
 @media (max-width: 640px) {
+  .account-control {
+    top: max(0.65rem, env(safe-area-inset-top));
+    right: max(0.65rem, env(safe-area-inset-right));
+  }
+
+  .account-name {
+    display: none;
+  }
+
+  .account-button-profile {
+    padding-right: 0.4rem;
+  }
+
+  .google-auth-button {
+    padding-inline: 0.75rem;
+  }
+
+  .google-auth-label {
+    display: none;
+  }
+
+  .google-auth-label-short {
+    display: inline;
+  }
+
+  .internal-header {
+    padding-right: 3.85rem;
+  }
+
   .tile-focus-overlay {
     padding: 0.75rem 0.5rem 180px;
   }

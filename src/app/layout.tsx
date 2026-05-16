@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 
 import '@/styles/globals.css';
+import { AccountButton } from '@/components/auth/AccountButton';
+import { AuthProvider } from '@/components/auth/AuthProvider';
 import { CampsiteScene } from '@/components/scene/CampsiteScene';
 
 export const metadata: Metadata = {
@@ -34,22 +36,25 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <CampsiteScene />
-        <nav aria-label="Main navigation" className="sr-only focus-within:not-sr-only">
-          <a href="/games" className="skip-link">
-            Games
-          </a>
-          <a href="/technology" className="skip-link">
-            Technology
-          </a>
-          <a href="/studio" className="skip-link">
-            Studio
-          </a>
-          <a href="/contact" className="skip-link">
-            Contact
-          </a>
-        </nav>
-        <div className="app-content">{children}</div>
+        <AuthProvider>
+          <CampsiteScene />
+          <AccountButton />
+          <nav aria-label="Main navigation" className="sr-only focus-within:not-sr-only">
+            <a href="/games" className="skip-link">
+              Games
+            </a>
+            <a href="/technology" className="skip-link">
+              Technology
+            </a>
+            <a href="/studio" className="skip-link">
+              Studio
+            </a>
+            <a href="/contact" className="skip-link">
+              Contact
+            </a>
+          </nav>
+          <div className="app-content">{children}</div>
+        </AuthProvider>
       </body>
     </html>
   );

@@ -239,7 +239,6 @@ const PAGE_FOCUS_CONTENT: Record<string, PageFocusContent> = {
           'Recognition: DPIIT Recognized Startup | LLPIN: ACV-2902',
           'Location: Ahmedabad, Gujarat, India',
           'Email: contact@everburninteractive.com',
-          'Business: partnerships@everburn.studio',
         ],
       },
       {
@@ -336,9 +335,12 @@ function CameraRig({
     const targetZoom = focus ? FOCUS_ZOOM : baseZoom;
     const lambda = focus ? 6 : 4;
 
+    // Three.js camera objects are intentionally mutated inside the render loop.
+    // eslint-disable-next-line react-hooks/immutability
     activeCamera.position.x = MathUtils.damp(activeCamera.position.x, targetX, lambda, delta);
     activeCamera.position.y = MathUtils.damp(activeCamera.position.y, targetY, lambda, delta);
     activeCamera.position.z = MathUtils.damp(activeCamera.position.z, targetZ, lambda, delta);
+    // eslint-disable-next-line react-hooks/immutability
     activeCamera.zoom = MathUtils.damp(activeCamera.zoom, targetZoom, lambda, delta);
     activeCamera.lookAt(focus ? focus.tilePosition[0] : 0, 0, focus ? focus.tilePosition[2] : 0);
     activeCamera.updateProjectionMatrix();
@@ -551,7 +553,7 @@ export function SceneCanvas({ isActive }: SceneCanvasProps) {
       <main className={`scene-root ${isActive ? 'is-active' : 'is-passive'}`}>
         <Canvas
           frameloop={isActive ? 'always' : 'demand'}
-          shadows
+          shadows="percentage"
           orthographic
           camera={{ position: CAMERA_POSITION, zoom: baseZoom, near: 0.1, far: 200 }}
           dpr={[0.75, 1.5]}
