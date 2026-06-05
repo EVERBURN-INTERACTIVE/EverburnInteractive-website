@@ -58,19 +58,23 @@ https://YOUR_PROJECT_REF.supabase.co/auth/v1/callback
 ```
 
 4. In Supabase, open **Authentication > Sign In / Providers > Google**, enable Google, then paste the Google **Client ID** and **Client Secret** there.
-5. In Supabase, open **Authentication > URL Configuration**. Set **Site URL** to:
+5. In Supabase, open **Authentication > URL Configuration**. Set **Site URL** to your live site, not localhost:
 
 ```text
-https://everburninteractive.com/
+https://everburninteractive.com
 ```
+
+If **Site URL** is still `http://localhost:3000`, Google sign-in will always send users back to localhost after auth, even on the live site.
 
 6. In the same Supabase URL Configuration page, add these **Redirect URLs**:
 
 ```text
-http://localhost:3000/
 http://localhost:3000/**
-https://everburninteractive.com/
+https://everburninteractive.com/**
+https://everburninteractive.com/auth/callback/
 ```
+
+The live site signs users in through `/auth/callback/`, so that URL must be allowlisted in Supabase.
 
 7. For local development, create `.env.local` from `.env.example` and paste the public Supabase values from **Supabase > Project Settings > API**:
 
@@ -83,12 +87,15 @@ After editing `.env.local`, restart `npm run dev`.
 
 8. For GitHub Pages deployment, add the same public values in **GitHub repository > Settings > Secrets and variables > Actions**.
 
-Recommended: create two repository **Variables**:
+Recommended: create these repository **Variables**:
 
 ```text
 NEXT_PUBLIC_SUPABASE_URL
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+NEXT_PUBLIC_SITE_URL
 ```
+
+`NEXT_PUBLIC_SITE_URL` should be `https://everburninteractive.com` for production deploys. CI falls back to that value if the variable is missing.
 
 Supported alternative: create one `DBVARS` entry (repository **Variable** or **Secret**) and paste the same `.env.local` contents into it. Names are case-sensitive:
 

@@ -39,6 +39,14 @@ body {
   z-index: 5;
 }
 
+.auth-callback-page {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: 2rem;
+  text-align: center;
+}
+
 .account-control {
   position: fixed;
   top: max(0.85rem, env(safe-area-inset-top));

@@ -38,6 +38,7 @@ jobs:
           DBVARS: ${{ vars.DBVARS || secrets.DBVARS }}
           NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+          NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL || 'https://everburninteractive.com' }}
         run: |
           touch .env.local
           if [ -n "$DBVARS" ]; then
@@ -48,6 +49,9 @@ jobs:
           fi
           if [ -n "$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY" ]; then
             printf 'NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=%s\n' "$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY" >> .env.local
+          fi
+          if [ -n "$NEXT_PUBLIC_SITE_URL" ]; then
+            printf 'NEXT_PUBLIC_SITE_URL=%s\n' "$NEXT_PUBLIC_SITE_URL" >> .env.local
           fi
 
       - name: Verify Supabase public env for build
@@ -64,7 +68,12 @@ jobs:
             echo 'Missing NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY in build env.'
             exit 1
           fi
+          if ! grep -q '^NEXT_PUBLIC_SITE_URL=' .env.local; then
+            echo 'Missing NEXT_PUBLIC_SITE_URL in build env.'
+            exit 1
+          fi
           echo 'Supabase public env vars present for static build.'
+          echo "OAuth redirect target: $(grep '^NEXT_PUBLIC_SITE_URL=' .env.local | cut -d= -f2-)/auth/callback/"
 
       - name: Build
         run: npm run build
