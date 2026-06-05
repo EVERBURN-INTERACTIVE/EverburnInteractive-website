@@ -17,6 +17,7 @@ export function getSupabaseBrowserClient() {
 
   browserClient ??= createClient<Database>(supabaseUrl!, supabasePublishableKey!, {
     auth: {
+      flowType: 'pkce',
       autoRefreshToken: true,
       detectSessionInUrl: true,
       persistSession: true,

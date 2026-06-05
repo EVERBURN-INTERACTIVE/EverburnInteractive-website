@@ -35,7 +35,7 @@ jobs:
 
       - name: Configure public environment
         env:
-          DBVARS: ${{ vars.DBVARS }}
+          DBVARS: ${{ vars.DBVARS || secrets.DBVARS }}
           NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
         run: |
@@ -49,6 +49,22 @@ jobs:
           if [ -n "$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY" ]; then
             printf 'NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=%s\n' "$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY" >> .env.local
           fi
+
+      - name: Verify Supabase public env for build
+        run: |
+          if ! grep -q '^NEXT_PUBLIC_SUPABASE_URL=' .env.local; then
+            echo 'Missing NEXT_PUBLIC_SUPABASE_URL in build env.'
+            echo 'DBVARS must use exact names (case-sensitive):'
+            echo '  NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT.supabase.co'
+            echo '  NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_publishable_key'
+            echo 'Place DBVARS under Actions > Variables, or Actions > Secrets (both are supported).'
+            exit 1
+          fi
+          if ! grep -q '^NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=' .env.local; then
+            echo 'Missing NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY in build env.'
+            exit 1
+          fi
+          echo 'Supabase public env vars present for static build.'
 
       - name: Build
         run: npm run build

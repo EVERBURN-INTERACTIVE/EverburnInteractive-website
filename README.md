@@ -81,21 +81,23 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=YOUR_SUPABASE_PUBLISHABLE_OR_ANON_KEY
 
 After editing `.env.local`, restart `npm run dev`.
 
-8. For GitHub Pages deployment, add the same public values in **GitHub repository > Settings > Secrets and variables > Actions > Variables**.
+8. For GitHub Pages deployment, add the same public values in **GitHub repository > Settings > Secrets and variables > Actions**.
 
-Recommended: create two repository variables:
+Recommended: create two repository **Variables**:
 
 ```text
 NEXT_PUBLIC_SUPABASE_URL
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
 ```
 
-Supported alternative: create one repository variable named `DBVARS` and paste the same `.env.local` contents into it:
+Supported alternative: create one `DBVARS` entry (repository **Variable** or **Secret**) and paste the same `.env.local` contents into it. Names are case-sensitive:
 
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=YOUR_SUPABASE_PUBLISHABLE_OR_ANON_KEY
 ```
+
+CI verifies both keys exist before `npm run build`. A failed deploy log usually means `DBVARS` used the wrong key names (for example `next_public_Supabaseurl` instead of `NEXT_PUBLIC_SUPABASE_URL`).
 
 Never commit Supabase service-role keys, Google OAuth client secrets, or any other private credentials.
 

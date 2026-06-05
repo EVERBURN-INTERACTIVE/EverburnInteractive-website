@@ -84,8 +84,15 @@ export function AccountButton() {
                 setIsOpen(true);
               });
             } else {
+              const isLocalhost =
+                typeof window !== 'undefined' &&
+                (window.location.hostname === 'localhost' ||
+                  window.location.hostname === '127.0.0.1');
+
               setAuthMessage(
-                'Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY in .env.local, then restart npm run dev.',
+                isLocalhost
+                  ? 'Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY in .env.local, then restart npm run dev.'
+                  : 'Production build is missing Supabase env vars. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY in GitHub → Settings → Secrets and variables → Actions → Variables, then redeploy.',
               );
               setIsOpen((current) => !current);
             }

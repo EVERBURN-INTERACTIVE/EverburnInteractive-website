@@ -105,18 +105,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     let isMounted = true;
 
-    supabase.auth.getSession().then(({ data }) => {
-      if (!isMounted) {
-        return;
-      }
+    supabase.auth
+      .getSession()
+      .then(({ data }) => {
+        if (!isMounted) {
+          return;
+        }
 
-      setSession(data.session);
-      setIsLoading(false);
+        setSession(data.session);
+        setIsLoading(false);
 
-      if (data.session?.user) {
-        void syncProfile(data.session.user);
-      }
-    });
+        if (data.session?.user) {
+          void syncProfile(data.session.user);
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      });
 
     const {
       data: { subscription },

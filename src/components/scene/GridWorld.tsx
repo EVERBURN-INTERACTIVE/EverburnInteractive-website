@@ -7,10 +7,10 @@ import { useFrame, useLoader } from '@react-three/fiber';
 import { AdditiveBlending, BoxGeometry, ConeGeometry, DoubleSide, Shape, ShapeGeometry, TextureLoader } from 'three';
 import type { CSSProperties } from 'react';
 
-import EverFlameWithName from '@/assets/EverFlame-with-Name.png';
 import EverFlame from '@/assets/EverFlame.png';
 
 import { Campfire } from './Campfire';
+import { StudioBuilding } from './StudioBuilding';
 
 interface GridWorldProps {
   active: boolean;
@@ -693,6 +693,45 @@ function CarDisplay({ x, z }: { x: number; z: number }) {
   );
 }
 
+function TechnologyPageIcon() {
+  const logoTexture = useLoader(TextureLoader, EverFlame.src);
+
+  useEffect(() => {
+    return () => {
+      logoTexture.dispose();
+    };
+  }, [logoTexture]);
+
+  return (
+    <group position={[0, 0.62, 0]} castShadow>
+      <mesh position={[0, 0.22, 0]} castShadow>
+        <boxGeometry args={[1.02, 0.7, 0.14]} />
+        <meshStandardMaterial color="#7f95a9" roughness={0.7} metalness={0.16} />
+      </mesh>
+      <mesh position={[0, 0.22, 0.09]} castShadow>
+        <planeGeometry args={[0.82, 0.5]} />
+        <meshStandardMaterial color="#223345" emissive="#3cb8ff" emissiveIntensity={0.35} roughness={0.35} metalness={0.18} />
+      </mesh>
+      <mesh position={[0, 0.22, 0.095]}>
+        <planeGeometry args={[0.72, 0.38]} />
+        <meshStandardMaterial map={logoTexture} transparent emissive="#4bc5ff" emissiveIntensity={0.3} roughness={0.38} metalness={0.12} />
+      </mesh>
+      <mesh position={[0, -0.2, 0]} castShadow>
+        <boxGeometry args={[0.74, 0.12, 0.5]} />
+        <meshStandardMaterial color="#6a7f90" roughness={0.8} metalness={0.12} />
+      </mesh>
+      <mesh position={[0, -0.08, 0]} castShadow>
+        <boxGeometry args={[0.16, 0.12, 0.16]} />
+        <meshStandardMaterial color="#5a6f81" roughness={0.8} metalness={0.1} />
+      </mesh>
+      <mesh position={[0, -0.31, 0]} castShadow>
+        <boxGeometry args={[0.9, 0.08, 0.62]} />
+        <meshStandardMaterial color="#7a8f9f" roughness={0.82} metalness={0.12} />
+      </mesh>
+    </group>
+  );
+}
+
 function PageMarker({
   x,
   z,
@@ -712,14 +751,6 @@ function PageMarker({
   const posZ = z * TILE_SIZE;
   const floatingGroupRef = useRef<Group | null>(null);
   const [isHovered, setIsHovered] = useState<boolean>(false);
-  const [logoWithNameTexture, logoTexture] = useLoader(TextureLoader, [EverFlameWithName.src, EverFlame.src]);
-
-  useEffect(() => {
-    return () => {
-      logoWithNameTexture.dispose();
-      logoTexture.dispose();
-    };
-  }, [logoWithNameTexture, logoTexture]);
 
   useFrame(({ clock }) => {
     if (!floatingGroupRef.current) {
@@ -732,26 +763,7 @@ function PageMarker({
 
   const renderIcon = () => {
     if (href === '/studio') {
-      return (
-        <group position={[0, 0.53, 0]} castShadow>
-          <mesh position={[0, 0.28, 0]} castShadow>
-            <boxGeometry args={[1.05, 0.56, 0.84]} />
-            <meshStandardMaterial color="#8f6a44" roughness={0.88} />
-          </mesh>
-          <mesh position={[0.53, 0.3, 0]} rotation={[0, -Math.PI / 2, 0]}>
-            <planeGeometry args={[0.58, 0.26]} />
-            <meshStandardMaterial map={logoWithNameTexture} transparent roughness={0.72} metalness={0} side={2} />
-          </mesh>
-          <mesh position={[0, 0.72, 0]} rotation={[0, Math.PI / 4, 0]} castShadow>
-            <coneGeometry args={[0.74, 0.31, 4]} />
-            <meshStandardMaterial color="#6c3f25" roughness={0.86} />
-          </mesh>
-          <mesh position={[0, 0.3, 0.43]} castShadow>
-            <boxGeometry args={[0.2, 0.32, 0.06]} />
-            <meshStandardMaterial color="#d8bd8f" roughness={0.88} />
-          </mesh>
-        </group>
-      );
+      return <StudioBuilding />;
     }
 
     if (href === '/contact') {
@@ -759,34 +771,7 @@ function PageMarker({
     }
 
     if (href === '/technology') {
-      return (
-        <group position={[0, 0.62, 0]} castShadow>
-          <mesh position={[0, 0.22, 0]} castShadow>
-            <boxGeometry args={[1.02, 0.7, 0.14]} />
-            <meshStandardMaterial color="#7f95a9" roughness={0.7} metalness={0.16} />
-          </mesh>
-          <mesh position={[0, 0.22, 0.09]} castShadow>
-            <planeGeometry args={[0.82, 0.5]} />
-            <meshStandardMaterial color="#223345" emissive="#3cb8ff" emissiveIntensity={0.35} roughness={0.35} metalness={0.18} />
-          </mesh>
-          <mesh position={[0, 0.22, 0.095]}>
-            <planeGeometry args={[0.72, 0.38]} />
-            <meshStandardMaterial map={logoTexture} transparent emissive="#4bc5ff" emissiveIntensity={0.3} roughness={0.38} metalness={0.12} />
-          </mesh>
-          <mesh position={[0, -0.2, 0]} castShadow>
-            <boxGeometry args={[0.74, 0.12, 0.5]} />
-            <meshStandardMaterial color="#6a7f90" roughness={0.8} metalness={0.12} />
-          </mesh>
-          <mesh position={[0, -0.08, 0]} castShadow>
-            <boxGeometry args={[0.16, 0.12, 0.16]} />
-            <meshStandardMaterial color="#5a6f81" roughness={0.8} metalness={0.1} />
-          </mesh>
-          <mesh position={[0, -0.31, 0]} castShadow>
-            <boxGeometry args={[0.9, 0.08, 0.62]} />
-            <meshStandardMaterial color="#7a8f9f" roughness={0.82} metalness={0.12} />
-          </mesh>
-        </group>
-      );
+      return <TechnologyPageIcon />;
     }
 
     if (href === '/games') {
@@ -890,7 +875,7 @@ export function GridWorld({ active, reducedMotion, onNavigate }: GridWorldProps)
               x={cell.x}
               z={cell.z}
               variant={cell.type === 'car' ? 'road' : 'grass'}
-              showCenterGlyph={cell.type !== 'campfire'}
+              showCenterGlyph={cell.type !== 'campfire' && cell.type !== 'trees'}
             />
           ) : null}
           {cell.type === 'trees' ? <TreeCluster x={cell.x} z={cell.z} /> : null}
