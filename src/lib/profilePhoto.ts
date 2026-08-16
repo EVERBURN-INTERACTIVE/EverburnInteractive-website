@@ -91,7 +91,7 @@ export async function uploadProfilePhoto(
     .upload(path, file, {
       upsert: true,
       contentType: type,
-      cacheControl: '3600',
+      cacheControl: '0',
     });
   if (uploadError) {
     throw uploadError;

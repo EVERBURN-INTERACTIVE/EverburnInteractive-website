@@ -8,6 +8,8 @@ import {
   TextureLoader,
 } from 'three';
 
+import { markTextureForUpload } from '@/lib/textureUpload';
+
 /** Blender material name — keep in sync with M_Cyber_Neon_Flow in the .blend file. */
 export const CYBER_NEON_FLOW_MATERIAL_NAME = 'M_Cyber_Neon_Flow';
 
@@ -31,17 +33,25 @@ let sharedEmissive: Texture | null = null;
 
 function loadSharedTextures(): { albedo: Texture; emissive: Texture } {
   if (!sharedAlbedo) {
-    sharedAlbedo = textureLoader.load(CYBER_NEON_ALBEDO_URL);
+    sharedAlbedo = textureLoader.load(CYBER_NEON_ALBEDO_URL, (texture) => {
+      texture.colorSpace = SRGBColorSpace;
+      texture.wrapS = texture.wrapT = RepeatWrapping;
+      markTextureForUpload(texture);
+    });
     sharedAlbedo.colorSpace = SRGBColorSpace;
     sharedAlbedo.wrapS = sharedAlbedo.wrapT = RepeatWrapping;
-    sharedAlbedo.needsUpdate = true;
+    sharedAlbedo.needsUpdate = false;
   }
 
   if (!sharedEmissive) {
-    sharedEmissive = textureLoader.load(CYBER_NEON_EMISSIVE_URL);
+    sharedEmissive = textureLoader.load(CYBER_NEON_EMISSIVE_URL, (texture) => {
+      texture.colorSpace = SRGBColorSpace;
+      texture.wrapS = texture.wrapT = RepeatWrapping;
+      markTextureForUpload(texture);
+    });
     sharedEmissive.colorSpace = SRGBColorSpace;
     sharedEmissive.wrapS = sharedEmissive.wrapT = RepeatWrapping;
-    sharedEmissive.needsUpdate = true;
+    sharedEmissive.needsUpdate = false;
   }
 
   return { albedo: sharedAlbedo, emissive: sharedEmissive };
@@ -51,7 +61,7 @@ function cloneRepeatingTexture(source: Texture, repeatX: number, repeatY: number
   const clone = source.clone();
   clone.repeat.set(repeatX, repeatY);
   clone.wrapS = clone.wrapT = RepeatWrapping;
-  clone.needsUpdate = true;
+  markTextureForUpload(clone);
   return clone;
 }
 
@@ -171,16 +181,16 @@ export function tickCyberNeonFlowMaterials(elapsedTime: number): void {
 export function normalizeCyberNeonFlowMaps(material: MeshStandardMaterial): void {
   if (material.map) {
     material.map.colorSpace = SRGBColorSpace;
-    material.map.needsUpdate = true;
+    markTextureForUpload(material.map);
   }
 
   if (material.emissiveMap) {
     material.emissiveMap.colorSpace = SRGBColorSpace;
-    material.emissiveMap.needsUpdate = true;
+    markTextureForUpload(material.emissiveMap);
   }
 
   if (material.normalMap) {
     material.normalMap.colorSpace = NoColorSpace;
-    material.normalMap.needsUpdate = true;
+    markTextureForUpload(material.normalMap);
   }
 }

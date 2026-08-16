@@ -1,9 +1,10 @@
 import type { Metadata, Viewport } from 'next';
-import type { ReactNode } from 'react';
+import { Suspense, type ReactNode } from 'react';
 
 import '@/styles/globals.css';
 import { AccountButton } from '@/components/auth/AccountButton';
 import { AuthProvider } from '@/components/auth/AuthProvider';
+import { ProfileReturnPathTracker } from '@/components/nav/ProfileReturnPathTracker';
 import { CampsiteScene } from '@/components/scene/CampsiteScene';
 import { FlameCoreBadge } from '@/components/ui/FlameCoreBadge';
 
@@ -44,6 +45,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en">
       <body>
         <AuthProvider>
+          <Suspense fallback={null}>
+            <ProfileReturnPathTracker />
+          </Suspense>
           <CampsiteScene />
           <AccountButton />
           <FlameCoreBadge />

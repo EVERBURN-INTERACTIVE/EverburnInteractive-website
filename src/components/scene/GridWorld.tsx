@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useRef, useState, useEffect } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Html } from '@react-three/drei';
 import { useFrame, useLoader } from '@react-three/fiber';
 import { AdditiveBlending, BoxGeometry, DoubleSide, Shape, ShapeGeometry, TextureLoader } from 'three';
@@ -18,6 +18,7 @@ interface GridWorldProps {
   active: boolean;
   reducedMotion: boolean;
   onNavigate: (href: string, tileWorldPosition: [number, number, number]) => void;
+  onReady?: () => void;
 }
 
 interface GridCell {
@@ -551,12 +552,6 @@ function CarDisplay({ x, z }: { x: number; z: number }) {
 function TechnologyPageIcon() {
   const logoTexture = useLoader(TextureLoader, EverFlame.src);
 
-  useEffect(() => {
-    return () => {
-      logoTexture.dispose();
-    };
-  }, [logoTexture]);
-
   return (
     <group position={[0, 0.62, 0]} castShadow>
       <mesh position={[0, 0.22, 0]} castShadow>
@@ -736,7 +731,11 @@ export function PageMarker({
   );
 }
 
-export function GridWorld({ active, reducedMotion, onNavigate }: GridWorldProps) {
+export function GridWorld({ active, reducedMotion, onNavigate, onReady }: GridWorldProps) {
+  useLayoutEffect(() => {
+    onReady?.();
+  }, [onReady]);
+
   return (
     <group>
       {GRID_CELLS.map((cell) => (

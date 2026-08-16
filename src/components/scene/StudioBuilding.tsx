@@ -1,8 +1,8 @@
 'use client';
 
 import { useGLTF } from '@react-three/drei';
-import { useFrame } from '@react-three/fiber';
-import { useMemo, useRef } from 'react';
+import { useFrame, useLoader } from '@react-three/fiber';
+import { useMemo } from 'react';
 import {
   Box3,
   DoubleSide,
@@ -17,7 +17,8 @@ import {
   Vector3,
 } from 'three';
 
-const STUDIO_BUILDING_URL = '/models/studio-building.glb?v=8';
+import { CIRCUIT_PATTERN_URL, STUDIO_BUILDING_URL } from '@/lib/homeSceneAssets';
+import { markTextureForUpload } from '@/lib/textureUpload';
 
 const LOGO_MESHES = new Set(['Everburn_Logo_Sign', 'Logo_Plaque']);
 const LOGO_MATERIALS = new Set(['Everburn_Logo_Image']);
@@ -33,14 +34,11 @@ const CIRCUIT_BOARD_MESHES = new Set([
 
 const PAGE_TILE_SURFACE_Y = 0.09;
 const TARGET_SIZE = 2.65;
-const CIRCUIT_PATTERN_URL = '/textures/circuit/circuit_pattern_generated.png?v=2';
 
 const GROUND_ALIGN_PATTERN = /^(Bush_|Tree_Trunk_|HQ_Lower_Mass)/;
 
 /** Blender Mapping_Pulse_Scroll: 0→1 over 60 frames @ 24fps */
 const PULSE_CYCLE_SECONDS = 60 / 24;
-
-const textureLoader = new TextureLoader();
 
 interface CircuitUniforms {
   uPatternMap: { value: Texture };
@@ -77,7 +75,7 @@ function isLogoMaterial(material: unknown): material is MeshStandardMaterial {
 function applyLogoMaterial(material: MeshStandardMaterial): MeshBasicMaterial {
   if (material.map) {
     material.map.colorSpace = SRGBColorSpace;
-    material.map.needsUpdate = true;
+    markTextureForUpload(material.map);
   }
 
   return new MeshBasicMaterial({
@@ -166,18 +164,16 @@ export function StudioBuilding({
   rotationY = 0,
 }: StudioBuildingProps) {
   const { scene } = useGLTF(STUDIO_BUILDING_URL);
-  const circuitMaterialsRef = useRef<MeshStandardMaterial[]>([]);
-
+  const loadedPattern = useLoader(TextureLoader, CIRCUIT_PATTERN_URL);
   const patternMap = useMemo(() => {
-    const texture = textureLoader.load(CIRCUIT_PATTERN_URL);
-    texture.colorSpace = SRGBColorSpace;
-    texture.needsUpdate = true;
-    return texture;
-  }, []);
+    const clone = loadedPattern.clone();
+    clone.colorSpace = SRGBColorSpace;
+    markTextureForUpload(clone);
+    return clone;
+  }, [loadedPattern]);
 
-  const model = useMemo(() => {
-    circuitMaterialsRef.current = [];
-
+  const { root, circuitMaterials } = useMemo(() => {
+    const circuitMaterials: MeshStandardMaterial[] = [];
     const clone = scene.clone(true);
     clone.updateMatrixWorld(true);
 
@@ -233,17 +229,17 @@ export function StudioBuilding({
           ? sourceMaterial.clone()
           : new MeshStandardMaterial();
 
-      applyCircuitBoardMaster(base, patternMap, circuitMaterialsRef.current);
+      applyCircuitBoardMaster(base, patternMap, circuitMaterials);
       child.material = base;
     });
 
-    return clone;
+    return { root: clone, circuitMaterials };
   }, [scene, patternMap]);
 
   useFrame(({ clock }) => {
     const pulseOffset = (clock.elapsedTime / PULSE_CYCLE_SECONDS) % 1;
 
-    circuitMaterialsRef.current.forEach((material) => {
+    circuitMaterials.forEach((material) => {
       const uniforms = material.userData.circuitUniforms as CircuitUniforms | undefined;
       if (uniforms?.uPulseOffset) {
         uniforms.uPulseOffset.value = pulseOffset;
@@ -253,7 +249,7 @@ export function StudioBuilding({
 
   return (
     <group position={position} rotation={[0, rotationY, 0]}>
-      <primitive object={model} />
+      <primitive object={root} />
     </group>
   );
 }

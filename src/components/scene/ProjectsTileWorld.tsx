@@ -1,6 +1,6 @@
 'use client';
 
-import type { ReactNode } from 'react';
+import { useLayoutEffect, type ReactNode } from 'react';
 
 import {
   type ProjectsInnerTileAction,
@@ -15,6 +15,7 @@ import { WorldPortfolioTree } from './WorldPortfolioTree';
 interface ProjectsTileWorldProps {
   active: boolean;
   onInnerTileNavigate: (payload: ProjectsInnerTileNavigatePayload) => void;
+  onReady?: () => void;
 }
 
 interface ProjectInnerTile {
@@ -54,7 +55,11 @@ const PROJECT_INNER_TILES: ProjectInnerTile[] = [
   },
 ];
 
-export function ProjectsTileWorld({ active, onInnerTileNavigate }: ProjectsTileWorldProps) {
+export function ProjectsTileWorld({ active, onInnerTileNavigate, onReady }: ProjectsTileWorldProps) {
+  useLayoutEffect(() => {
+    onReady?.();
+  }, [onReady]);
+
   return (
     <group name="ProjectsTileWorld">
       {PROJECT_INNER_TILES.map((tile) => (

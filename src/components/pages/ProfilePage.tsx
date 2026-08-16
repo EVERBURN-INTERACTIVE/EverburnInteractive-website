@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { useAuth } from '@/components/auth/AuthProvider';
+import { getProfileReturnLabel, useProfileReturnPath } from '@/lib/profileReturnPath';
 import {
-  createProfilePhotoUrl,
   removeProfilePhoto,
   uploadProfilePhoto,
   validateProfilePhoto,
@@ -14,36 +14,13 @@ import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import { SharedInternalLayout } from './SharedInternalLayout';
 
 export function ProfilePage() {
-  const { user, profile, isConfigured, isLoading, signInWithGoogle, refreshProfile } = useAuth();
+  const { user, profile, profilePhotoUrl, isConfigured, isLoading, signInWithGoogle, refreshProfile } =
+    useAuth();
+  const returnPath = useProfileReturnPath();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [photoBusy, setPhotoBusy] = useState(false);
   const [photoMessage, setPhotoMessage] = useState<string | null>(null);
   const [photoError, setPhotoError] = useState<string | null>(null);
-  const customPhotoPath = profile?.custom_avatar_path ?? null;
-  const visiblePhotoUrl = customPhotoPath ? photoUrl : null;
-
-  useEffect(() => {
-    let cancelled = false;
-    if (!customPhotoPath) {
-      return;
-    }
-
-    const supabase = getSupabaseBrowserClient();
-    if (!supabase) {
-      return;
-    }
-
-    void createProfilePhotoUrl(supabase, customPhotoPath).then((url) => {
-      if (!cancelled) {
-        setPhotoUrl(url);
-      }
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [customPhotoPath]);
 
   const handlePhotoSelected = async (file: File | undefined) => {
     if (!file || !user) {
@@ -69,7 +46,7 @@ export function ProfilePage() {
 
       await uploadProfilePhoto(supabase, user.id, file);
       await refreshProfile();
-      setPhotoMessage('Profile photo updated. It stays on this page for now.');
+      setPhotoMessage('Profile photo updated.');
     } catch (error) {
       setPhotoError(error instanceof Error ? error.message : 'The photo could not be saved.');
     } finally {
@@ -98,7 +75,6 @@ export function ProfilePage() {
     try {
       await removeProfilePhoto(supabase, user.id, profile?.custom_avatar_path ?? null);
       await refreshProfile();
-      setPhotoUrl(null);
       setPhotoMessage('Profile photo removed.');
     } catch (error) {
       setPhotoError(error instanceof Error ? error.message : 'The photo could not be removed.');
@@ -108,7 +84,11 @@ export function ProfilePage() {
   };
 
   return (
-    <SharedInternalLayout title="PROFILE">
+    <SharedInternalLayout
+      title="PROFILE"
+      backHref={returnPath}
+      backLabel={getProfileReturnLabel(returnPath)}
+    >
       <section className="notice-board account-page-panel">
         {!isConfigured ? (
           <>
@@ -127,12 +107,12 @@ export function ProfilePage() {
               <div className="profile-photo-block">
                 <dt>Profile photo</dt>
                 <dd>
-                  {visiblePhotoUrl ? (
+                  {profilePhotoUrl ? (
                     // Signed URLs are owner-only and expire; a plain img avoids Next image-host config.
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       className="profile-photo-preview"
-                      src={visiblePhotoUrl}
+                      src={profilePhotoUrl}
                       alt="Your profile photo"
                     />
                   ) : (
@@ -141,7 +121,8 @@ export function ProfilePage() {
                     </div>
                   )}
                   <p className="profile-photo-hint">
-                    PNG or JPG, at most 1000x1000 pixels and 1MB. This photo is only shown to you here.
+                    PNG or JPG, at most 1000x1000 pixels and 1MB. This photo appears on your account
+                    button.
                   </p>
                   <div className="profile-photo-actions">
                     <input

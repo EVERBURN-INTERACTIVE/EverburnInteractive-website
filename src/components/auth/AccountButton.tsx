@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
+import { rememberProfileReturnPath } from '@/lib/profileReturnPath';
+
 import { useAuth } from './AuthProvider';
 
 function GoogleMark() {
@@ -29,7 +31,8 @@ function GoogleMark() {
 }
 
 export function AccountButton() {
-  const { user, profile, isConfigured, isLoading, signInWithGoogle, signOut } = useAuth();
+  const { user, profile, profilePhotoUrl, isConfigured, isLoading, signInWithGoogle, signOut } =
+    useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [authMessage, setAuthMessage] = useState('');
   const menuRef = useRef<HTMLDivElement | null>(null);
@@ -57,7 +60,11 @@ export function AccountButton() {
   }, []);
 
   const displayName = profile?.display_name ?? user?.email?.split('@')[0] ?? 'Player';
-  const avatarUrl = profile?.avatar_url ?? user?.user_metadata.avatar_url ?? user?.user_metadata.picture;
+  const avatarUrl =
+    profilePhotoUrl ??
+    profile?.avatar_url ??
+    user?.user_metadata.avatar_url ??
+    user?.user_metadata.picture;
 
   if (isLoading) {
     return (
@@ -126,7 +133,15 @@ export function AccountButton() {
         <span
           aria-hidden="true"
           className="account-avatar"
-          style={avatarUrl ? { backgroundImage: `url(${avatarUrl})` } : undefined}
+          style={
+            avatarUrl
+              ? {
+                  backgroundImage: `url("${avatarUrl}")`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }
+              : undefined
+          }
         >
           {!avatarUrl ? displayName.charAt(0).toUpperCase() : null}
         </span>
@@ -135,7 +150,15 @@ export function AccountButton() {
 
       {isOpen ? (
         <div className="account-menu" role="menu">
-          <Link className="account-menu-item" href="/profile" role="menuitem" onClick={() => setIsOpen(false)}>
+          <Link
+            className="account-menu-item"
+            href="/profile"
+            role="menuitem"
+            onClick={() => {
+              rememberProfileReturnPath(`${window.location.pathname}${window.location.search}`);
+              setIsOpen(false);
+            }}
+          >
             Profile
           </Link>
           <button

@@ -12,6 +12,7 @@ import {
 import type { Session, User } from '@supabase/supabase-js';
 
 import { getAuthCallbackUrl, rememberAuthNextPath } from '@/lib/supabase/auth-redirect';
+import { createProfilePhotoUrl } from '@/lib/profilePhoto';
 import {
   getSupabaseBrowserClient,
   isSupabaseConfigured,
@@ -23,6 +24,7 @@ interface AuthContextValue {
   user: User | null;
   session: Session | null;
   profile: Profile | null;
+  profilePhotoUrl: string | null;
   isConfigured: boolean;
   isLoading: boolean;
   signInWithGoogle: () => Promise<void>;
@@ -35,6 +37,7 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [signedProfilePhotoUrl, setSignedProfilePhotoUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(isSupabaseConfigured);
 
   const supabase = getSupabaseBrowserClient();
@@ -156,18 +159,47 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await supabase.auth.signOut();
   }, [supabase]);
 
+  const customAvatarPath = profile?.custom_avatar_path ?? null;
+  const profileUpdatedAt = profile?.updated_at ?? null;
+  const profilePhotoUrl = customAvatarPath ? signedProfilePhotoUrl : null;
+
+  useEffect(() => {
+    if (!supabase || !customAvatarPath) {
+      return;
+    }
+
+    let cancelled = false;
+
+    const loadSignedUrl = () => {
+      void createProfilePhotoUrl(supabase, customAvatarPath).then((url) => {
+        if (!cancelled) {
+          setSignedProfilePhotoUrl(url);
+        }
+      });
+    };
+
+    loadSignedUrl();
+    const refreshTimer = window.setInterval(loadSignedUrl, 45 * 60 * 1000);
+
+    return () => {
+      cancelled = true;
+      window.clearInterval(refreshTimer);
+    };
+  }, [customAvatarPath, profileUpdatedAt, supabase]);
+
   const value = useMemo<AuthContextValue>(
     () => ({
       user,
       session,
       profile,
+      profilePhotoUrl,
       isConfigured: isSupabaseConfigured,
       isLoading,
       signInWithGoogle,
       signOut,
       refreshProfile,
     }),
-    [user, session, profile, isLoading, signInWithGoogle, signOut, refreshProfile],
+    [user, session, profile, profilePhotoUrl, isLoading, signInWithGoogle, signOut, refreshProfile],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

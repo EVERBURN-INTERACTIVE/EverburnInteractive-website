@@ -158,11 +158,14 @@ html.oms-mobile-landscape body {
   width: 1.9rem;
   height: 1.9rem;
   flex: 0 0 auto;
+  overflow: hidden;
   place-items: center;
   border: 1px solid rgba(255, 214, 165, 0.35);
   background:
     linear-gradient(135deg, rgba(255, 106, 0, 0.55), rgba(120, 42, 10, 0.92)),
     center / cover no-repeat;
+  background-size: cover;
+  background-position: center;
   border-radius: 50%;
   color: #fff3d8;
 }
@@ -752,8 +755,16 @@ html.oms-mobile-landscape body {
 }
 
 .profile-photo-preview {
+  box-sizing: border-box;
   width: 5.5rem;
   height: 5.5rem;
+  min-width: 5.5rem;
+  max-width: 5.5rem;
+  min-height: 5.5rem;
+  max-height: 5.5rem;
+  aspect-ratio: 1;
+  flex-shrink: 0;
+  overflow: hidden;
   border-radius: 50%;
   object-fit: cover;
   border: 1px solid rgba(255, 214, 165, 0.35);
@@ -765,9 +776,11 @@ html.oms-mobile-landscape body {
 .profile-photo-preview--empty {
   display: grid;
   place-items: center;
+  padding: 0.35rem;
   color: var(--color-text-muted);
-  font-size: 0.68rem;
-  letter-spacing: 0.08em;
+  font-size: 0.62rem;
+  letter-spacing: 0.04em;
+  line-height: 1.15;
   text-transform: uppercase;
   text-align: center;
 }
@@ -1005,11 +1018,6 @@ html.oms-mobile-landscape body {
 }
 
 @media (pointer: coarse) {
-  .account-control--signed-in {
-    left: max(0.55rem, env(safe-area-inset-left));
-    right: auto;
-  }
-
   .account-control--signed-in .account-name {
     display: none;
   }
@@ -1027,20 +1035,6 @@ html.oms-mobile-landscape body {
     width: 2.02rem;
     height: 2.02rem;
   }
-
-  .account-control--signed-in .account-menu {
-    left: 0;
-    right: auto;
-  }
-
-  body:has(.account-control--signed-in) .projects-world-back--top-left {
-    left: max(3.2rem, calc(env(safe-area-inset-left) + 2.75rem));
-  }
-
-  body:has(.account-control--signed-in) .internal-header {
-    padding-left: max(3.6rem, calc(env(safe-area-inset-left) + 3rem));
-    padding-right: 0;
-  }
 }
 
 @media (max-width: 640px) {
@@ -1053,8 +1047,18 @@ html.oms-mobile-landscape body {
     display: none;
   }
 
-  .account-button-profile {
-    padding-right: 0.4rem;
+  .account-control--signed-in .account-button-profile {
+    min-height: 0;
+    width: 2.4rem;
+    height: 2.4rem;
+    padding: 0.18rem;
+    max-width: none;
+    justify-content: center;
+  }
+
+  .account-control--signed-in .account-avatar {
+    width: 2.02rem;
+    height: 2.02rem;
   }
 
   .google-auth-button {
@@ -1071,11 +1075,6 @@ html.oms-mobile-landscape body {
 
   .internal-header {
     padding-right: 3.85rem;
-  }
-
-  body:has(.account-control--signed-in) .internal-header {
-    padding-right: 0;
-    padding-left: max(3.6rem, calc(env(safe-area-inset-left) + 3rem));
   }
 
   .tile-focus-overlay {

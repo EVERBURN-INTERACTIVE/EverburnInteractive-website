@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
@@ -18,6 +18,7 @@ import { useIsMobile } from '@/lib/hooks/useIsMobile';
 import { useReducedMotion } from '@/lib/hooks/useReducedMotion';
 import { useTimePhase } from '@/lib/hooks/useTimePhase';
 import { getTargetDpr } from '@/lib/performanceMonitor';
+import { preloadHomeSceneAssets } from '@/lib/scenePreload';
 import { BATTLE_ARENA_ZOOM_SCALE } from '@/lib/battleArenaLayout';
 import {
   WORLD_PORTFOLIO_URL,
@@ -56,6 +57,8 @@ const SkyDome = dynamic(() => import('./SkyDome').then((m) => m.SkyDome), { ssr:
 const Birds = dynamic(() => import('./Birds').then((m) => m.Birds), { ssr: false });
 const Stars = dynamic(() => import('./Stars').then((m) => m.Stars), { ssr: false });
 const ShootingStars = dynamic(() => import('./ShootingStars').then((m) => m.ShootingStars), { ssr: false });
+
+preloadHomeSceneAssets();
 
 const CAMERA_POSITION: [number, number, number] = [6, 5, 10];
 const FOCUS_ZOOM = 168;
@@ -447,7 +450,9 @@ export function SceneCanvas({ isActive }: SceneCanvasProps) {
   const baseZoom = isMobile ? 42 : 80;
   const timePhase = useTimePhase();
   const reducedMotion = useReducedMotion();
-  const [isLoaded, setIsLoaded] = useState<boolean>(false);
+  const [isHostReady, setIsHostReady] = useState<boolean>(false);
+  const [worldReady, setWorldReady] = useState<boolean>(false);
+  const [forceLoaded, setForceLoaded] = useState<boolean>(false);
   const [focus, setFocus] = useState<FocusState | null>(null);
   const [overlayHref, setOverlayHref] = useState<string | null>(null);
   const [showFocusOverlay, setShowFocusOverlay] = useState<boolean>(false);
@@ -471,18 +476,23 @@ export function SceneCanvas({ isActive }: SceneCanvasProps) {
     return context !== null;
   });
 
+  const markWorldReady = useCallback(() => {
+    setWorldReady(true);
+  }, []);
+
   const handleFlameCoreReady = useCallback(() => {
     // Keep the loader up briefly after the host reports a usable layout so the
     // first WebGL frames are not flashed under a fading overlay.
     window.setTimeout(() => {
-      setIsLoaded(true);
+      setIsHostReady(true);
     }, 220);
   }, []);
 
   useEffect(() => {
     // Safety net if onReady never fires (layout stuck at 0×0, etc.).
     const timer = window.setTimeout(() => {
-      setIsLoaded(true);
+      setIsHostReady(true);
+      setForceLoaded(true);
     }, 8000);
 
     return () => {
@@ -654,6 +664,9 @@ export function SceneCanvas({ isActive }: SceneCanvasProps) {
   const shouldShowProjectsWorld = onProjectsScene;
   const projectsTileWorldActive = shouldShowProjectsWorld;
   const battleArenaRacingActive = isOneMoreSecondSceneRoute(scenePath) && shouldShowProjectsWorld;
+  if (battleArenaRacingActive && !worldReady) {
+    setWorldReady(true);
+  }
   const projectsInnerOverlayActive = scenePath === SCENE_MARBLE_PARTY && shouldShowProjectsWorld;
   const omsRunActive = battleArenaRacingActive && omsChrome === 'run';
   const showOmsLeaderboard = isActive && battleArenaRacingActive && omsChrome === 'attract';
@@ -910,13 +923,24 @@ export function SceneCanvas({ isActive }: SceneCanvasProps) {
           {timePhase.starsActive ? <Stars count={420} reducedMotion={reducedMotion} /> : null}
           {timePhase.starsActive ? <ShootingStars /> : null}
           {timePhase.birdsActive && !battleArenaRacingActive ? <Birds count={4} reducedMotion={reducedMotion} /> : null}
-          {onProjectsScene ? (
-            shouldShowProjectsWorld && !battleArenaRacingActive ? (
-              <ProjectsTileWorld active={isActive} onInnerTileNavigate={handleProjectsInnerNavigate} />
-            ) : null
-          ) : showCampsiteGrid ? (
-            <GridWorld active={isActive} reducedMotion={reducedMotion} onNavigate={handleNavigate} />
-          ) : null}
+          <Suspense fallback={null}>
+            {onProjectsScene ? (
+              shouldShowProjectsWorld && !battleArenaRacingActive ? (
+                <ProjectsTileWorld
+                  active={isActive}
+                  onInnerTileNavigate={handleProjectsInnerNavigate}
+                  onReady={markWorldReady}
+                />
+              ) : null
+            ) : showCampsiteGrid ? (
+              <GridWorld
+                active={isActive}
+                reducedMotion={reducedMotion}
+                onNavigate={handleNavigate}
+                onReady={markWorldReady}
+              />
+            ) : null}
+          </Suspense>
         </FlameCoreR3FHost>
         {battleArenaRacingActive ? (
           <>
@@ -925,7 +949,7 @@ export function SceneCanvas({ isActive }: SceneCanvasProps) {
           </>
         ) : null}
       </main>
-      <LoadingScreen loaded={isLoaded} />
+      <LoadingScreen loaded={isHostReady && worldReady} force={forceLoaded} />
       {showProjectsBack ? (
         <div
           className={`projects-world-back${battleArenaRacingActive ? ' projects-world-back--top-left' : ''}`}

@@ -21,6 +21,7 @@ import {
   normalizeCyberNeonFlowMaps,
   prepareCyberNeonFlowMaterial,
 } from '@/lib/materials/cyberNeonFlowMaterial';
+import { markTextureForUpload } from '@/lib/textureUpload';
 
 export const PAGE_TILE_SURFACE_Y = 0.09;
 const DEFAULT_TARGET_FOOTPRINT = 2.75;
@@ -31,7 +32,7 @@ function getModelGroundMinY(root: Object3D): number {
 
 function setTextureColorSpace(texture: Texture, colorSpace: typeof SRGBColorSpace | typeof NoColorSpace): void {
   texture.colorSpace = colorSpace;
-  texture.needsUpdate = true;
+  markTextureForUpload(texture);
 }
 
 export function prepareGltfMaterial(material: Material): Material {
