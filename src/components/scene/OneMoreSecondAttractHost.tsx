@@ -42,6 +42,75 @@ function isPortrait(): boolean {
   return window.matchMedia('(orientation: portrait)').matches || window.innerHeight > window.innerWidth;
 }
 
+type WebkitDocument = Document & {
+  webkitFullscreenElement?: Element | null;
+  webkitExitFullscreen?: () => Promise<void> | void;
+};
+
+type WebkitElement = HTMLElement & {
+  webkitRequestFullscreen?: () => Promise<void> | void;
+  webkitRequestFullScreen?: () => Promise<void> | void;
+};
+
+function getFullscreenElement(): Element | null {
+  const doc = document as WebkitDocument;
+  return document.fullscreenElement ?? doc.webkitFullscreenElement ?? null;
+}
+
+async function requestElementFullscreen(el: HTMLElement): Promise<void> {
+  const node = el as WebkitElement;
+  if (typeof node.requestFullscreen === 'function') {
+    await node.requestFullscreen({ navigationUI: 'hide' });
+    return;
+  }
+  const webkit = node.webkitRequestFullscreen ?? node.webkitRequestFullScreen;
+  if (webkit) {
+    await Promise.resolve(webkit.call(node));
+  }
+}
+
+async function exitDocumentFullscreen(): Promise<void> {
+  if (!getFullscreenElement()) {
+    return;
+  }
+  const doc = document as WebkitDocument;
+  if (typeof document.exitFullscreen === 'function') {
+    await document.exitFullscreen();
+    return;
+  }
+  if (doc.webkitExitFullscreen) {
+    await Promise.resolve(doc.webkitExitFullscreen());
+  }
+}
+
+function tryLockLandscapeOrientation(): void {
+  const orientation = screen.orientation as ScreenOrientation & {
+    lock?: (mode: string) => Promise<void>;
+  };
+  void orientation.lock?.('landscape').catch(() => {
+    /* iOS and some browsers reject this unless fullscreen already succeeded */
+  });
+}
+
+async function enterOmsLandscapeFullscreen(host: HTMLElement | null): Promise<void> {
+  if (getFullscreenElement()) {
+    tryLockLandscapeOrientation();
+    return;
+  }
+  const targets = [host, document.documentElement].filter((node): node is HTMLElement => node != null);
+  for (const target of targets) {
+    try {
+      await requestElementFullscreen(target);
+      tryLockLandscapeOrientation();
+      if (getFullscreenElement()) {
+        return;
+      }
+    } catch {
+      /* iOS often requires a user gesture and may ignore element fullscreen */
+    }
+  }
+}
+
 function preferLowPowerGpu(): boolean {
   const nav = navigator as Navigator & { deviceMemory?: number };
   return isTouchPhone()
@@ -76,17 +145,45 @@ export function OneMoreSecondAttractHost({ onChromeChange }: OneMoreSecondAttrac
   const needLandscapeRef = useRef(false);
 
   useEffect(() => {
-    const update = () => {
+    let wantFullscreen = false;
+
+    const updateGate = () => {
       const blocked = isTouchPhone() && isPortrait();
       needLandscapeRef.current = blocked;
       setNeedLandscape(blocked);
     };
-    update();
-    window.addEventListener('resize', update);
-    window.addEventListener('orientationchange', update);
+
+    const syncLandscapeChrome = () => {
+      updateGate();
+      const landscapePhone = isTouchPhone() && !isPortrait();
+      document.documentElement.classList.toggle('oms-mobile-landscape', landscapePhone);
+      if (!landscapePhone) {
+        wantFullscreen = false;
+        void exitDocumentFullscreen().catch(() => undefined);
+        return;
+      }
+      if (!wantFullscreen) {
+        wantFullscreen = true;
+        void enterOmsLandscapeFullscreen(hostRef.current).catch(() => undefined);
+      }
+    };
+
+    const onGesture = () => {
+      if (isTouchPhone() && !isPortrait() && !getFullscreenElement()) {
+        void enterOmsLandscapeFullscreen(hostRef.current).catch(() => undefined);
+      }
+    };
+
+    syncLandscapeChrome();
+    window.addEventListener('resize', syncLandscapeChrome);
+    window.addEventListener('orientationchange', syncLandscapeChrome);
+    window.addEventListener('pointerdown', onGesture, true);
     return () => {
-      window.removeEventListener('resize', update);
-      window.removeEventListener('orientationchange', update);
+      document.documentElement.classList.remove('oms-mobile-landscape');
+      window.removeEventListener('resize', syncLandscapeChrome);
+      window.removeEventListener('orientationchange', syncLandscapeChrome);
+      window.removeEventListener('pointerdown', onGesture, true);
+      void exitDocumentFullscreen().catch(() => undefined);
     };
   }, []);
 

@@ -21,6 +21,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Require private FlameCore access
+        env:
+          FLAMECORE_PAT: ${{ secrets.FLAMECORE_PAT }}
+        run: |
+          if [ -z "$FLAMECORE_PAT" ]; then
+            echo "Set repository secret FLAMECORE_PAT with read access to the private FlameCore repo."
+            exit 1
+          fi
+
+      - name: Checkout FlameCore
+        uses: actions/checkout@v4
+        with:
+          repository: PhoenixtBlaze/FlameCore
+          token: ${{ secrets.FLAMECORE_PAT }}
+          path: .ci-flamecore
+          persist-credentials: false
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -29,6 +46,7 @@ jobs:
 
       - name: Install
         env:
+          FLAMECORE_ROOT: ${{ github.workspace }}/.ci-flamecore
           FLAMECORE_PAT: ${{ secrets.FLAMECORE_PAT }}
         run: npm ci
 

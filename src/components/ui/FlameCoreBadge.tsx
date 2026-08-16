@@ -1,8 +1,6 @@
 'use client';
 
-const FLAMECORE_HOME = 'https://github.com/PhoenixtBlaze/FlameCore';
-
-/** Lucide Flame path used as the FlameCore mark. */
+/** Decorative FlameCore mark. Not interactive and not a link. */
 function FlameCoreMark() {
   return (
     <svg
@@ -22,15 +20,9 @@ function FlameCoreMark() {
 
 export function FlameCoreBadge() {
   return (
-    <a
-      className="flamecore-badge"
-      href={FLAMECORE_HOME}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label="Made with FlameCore"
-    >
+    <p className="flamecore-badge">
       <FlameCoreMark />
       <span>Made with FlameCore</span>
-    </a>
+    </p>
   );
 }

@@ -23,8 +23,15 @@ body {
   inset: 0;
   z-index: 0;
   width: 100%;
-  height: 100vh;
+  height: 100%;
   background: radial-gradient(circle at 50% 40%, #1a1108 0%, #0a0a0a 60%, #050505 100%);
+}
+
+html.oms-mobile-landscape,
+html.oms-mobile-landscape body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
 .scene-root.is-passive {
@@ -1186,48 +1193,203 @@ body {
 
 .flamecore-badge {
   position: fixed;
-  right: max(0.75rem, env(safe-area-inset-right));
-  bottom: max(0.75rem, env(safe-area-inset-bottom));
+  right: max(0.55rem, env(safe-area-inset-right));
+  bottom: max(0.55rem, env(safe-area-inset-bottom));
   z-index: 150;
+  margin: 0;
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  padding: 0.38rem 0.7rem 0.38rem 0.5rem;
+  gap: 0.35rem;
+  padding: 0.22rem 0.5rem 0.22rem 0.38rem;
   border-radius: 999px;
-  border: 1px solid rgba(232, 196, 92, 0.85);
-  background: linear-gradient(180deg, rgba(62, 42, 12, 0.94), rgba(22, 14, 6, 0.96));
+  border: 1px solid rgba(232, 196, 92, 0.7);
+  background: linear-gradient(180deg, rgba(62, 42, 12, 0.88), rgba(22, 14, 6, 0.9));
   color: #f3d48a;
-  text-decoration: none;
   font-family: var(--font-display), "Segoe UI", sans-serif;
-  font-size: 0.68rem;
+  font-size: 0.58rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  box-shadow: 0 0 18px rgba(232, 196, 92, 0.28), 0 8px 22px rgba(0, 0, 0, 0.4);
-  pointer-events: auto;
-}
-
-.flamecore-badge:hover {
-  color: #ffe7ad;
-  border-color: #f6d56a;
-  box-shadow: 0 0 24px rgba(246, 213, 106, 0.4), 0 8px 22px rgba(0, 0, 0, 0.4);
-}
-
-.flamecore-badge:focus-visible {
-  outline: 2px solid #f6d56a;
-  outline-offset: 3px;
+  box-shadow: 0 0 12px rgba(232, 196, 92, 0.2);
+  pointer-events: none;
+  user-select: none;
 }
 
 .flamecore-badge-mark {
-  width: 1.05rem;
-  height: 1.05rem;
+  width: 0.82rem;
+  height: 0.82rem;
   flex: 0 0 auto;
   color: #f0c75a;
-  filter: drop-shadow(0 0 6px rgba(240, 199, 90, 0.55));
+  filter: drop-shadow(0 0 4px rgba(240, 199, 90, 0.45));
 }
 
 @media (pointer: coarse) and (orientation: portrait) {
   .oms-leaderboard {
     display: none;
+  }
+}
+
+@media (pointer: coarse) and (orientation: landscape) {
+  .oms-leaderboard {
+    top: max(3.35rem, calc(env(safe-area-inset-top) + 2.9rem));
+    right: max(0.35rem, env(safe-area-inset-right));
+    transform: none;
+    width: min(13.25rem, 38vw);
+    min-width: 0;
+    max-height: calc(100dvh - 5.4rem);
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 0.42rem 0.38rem 0.38rem;
+    letter-spacing: 0.06em;
+  }
+
+  .oms-leaderboard h2 {
+    margin: 0 0 0.4rem;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+  }
+
+  .oms-leaderboard-head,
+  .oms-leaderboard li {
+    grid-template-columns: 1.35rem 1fr 3.4rem;
+    gap: 0.2rem;
+  }
+
+  .oms-leaderboard-head {
+    font-size: 0.52rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .oms-leaderboard ol {
+    padding: 0.2rem;
+  }
+
+  .oms-leaderboard li {
+    margin-bottom: 0.16rem;
+    padding: 0.18rem 0.28rem;
+    font-size: 0.58rem;
+  }
+
+  .projects-world-back--top-left {
+    top: max(0.45rem, env(safe-area-inset-top));
+    left: max(0.45rem, env(safe-area-inset-left));
+  }
+
+  .projects-world-back--top-left button {
+    padding: 0.32rem 0.7rem;
+    font-size: 0.72rem;
+  }
+
+  .oms-attract-host .oms-title {
+    font-size: clamp(0.95rem, 3.4vw, 1.35rem);
+    letter-spacing: 0.16em;
+  }
+
+  .oms-attract-host .oms-sub {
+    margin-top: 0.4rem;
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+  }
+
+  .oms-attract-host .oms-attract {
+    top: 44%;
+    width: min(42rem, calc(100vw - 15.5rem));
+  }
+
+  .oms-attract-host .oms-fail-card {
+    padding: 0.7rem 0.85rem;
+    max-width: min(28rem, calc(100vw - 2rem));
+    max-height: calc(100dvh - 1.2rem);
+    overflow-y: auto;
+  }
+
+  .oms-attract-host .oms-fail-time {
+    font-size: clamp(1.6rem, 8vw, 2.2rem);
+  }
+
+  .oms-attract-host .oms-fail-label,
+  .oms-attract-host .oms-fail-best,
+  .oms-attract-host .oms-fail-hint {
+    margin-top: 0.35rem;
+    font-size: 0.58rem;
+    letter-spacing: 0.18em;
+  }
+
+  .oms-attract-host .oms-fail-actions {
+    margin-top: 0.55rem;
+    gap: 0.4rem;
+  }
+
+  .oms-attract-host .oms-fail-cta {
+    margin-top: 0;
+    padding: 0.38rem 0.7rem;
+    font-size: 0.62rem;
+    letter-spacing: 0.16em;
+  }
+
+  .oms-attract-host .oms-help {
+    padding: 0.45rem;
+  }
+
+  .oms-attract-host .oms-help-card {
+    width: min(36rem, 100%);
+    max-height: min(86dvh, 22rem);
+    padding: 0.85rem 0.8rem 0.7rem;
+  }
+
+  .oms-attract-host .oms-help-card h2 {
+    margin: 0 0 0.55rem;
+    font-size: 0.72rem;
+  }
+
+  .oms-attract-host .oms-help-card h3 {
+    margin: 0.55rem 0 0.25rem;
+    font-size: 0.58rem;
+  }
+
+  .oms-attract-host .oms-help-card p,
+  .oms-attract-host .oms-help-card li {
+    font-size: 0.7rem;
+    line-height: 1.4;
+  }
+
+  .oms-attract-host .oms-countdown {
+    font-size: 4rem;
+  }
+
+  .oms-attract-host .oms-help-btn {
+    width: 2.4rem;
+    height: 2.4rem;
+    font-size: 1rem;
+    left: max(0.45rem, env(safe-area-inset-left));
+    bottom: max(0.45rem, env(safe-area-inset-bottom));
+  }
+
+  .oms-attract-host .oms-rewind-btn {
+    width: 3rem;
+    height: 3rem;
+    font-size: 0.5rem;
+    right: max(0.45rem, env(safe-area-inset-right));
+    bottom: max(2.6rem, calc(env(safe-area-inset-bottom) + 2.1rem));
+  }
+
+  .oms-signin-card {
+    width: min(24rem, calc(100vw - 2rem));
+    padding: 1rem 1rem 0.9rem;
+  }
+
+  .oms-signin-card #oms-signin-title {
+    font-size: 0.9rem;
+    letter-spacing: 0.18em;
+  }
+
+  .oms-signin-copy,
+  .oms-signin-status {
+    margin-top: 0.45rem;
+    font-size: 0.62rem;
+  }
+
+  .oms-signin-card .google-auth-button {
+    margin-top: 0.7rem;
   }
 }

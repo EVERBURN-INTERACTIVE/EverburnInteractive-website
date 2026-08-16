@@ -8,6 +8,7 @@ const vendorDir = path.join(projectRoot, 'vendor', 'FlameCore');
 const vendorMarker = path.join(vendorDir, 'src', 'runtime', 'runtime.ts');
 const siblingDir = path.resolve(projectRoot, '..', '..', 'FlameCore');
 const siblingMarker = path.join(siblingDir, 'src', 'runtime', 'runtime.ts');
+const envRoot = process.env.FLAMECORE_ROOT?.trim();
 
 function hasFlameCore(markerPath) {
   return existsSync(markerPath);
@@ -54,7 +55,7 @@ function cloneFlameCore() {
 
   mkdirSync(path.join(projectRoot, 'vendor'), { recursive: true });
   const cloneUrl = `https://x-access-token:${token}@github.com/PhoenixtBlaze/FlameCore.git`;
-  console.log('[ensure-flamecore] Cloning FlameCore for vendor copy …');
+  console.log('[ensure-flamecore] Cloning FlameCore for a private CI vendor copy …');
 
   const result = spawnSync(
     'git',
@@ -75,6 +76,11 @@ if (vendorInstallIsValid()) {
   process.exit(0);
 }
 
+if (envRoot && hasFlameCore(path.join(envRoot, 'src', 'runtime', 'runtime.ts'))) {
+  copyRuntimeTree(envRoot);
+  process.exit(0);
+}
+
 if (hasFlameCore(siblingMarker)) {
   copyRuntimeTree(siblingDir);
   process.exit(0);
@@ -86,5 +92,5 @@ if (cloneFlameCore()) {
 
 console.error('[ensure-flamecore] FlameCore is required but not available.');
 console.error('  Local dev: clone FlameCore as a sibling at ../../FlameCore');
-console.error('  Or set FLAMECORE_PAT and re-run npm install');
+console.error('  CI: set FLAMECORE_PAT (read access to the private FlameCore repo).');
 process.exit(1);
