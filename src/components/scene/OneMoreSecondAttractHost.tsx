@@ -7,7 +7,7 @@ import { useAuth } from '@/components/auth/AuthProvider';
 import { submitOmsScore } from '@/lib/omsLeaderboard';
 import { OmsMovementLoop } from '@/lib/omsMovementAudio';
 import { bindOmsButtonSfx, playOmsSfx, preloadOmsSfx } from '@/lib/omsSfx';
-import { relayoutOmsTrackHoops } from '@/lib/omsTrackHoops';
+import { disposeOmsTrackHoops, relayoutOmsTrackHoops } from '@/lib/omsTrackHoops';
 import { OneMoreSecondHud, readBestTime } from '@runtime/games/one-more-second/hud';
 import { OneMoreSecondInput } from '@runtime/games/one-more-second/input';
 import { OneMoreSecondSimulation } from '@runtime/games/one-more-second/simulation';
@@ -34,8 +34,16 @@ function chromeFromPhase(phase: string): OneMoreSecondChrome {
   return 'run';
 }
 
-function isTouchPhone(): boolean {
-  return window.matchMedia('(pointer: coarse)').matches || navigator.maxTouchPoints > 1;
+function isCoarsePointer(): boolean {
+  return window.matchMedia('(pointer: coarse)').matches;
+}
+
+/** Phone or tablet using touch, not a PC with a mouse (including touchscreen laptops). */
+function isMobilePlayDevice(): boolean {
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    return false;
+  }
+  return isCoarsePointer() && window.matchMedia('(hover: none)').matches;
 }
 
 function isPortrait(): boolean {
@@ -113,7 +121,7 @@ async function enterOmsLandscapeFullscreen(host: HTMLElement | null): Promise<vo
 
 function preferLowPowerGpu(): boolean {
   const nav = navigator as Navigator & { deviceMemory?: number };
-  return isTouchPhone()
+  return isCoarsePointer()
     || Math.min(window.innerWidth, window.innerHeight) < 700
     || (typeof nav.deviceMemory === 'number' && nav.deviceMemory <= 4);
 }
@@ -148,16 +156,16 @@ export function OneMoreSecondAttractHost({ onChromeChange }: OneMoreSecondAttrac
     let wantFullscreen = false;
 
     const updateGate = () => {
-      const blocked = isTouchPhone() && isPortrait();
+      const blocked = isMobilePlayDevice() && isPortrait();
       needLandscapeRef.current = blocked;
       setNeedLandscape(blocked);
     };
 
     const syncLandscapeChrome = () => {
       updateGate();
-      const landscapePhone = isTouchPhone() && !isPortrait();
-      document.documentElement.classList.toggle('oms-mobile-landscape', landscapePhone);
-      if (!landscapePhone) {
+      const landscapeMobile = isMobilePlayDevice() && !isPortrait();
+      document.documentElement.classList.toggle('oms-mobile-landscape', landscapeMobile);
+      if (!landscapeMobile) {
         wantFullscreen = false;
         void exitDocumentFullscreen().catch(() => undefined);
         return;
@@ -169,7 +177,7 @@ export function OneMoreSecondAttractHost({ onChromeChange }: OneMoreSecondAttrac
     };
 
     const onGesture = () => {
-      if (isTouchPhone() && !isPortrait() && !getFullscreenElement()) {
+      if (isMobilePlayDevice() && !isPortrait() && !getFullscreenElement()) {
         void enterOmsLandscapeFullscreen(hostRef.current).catch(() => undefined);
       }
     };
@@ -545,6 +553,7 @@ export function OneMoreSecondAttractHost({ onChromeChange }: OneMoreSecondAttrac
       resize.disconnect();
       input.dispose();
       hud.dispose();
+      disposeOmsTrackHoops(view.root);
       view.dispose(scene);
       renderer.dispose();
       canvas.remove();
