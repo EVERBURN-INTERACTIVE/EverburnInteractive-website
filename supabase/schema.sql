@@ -2,9 +2,20 @@ create table if not exists public.profiles (
   user_id uuid primary key references auth.users(id) on delete cascade,
   display_name text,
   avatar_url text,
+  custom_avatar_path text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+alter table public.profiles
+  drop constraint if exists profiles_custom_avatar_path_own_folder;
+
+alter table public.profiles
+  add constraint profiles_custom_avatar_path_own_folder
+  check (
+    custom_avatar_path is null
+    or custom_avatar_path like (user_id::text || '/%')
+  );
 
 create table if not exists public.one_more_second_scores (
   user_id uuid primary key references auth.users(id) on delete cascade,
@@ -128,3 +139,61 @@ begin
     execute 'alter publication supabase_realtime add table public.one_more_second_scores';
   end if;
 end $$;
+
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values (
+  'profile-photos',
+  'profile-photos',
+  false,
+  1048576,
+  array['image/jpeg', 'image/png']
+)
+on conflict (id) do update
+set
+  public = excluded.public,
+  file_size_limit = excluded.file_size_limit,
+  allowed_mime_types = excluded.allowed_mime_types;
+
+drop policy if exists "Users can read own profile photo" on storage.objects;
+create policy "Users can read own profile photo"
+on storage.objects
+for select
+to authenticated
+using (
+  bucket_id = 'profile-photos'
+  and split_part(name, '/', 1) = (select auth.uid())::text
+);
+
+drop policy if exists "Users can upload own profile photo" on storage.objects;
+create policy "Users can upload own profile photo"
+on storage.objects
+for insert
+to authenticated
+with check (
+  bucket_id = 'profile-photos'
+  and split_part(name, '/', 1) = (select auth.uid())::text
+);
+
+drop policy if exists "Users can update own profile photo" on storage.objects;
+create policy "Users can update own profile photo"
+on storage.objects
+for update
+to authenticated
+using (
+  bucket_id = 'profile-photos'
+  and split_part(name, '/', 1) = (select auth.uid())::text
+)
+with check (
+  bucket_id = 'profile-photos'
+  and split_part(name, '/', 1) = (select auth.uid())::text
+);
+
+drop policy if exists "Users can delete own profile photo" on storage.objects;
+create policy "Users can delete own profile photo"
+on storage.objects
+for delete
+to authenticated
+using (
+  bucket_id = 'profile-photos'
+  and split_part(name, '/', 1) = (select auth.uid())::text
+);

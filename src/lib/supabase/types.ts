@@ -8,6 +8,7 @@ export interface Database {
           user_id: string;
           display_name: string | null;
           avatar_url: string | null;
+          custom_avatar_path: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -15,6 +16,7 @@ export interface Database {
           user_id: string;
           display_name?: string | null;
           avatar_url?: string | null;
+          custom_avatar_path?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -22,6 +24,7 @@ export interface Database {
           user_id?: string;
           display_name?: string | null;
           avatar_url?: string | null;
+          custom_avatar_path?: string | null;
           created_at?: string;
           updated_at?: string;
         };

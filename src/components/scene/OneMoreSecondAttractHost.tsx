@@ -22,6 +22,8 @@ const MUSIC_VOLUME = 0.45;
 
 interface OneMoreSecondAttractHostProps {
   onChromeChange?: (chrome: OneMoreSecondChrome) => void;
+  /** Pause sim/audio without disposing WebGL (internal pages overlay the scene). */
+  suspended?: boolean;
 }
 
 function chromeFromPhase(phase: string): OneMoreSecondChrome {
@@ -145,25 +147,36 @@ function applyOmsAttractPrompt(hudRoot: HTMLElement): void {
 }
 
 /** Boots the FlameCore One More Second attract loop (auto-playing corridor menu). */
-export function OneMoreSecondAttractHost({ onChromeChange }: OneMoreSecondAttractHostProps) {
+export function OneMoreSecondAttractHost({ onChromeChange, suspended = false }: OneMoreSecondAttractHostProps) {
   const hostRef = useRef<HTMLDivElement | null>(null);
   const onChromeChangeRef = useRef(onChromeChange);
-  onChromeChangeRef.current = onChromeChange;
+  const suspendedRef = useRef(suspended);
   const { user, profile, isLoading, isConfigured, signInWithGoogle } = useAuth();
   const userRef = useRef(user);
   const profileRef = useRef(profile);
   const authLoadingRef = useRef(isLoading);
-  userRef.current = user;
-  profileRef.current = profile;
-  authLoadingRef.current = isLoading;
   const [needSignIn, setNeedSignIn] = useState(false);
   const [authMessage, setAuthMessage] = useState('');
   const [needLandscape, setNeedLandscape] = useState(false);
   const setNeedSignInRef = useRef(setNeedSignIn);
-  setNeedSignInRef.current = setNeedSignIn;
   const needLandscapeRef = useRef(false);
 
+  /* eslint-disable react-hooks/refs -- the WebGL loop must read the latest values without remounting */
+  onChromeChangeRef.current = onChromeChange;
+  suspendedRef.current = suspended;
+  userRef.current = user;
+  profileRef.current = profile;
+  authLoadingRef.current = isLoading;
+  setNeedSignInRef.current = setNeedSignIn;
+  /* eslint-enable react-hooks/refs */
+
   useEffect(() => {
+    if (suspended) {
+      document.documentElement.classList.remove('oms-mobile-landscape');
+      void exitDocumentFullscreen().catch(() => undefined);
+      return;
+    }
+
     let wantFullscreen = false;
 
     const updateGate = () => {
@@ -204,14 +217,7 @@ export function OneMoreSecondAttractHost({ onChromeChange }: OneMoreSecondAttrac
       window.removeEventListener('pointerdown', onGesture, true);
       void exitDocumentFullscreen().catch(() => undefined);
     };
-  }, []);
-
-  useEffect(() => {
-    if (user) {
-      setNeedSignIn(false);
-      setAuthMessage('');
-    }
-  }, [user]);
+  }, [suspended]);
 
   useEffect(() => {
     const host = hostRef.current;
@@ -386,7 +392,7 @@ export function OneMoreSecondAttractHost({ onChromeChange }: OneMoreSecondAttrac
     applyMusic('menu');
 
     const beginPlay = () => {
-      if (playing || disposed || sim.phase !== 'attract') {
+      if (playing || disposed || suspendedRef.current || sim.phase !== 'attract') {
         return;
       }
       if (needLandscapeRef.current) {
@@ -407,7 +413,7 @@ export function OneMoreSecondAttractHost({ onChromeChange }: OneMoreSecondAttrac
     };
 
     const onPointerDown = (event: PointerEvent) => {
-      if (!isPlaySurfaceTarget(event.target) || hud.isHelpOpen || needLandscapeRef.current) {
+      if (suspendedRef.current || !isPlaySurfaceTarget(event.target) || hud.isHelpOpen || needLandscapeRef.current) {
         return;
       }
       event.stopPropagation();
@@ -417,6 +423,9 @@ export function OneMoreSecondAttractHost({ onChromeChange }: OneMoreSecondAttrac
       }
     };
     const onKeyDown = (event: KeyboardEvent) => {
+      if (suspendedRef.current) {
+        return;
+      }
       if (event.key === 'Escape') {
         setNeedSignInRef.current(false);
         if (hud.isHelpOpen) {
@@ -466,10 +475,11 @@ export function OneMoreSecondAttractHost({ onChromeChange }: OneMoreSecondAttrac
       if (disposed) {
         return;
       }
-      if (needLandscapeRef.current) {
+      if (needLandscapeRef.current || suspendedRef.current) {
         if (playing) {
           input.setActive(false);
         }
+        movementLoop.sync(false, 0, 1, 0);
         if (musicMode !== 'off') {
           applyMusic('off');
         }
@@ -577,10 +587,11 @@ export function OneMoreSecondAttractHost({ onChromeChange }: OneMoreSecondAttrac
     <>
       <div
         ref={hostRef}
-        className="oms-attract-host"
+        className={`oms-attract-host${suspended ? ' oms-attract-host--suspended' : ''}`}
         aria-label="One More Second"
+        aria-hidden={suspended}
       />
-      {needLandscape ? (
+      {needLandscape && !suspended ? (
         <div className="oms-landscape-gate" role="dialog" aria-labelledby="oms-landscape-title">
           <div className="oms-landscape-card">
             <p id="oms-landscape-title">Turn your phone</p>
@@ -588,7 +599,7 @@ export function OneMoreSecondAttractHost({ onChromeChange }: OneMoreSecondAttrac
           </div>
         </div>
       ) : null}
-      {needSignIn && !user ? (
+      {needSignIn && !user && !suspended ? (
         <div className="oms-signin-gate" role="dialog" aria-labelledby="oms-signin-title">
           <div className="oms-signin-card">
             <p id="oms-signin-title">Sign in to play</p>

@@ -626,14 +626,15 @@ html.oms-mobile-landscape body {
   min-height: 100vh;
   background: linear-gradient(180deg, rgba(13, 13, 13, 0.78), rgba(8, 8, 8, 0.94));
   backdrop-filter: blur(2px);
-  padding: 1rem 1.25rem 2rem;
+  padding: max(4.75rem, calc(env(safe-area-inset-top) + 3.5rem)) 1.25rem 2rem;
 }
 
 .internal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.75rem min(15rem, 42vw) 0.75rem 0;
+  gap: 1rem;
+  padding: 0 8.5rem 0 0;
 }
 
 .back-link,
@@ -742,6 +743,58 @@ html.oms-mobile-landscape body {
 .account-detail-list dd {
   overflow-wrap: anywhere;
   margin: 0;
+}
+
+.profile-photo-block dd {
+  display: grid;
+  gap: 0.75rem;
+  justify-items: start;
+}
+
+.profile-photo-preview {
+  width: 5.5rem;
+  height: 5.5rem;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid rgba(255, 214, 165, 0.35);
+  background:
+    linear-gradient(135deg, rgba(255, 106, 0, 0.55), rgba(120, 42, 10, 0.92)),
+    center / cover no-repeat;
+}
+
+.profile-photo-preview--empty {
+  display: grid;
+  place-items: center;
+  color: var(--color-text-muted);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.profile-photo-hint,
+.profile-photo-status {
+  margin: 0;
+  font-size: 0.82rem;
+}
+
+.profile-photo-hint {
+  color: var(--color-text-muted);
+}
+
+.profile-photo-status.is-error {
+  color: #ffb4a2;
+}
+
+.profile-photo-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.profile-photo-actions .account-primary-action,
+.profile-photo-actions .account-button {
+  margin-top: 0;
 }
 
 .account-primary-action {
@@ -983,6 +1036,11 @@ html.oms-mobile-landscape body {
   body:has(.account-control--signed-in) .projects-world-back--top-left {
     left: max(3.2rem, calc(env(safe-area-inset-left) + 2.75rem));
   }
+
+  body:has(.account-control--signed-in) .internal-header {
+    padding-left: max(3.6rem, calc(env(safe-area-inset-left) + 3rem));
+    padding-right: 0;
+  }
 }
 
 @media (max-width: 640px) {
@@ -1013,6 +1071,11 @@ html.oms-mobile-landscape body {
 
   .internal-header {
     padding-right: 3.85rem;
+  }
+
+  body:has(.account-control--signed-in) .internal-header {
+    padding-right: 0;
+    padding-left: max(3.6rem, calc(env(safe-area-inset-left) + 3rem));
   }
 
   .tile-focus-overlay {
@@ -1063,6 +1126,16 @@ html.oms-mobile-landscape body {
   inset: 0;
   pointer-events: none;
   z-index: 1;
+}
+
+.oms-attract-host--suspended .oms-attract-hud-mount {
+  visibility: hidden;
+}
+
+.scene-root.is-passive .oms-signin-gate,
+.scene-root.is-passive .oms-landscape-gate,
+.scene-root.is-passive .oms-leaderboard {
+  display: none;
 }
 
 .oms-signin-gate {

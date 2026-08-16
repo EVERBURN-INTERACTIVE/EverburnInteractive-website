@@ -32,6 +32,7 @@ import {
   SCENE_PROJECTS,
   isOneMoreSecondSceneRoute,
   isProjectsSceneRoute,
+  isSceneCanvasRoute,
   normalizeScenePathname,
 } from '@/lib/sceneRoutes';
 import { FlameCoreR3FHost } from '@/flamecore';
@@ -434,7 +435,14 @@ interface SceneCanvasProps {
 export function SceneCanvas({ isActive }: SceneCanvasProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const scenePath = normalizeScenePathname(pathname);
+  const livePath = normalizeScenePathname(pathname);
+  const preservedScenePathRef = useRef(isSceneCanvasRoute(livePath) ? livePath : SCENE_HOME);
+  if (isSceneCanvasRoute(livePath)) {
+    preservedScenePathRef.current = livePath;
+  }
+  // Keep the last 3D world mounted under internal pages so overlaying /profile
+  // does not tear down One More Second or remount GridWorld into a paused renderer.
+  const scenePath = isSceneCanvasRoute(livePath) ? livePath : preservedScenePathRef.current;
   const isMobile = useIsMobile();
   const baseZoom = isMobile ? 42 : 80;
   const timePhase = useTimePhase();
@@ -648,9 +656,9 @@ export function SceneCanvas({ isActive }: SceneCanvasProps) {
   const battleArenaRacingActive = isOneMoreSecondSceneRoute(scenePath) && shouldShowProjectsWorld;
   const projectsInnerOverlayActive = scenePath === SCENE_MARBLE_PARTY && shouldShowProjectsWorld;
   const omsRunActive = battleArenaRacingActive && omsChrome === 'run';
-  const showOmsLeaderboard = battleArenaRacingActive && omsChrome === 'attract';
+  const showOmsLeaderboard = isActive && battleArenaRacingActive && omsChrome === 'attract';
   const showProjectsBack =
-    onProjectsScene && !projectsInnerOverlayActive && !omsRunActive;
+    isActive && onProjectsScene && !projectsInnerOverlayActive && !omsRunActive;
   const showCampsiteGrid = scenePath === SCENE_HOME;
   const ambientIntensity = battleArenaRacingActive
     ? Math.max(0.72, timePhase.ambientIntensity * 1.05)
@@ -685,7 +693,7 @@ export function SceneCanvas({ isActive }: SceneCanvasProps) {
   }, [battleArenaRacingActive]);
 
   useEffect(() => {
-    if (!omsRunActive) {
+    if (!omsRunActive || !isActive) {
       return;
     }
 
@@ -700,7 +708,7 @@ export function SceneCanvas({ isActive }: SceneCanvasProps) {
     return () => {
       window.removeEventListener('keydown', onKeyDown);
     };
-  }, [closeBattleArenaRacing, omsRunActive]);
+  }, [closeBattleArenaRacing, isActive, omsRunActive]);
 
   // Open the public games overlay when arriving with ?overlay=games.
   useEffect(() => {
@@ -912,7 +920,7 @@ export function SceneCanvas({ isActive }: SceneCanvasProps) {
         </FlameCoreR3FHost>
         {battleArenaRacingActive ? (
           <>
-            <OneMoreSecondAttractHost onChromeChange={setOmsChrome} />
+            <OneMoreSecondAttractHost onChromeChange={setOmsChrome} suspended={!isActive} />
             {showOmsLeaderboard ? <OneMoreSecondLeaderboardOverlay /> : null}
           </>
         ) : null}
@@ -995,7 +1003,7 @@ export function SceneCanvas({ isActive }: SceneCanvasProps) {
           </article>
         </section>
       ) : null}
-      <AudioControl />
+      {isActive ? <AudioControl /> : null}
     </>
   );
 }

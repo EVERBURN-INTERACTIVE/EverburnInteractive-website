@@ -63,6 +63,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
 
+      // Omit custom_avatar_path so Google avatar sync cannot clear an uploaded photo.
       const { data, error } = await supabase
         .from('profiles')
         .upsert(
