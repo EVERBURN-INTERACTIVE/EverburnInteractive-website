@@ -28,8 +28,12 @@
     "npm": ">=10"
   },
   "overrides": {
-    "postcss": "8.5.15",
-    "three": "0.160.1"
+    "postcss": "8.5.26",
+    "three": "0.160.1",
+    "nanoid": "3.3.18",
+    "js-yaml": "4.3.1",
+    "brace-expansion": "1.1.18",
+    "sharp": "0.35.3"
   },
   "dependencies": {
     "@dimforge/rapier3d-compat": "^0.13.1",
@@ -37,7 +41,7 @@
     "@react-three/fiber": "9.6.0",
     "@supabase/supabase-js": "2.105.4",
     "gsap": "3.15.0",
-    "next": "16.2.7",
+    "next": "16.3.1",
     "react": "19.2.5",
     "react-dom": "19.2.5",
     "tailwindcss": "4.2.2",
@@ -49,7 +53,7 @@
     "@types/react-dom": "19.2.3",
     "@types/three": "0.160.0",
     "eslint": "9.39.4",
-    "eslint-config-next": "16.2.7",
+    "eslint-config-next": "16.3.1",
     "typescript": "6.0.2"
   }
 }
