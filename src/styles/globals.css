@@ -951,6 +951,40 @@ html.oms-mobile-landscape body {
   }
 }
 
+@media (pointer: coarse) {
+  .account-control--signed-in {
+    left: max(0.55rem, env(safe-area-inset-left));
+    right: auto;
+  }
+
+  .account-control--signed-in .account-name {
+    display: none;
+  }
+
+  .account-control--signed-in .account-button-profile {
+    min-height: 0;
+    width: 2.4rem;
+    height: 2.4rem;
+    padding: 0.18rem;
+    max-width: none;
+    justify-content: center;
+  }
+
+  .account-control--signed-in .account-avatar {
+    width: 2.02rem;
+    height: 2.02rem;
+  }
+
+  .account-control--signed-in .account-menu {
+    left: 0;
+    right: auto;
+  }
+
+  body:has(.account-control--signed-in) .projects-world-back--top-left {
+    left: max(3.2rem, calc(env(safe-area-inset-left) + 2.75rem));
+  }
+}
+
 @media (max-width: 640px) {
   .account-control {
     top: max(0.65rem, env(safe-area-inset-top));
@@ -1231,43 +1265,51 @@ html.oms-mobile-landscape body {
 
 @media (pointer: coarse) and (orientation: landscape) {
   .oms-leaderboard {
-    top: max(3.35rem, calc(env(safe-area-inset-top) + 2.9rem));
-    right: max(0.35rem, env(safe-area-inset-right));
+    top: max(0.4rem, env(safe-area-inset-top));
+    right: max(0.28rem, env(safe-area-inset-right));
     transform: none;
-    width: min(13.25rem, 38vw);
+    width: min(9.6rem, 28vw);
     min-width: 0;
-    max-height: calc(100dvh - 5.4rem);
+    max-height: calc(100dvh - 3.8rem);
     overflow-x: hidden;
     overflow-y: auto;
-    padding: 0.42rem 0.38rem 0.38rem;
-    letter-spacing: 0.06em;
+    padding: 0.28rem 0.24rem 0.24rem;
+    letter-spacing: 0.04em;
+    border-width: 1px;
+    box-shadow: 0 0 14px rgba(0, 232, 255, 0.16);
   }
 
   .oms-leaderboard h2 {
-    margin: 0 0 0.4rem;
-    font-size: 0.68rem;
-    letter-spacing: 0.12em;
+    margin: 0 0 0.22rem;
+    font-size: 0.48rem;
+    letter-spacing: 0.1em;
   }
 
   .oms-leaderboard-head,
   .oms-leaderboard li {
-    grid-template-columns: 1.35rem 1fr 3.4rem;
-    gap: 0.2rem;
+    grid-template-columns: 0.9rem 1fr 2.35rem;
+    gap: 0.12rem;
   }
 
   .oms-leaderboard-head {
-    font-size: 0.52rem;
-    margin-bottom: 0.25rem;
+    font-size: 0.4rem;
+    margin-bottom: 0.14rem;
   }
 
   .oms-leaderboard ol {
-    padding: 0.2rem;
+    padding: 0.12rem;
   }
 
   .oms-leaderboard li {
-    margin-bottom: 0.16rem;
-    padding: 0.18rem 0.28rem;
-    font-size: 0.58rem;
+    margin-bottom: 0.08rem;
+    padding: 0.08rem 0.16rem;
+    font-size: 0.42rem;
+  }
+
+  .oms-leaderboard li span:nth-child(2) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .projects-world-back--top-left {
@@ -1293,7 +1335,7 @@ html.oms-mobile-landscape body {
 
   .oms-attract-host .oms-attract {
     top: 44%;
-    width: min(42rem, calc(100vw - 15.5rem));
+    width: min(42rem, calc(100vw - 11.5rem));
   }
 
   .oms-attract-host .oms-fail-card {

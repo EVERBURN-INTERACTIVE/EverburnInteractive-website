@@ -114,10 +114,11 @@ export function AccountButton() {
   }
 
   return (
-    <div ref={menuRef} className="account-control">
+    <div ref={menuRef} className="account-control account-control--signed-in">
       <button
         aria-expanded={isOpen}
         aria-haspopup="menu"
+        aria-label={displayName}
         className="account-button account-button-profile"
         type="button"
         onClick={() => setIsOpen((current) => !current)}

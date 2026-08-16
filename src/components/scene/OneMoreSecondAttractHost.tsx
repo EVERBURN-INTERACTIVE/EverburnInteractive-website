@@ -133,6 +133,17 @@ function isPlaySurfaceTarget(target: EventTarget | null): boolean {
   return !target.closest('button, a, .oms-help, .oms-fail, .oms-signin-gate, .oms-landscape-gate, .flamecore-badge');
 }
 
+function applyOmsAttractPrompt(hudRoot: HTMLElement): void {
+  const sub = hudRoot.querySelector('.oms-sub');
+  if (!(sub instanceof HTMLElement)) {
+    return;
+  }
+  const next = window.matchMedia('(pointer: coarse)').matches ? 'Tap to play' : 'Click / any key';
+  if (sub.textContent !== next) {
+    sub.textContent = next;
+  }
+}
+
 /** Boots the FlameCore One More Second attract loop (auto-playing corridor menu). */
 export function OneMoreSecondAttractHost({ onChromeChange }: OneMoreSecondAttractHostProps) {
   const hostRef = useRef<HTMLDivElement | null>(null);
@@ -531,6 +542,7 @@ export function OneMoreSecondAttractHost({ onChromeChange }: OneMoreSecondAttrac
       view.sync(readout, events, dt);
       relayoutOmsTrackHoops(view.root, readout.distance, readout.halfWidth);
       hud.sync(readout, events, readout.timeAlive, true);
+      applyOmsAttractPrompt(hud.root);
       driveCamera(readout, dt);
       renderer.render(scene, camera);
       raf = window.requestAnimationFrame(frame);
