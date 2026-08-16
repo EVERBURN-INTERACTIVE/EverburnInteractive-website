@@ -7,6 +7,7 @@ import { useAuth } from '@/components/auth/AuthProvider';
 import { submitOmsScore } from '@/lib/omsLeaderboard';
 import { OmsMovementLoop } from '@/lib/omsMovementAudio';
 import { bindOmsButtonSfx, playOmsSfx, preloadOmsSfx } from '@/lib/omsSfx';
+import { relayoutOmsTrackHoops } from '@/lib/omsTrackHoops';
 import { OneMoreSecondHud, readBestTime } from '@runtime/games/one-more-second/hud';
 import { OneMoreSecondInput } from '@runtime/games/one-more-second/input';
 import { OneMoreSecondSimulation } from '@runtime/games/one-more-second/simulation';
@@ -423,6 +424,7 @@ export function OneMoreSecondAttractHost({ onChromeChange }: OneMoreSecondAttrac
         dt,
       );
       view.sync(readout, events, dt);
+      relayoutOmsTrackHoops(view.root, readout.distance, readout.halfWidth);
       hud.sync(readout, events, readout.timeAlive, true);
       driveCamera(readout, dt);
       renderer.render(scene, camera);
