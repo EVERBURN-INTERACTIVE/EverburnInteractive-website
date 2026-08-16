@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "audit": "npm audit --audit-level=moderate"
+    "audit": "npm audit --audit-level=moderate",
+    "postinstall": "node scripts/ensure-flamecore.mjs"
   },
   "repository": {
     "type": "git",
@@ -27,9 +28,11 @@
     "npm": ">=10"
   },
   "overrides": {
-    "postcss": "8.5.15"
+    "postcss": "8.5.15",
+    "three": "0.160.1"
   },
   "dependencies": {
+    "@dimforge/rapier3d-compat": "^0.13.1",
     "@react-three/drei": "10.7.7",
     "@react-three/fiber": "9.6.0",
     "@supabase/supabase-js": "2.105.4",
@@ -38,12 +41,13 @@
     "react": "19.2.5",
     "react-dom": "19.2.5",
     "tailwindcss": "4.2.2",
-    "three": "0.183.2"
+    "three": "0.160.1"
   },
   "devDependencies": {
     "@types/node": "25.6.0",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
+    "@types/three": "0.160.0",
     "eslint": "9.39.4",
     "eslint-config-next": "16.2.7",
     "typescript": "6.0.2"

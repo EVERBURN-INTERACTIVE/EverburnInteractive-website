@@ -28,7 +28,12 @@ jobs:
           cache: npm
 
       - name: Install
+        env:
+          FLAMECORE_PAT: ${{ secrets.FLAMECORE_PAT }}
         run: npm ci
+
+      - name: Verify FlameCore vendor
+        run: test -f vendor/FlameCore/src/runtime/runtime.ts
 
       - name: Security Audit
         run: npm run audit

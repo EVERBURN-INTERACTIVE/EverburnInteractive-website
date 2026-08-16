@@ -11,12 +11,13 @@ import {
 } from 'react';
 import type { Session, User } from '@supabase/supabase-js';
 
-import { getAuthCallbackUrl } from '@/lib/supabase/auth-redirect';
+import { getAuthCallbackUrl, rememberAuthNextPath } from '@/lib/supabase/auth-redirect';
 import {
   getSupabaseBrowserClient,
   isSupabaseConfigured,
 } from '@/lib/supabase/client';
 import type { Profile } from '@/lib/supabase/types';
+import { getUserAvatarUrl, getUserDisplayName } from '@/lib/supabase/userDisplayName';
 
 interface AuthContextValue {
   user: User | null;
@@ -30,22 +31,6 @@ interface AuthContextValue {
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
-
-function getDisplayName(user: User) {
-  const metadata = user.user_metadata;
-  const name = metadata.full_name ?? metadata.name ?? metadata.user_name;
-
-  if (typeof name === 'string' && name.trim().length > 0) {
-    return name.trim();
-  }
-
-  return user.email?.split('@')[0] ?? 'Everburn Player';
-}
-
-function getAvatarUrl(user: User) {
-  const avatar = user.user_metadata.avatar_url ?? user.user_metadata.picture;
-  return typeof avatar === 'string' ? avatar : null;
-}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
@@ -83,8 +68,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .upsert(
           {
             user_id: activeUser.id,
-            display_name: getDisplayName(activeUser),
-            avatar_url: getAvatarUrl(activeUser),
+            display_name: getUserDisplayName(activeUser),
+            avatar_url: getUserAvatarUrl(activeUser),
             updated_at: new Date().toISOString(),
           },
           { onConflict: 'user_id' },
@@ -149,6 +134,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
 
+    rememberAuthNextPath();
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {

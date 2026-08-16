@@ -1,0 +1,72 @@
+{
+  "version": 1,
+  "tileLength": 4,
+  "trackWidth": 2.35,
+  "coordinateSystem": "Blender Y-forward, Z-up; exported glTF uses Y-up for Three.js",
+  "socketConvention": {
+    "SN_In": "Entry socket at local (0, -tileLength/2, deckHeight), rotation faces -Y",
+    "SN_Out": "Exit socket at local (0, +tileLength/2, deckHeight), rotation faces +Y"
+  },
+  "pieces": [
+    {
+      "id": "straight",
+      "file": "track_straight.glb",
+      "trackType": "straight",
+      "speedMod": 1.0,
+      "sockets": {
+        "in": { "position": [0, -2, 0.14], "rotationY": 180 },
+        "out": { "position": [0, 2, 0.14], "rotationY": 0 }
+      }
+    },
+    {
+      "id": "curve_left",
+      "file": "track_curveleft_90.glb",
+      "trackType": "curve_left",
+      "speedMod": 1.0,
+      "sockets": {
+        "in": { "position": [0, -2, 0.14], "rotationY": 180 },
+        "out": { "position": [-2, 0, 0.14], "rotationY": 90 }
+      }
+    },
+    {
+      "id": "curve_right",
+      "file": "track_curveright_90.glb",
+      "trackType": "curve_right",
+      "speedMod": 1.0,
+      "sockets": {
+        "in": { "position": [0, -2, 0.14], "rotationY": 180 },
+        "out": { "position": [2, 0, 0.14], "rotationY": -90 }
+      }
+    },
+    {
+      "id": "jump",
+      "file": "track_jump.glb",
+      "trackType": "jump",
+      "speedMod": 1.15,
+      "sockets": {
+        "in": { "position": [0, -2, 0.14], "rotationY": 180 },
+        "out": { "position": [0, 2, 0.14], "rotationY": 0 }
+      }
+    },
+    {
+      "id": "boost",
+      "file": "track_boost.glb",
+      "trackType": "boost",
+      "speedMod": 1.45,
+      "sockets": {
+        "in": { "position": [0, -2, 0.14], "rotationY": 180 },
+        "out": { "position": [0, 2, 0.14], "rotationY": 0 }
+      }
+    },
+    {
+      "id": "slow",
+      "file": "track_slow.glb",
+      "trackType": "slow",
+      "speedMod": 0.55,
+      "sockets": {
+        "in": { "position": [0, -2, 0.14], "rotationY": 180 },
+        "out": { "position": [0, 2, 0.14], "rotationY": 0 }
+      }
+    }
+  ]
+}

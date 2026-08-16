@@ -50,7 +50,7 @@ The static output is generated in `out/`.
 This site uses Supabase Auth with Google OAuth and a browser publishable key so the repository can stay public.
 
 1. Create a Supabase project.
-2. In Supabase, open **SQL Editor**, paste the contents of `supabase/schema.sql`, and run it. This creates the `profiles` table and RLS policies.
+2. In Supabase, open **SQL Editor**, paste the contents of `supabase/schema.sql`, and run it. This creates the `profiles` table, the One More Second `one_more_second_scores` table, and RLS policies. Anyone can read the public top scores. Only a signed-in user can insert or update their own row, and a worse time never overwrites a better one.
 3. In Google Cloud Console, create an OAuth Client ID for a web app. In **Authorized redirect URIs**, paste the Supabase callback URL from your Supabase Google provider page. It looks like:
 
 ```text
@@ -114,6 +114,7 @@ Never commit Supabase service-role keys, Google OAuth client secrets, or any oth
 - CI runs `npm audit --audit-level=high` before deployment.
 - Dependabot is enabled for weekly npm security updates.
 - Supabase user data is protected by Row Level Security policies in `supabase/schema.sql`.
+- The campsite **Our Projects** world is public. Google sign-in is required only to start a One More Second run and to save a leaderboard time.
 
 ## Deployment
 

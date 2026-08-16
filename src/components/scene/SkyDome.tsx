@@ -6,6 +6,7 @@ import type { Group, Mesh, MeshStandardMaterial } from 'three';
 
 interface SkyDomeProps {
   dimmed: boolean;
+  showClouds?: boolean;
 }
 
 interface CloudSpec {
@@ -15,7 +16,7 @@ interface CloudSpec {
   opacity: number;
 }
 
-export function SkyDome({ dimmed }: SkyDomeProps) {
+export function SkyDome({ dimmed, showClouds = true }: SkyDomeProps) {
   const cloudRefs = useRef<Array<Group | null>>([]);
   const cloudSpecs = useMemo<CloudSpec[]>(() => [
     { position: [-3.4, 4.1, -2.8], scale: [1.15, 0.36, 1], speed: 0.12, opacity: 0.56 },
@@ -57,6 +58,10 @@ export function SkyDome({ dimmed }: SkyDomeProps) {
   });
 
   const cloudOpacityMultiplier = dimmed ? 0.55 : 1;
+
+  if (!showClouds) {
+    return null;
+  }
 
   return (
     <group>

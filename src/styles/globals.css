@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import './tokens.css';
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&display=swap');
 
 html,
 body {
@@ -28,6 +29,28 @@ body {
 
 .scene-root.is-passive {
   pointer-events: none;
+}
+
+.scene-root [data-flamecore-host] {
+  position: relative;
+  overflow: hidden;
+}
+
+.scene-root .flamecore-canvas {
+  position: relative;
+  z-index: 0;
+}
+
+.flamecore-html-portal {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.flamecore-html-portal .grid-page-pill {
+  pointer-events: auto;
 }
 
 .scene-root.is-active {
@@ -215,7 +238,8 @@ body {
     box-shadow 0.18s ease;
 }
 
-.grid-page-pill:hover:not(:disabled) {
+.grid-page-pill:hover:not(:disabled),
+.grid-page-pill.grid-page-pill--hovered:not(:disabled) {
   transform: translateY(-1px);
   border-color: rgba(255, 183, 106, 0.88);
   box-shadow:
@@ -407,6 +431,96 @@ body {
 .tile-focus-footer button:focus-visible {
   outline: 2px solid #ff6a00;
   outline-offset: 3px;
+}
+
+.projects-world-back {
+  position: fixed;
+  left: 50%;
+  bottom: clamp(1rem, 4vh, 1.75rem);
+  transform: translateX(-50%);
+  z-index: 25;
+  pointer-events: auto;
+}
+
+.projects-world-back--top-left {
+  bottom: auto;
+  transform: none;
+  top: max(0.85rem, env(safe-area-inset-top));
+  left: max(0.85rem, env(safe-area-inset-left));
+  right: auto;
+  z-index: 170;
+}
+
+.projects-world-back button {
+  border: 1px solid rgba(255, 214, 165, 0.55);
+  background: rgba(34, 24, 14, 0.95);
+  color: #ffe2b3;
+  padding: 0.52rem 1.25rem;
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+
+.projects-world-back button:hover {
+  background: rgba(60, 40, 20, 0.95);
+}
+
+.projects-world-back button:focus-visible {
+  outline: 2px solid #ff6a00;
+  outline-offset: 3px;
+}
+
+.battle-arena-menu-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.12rem;
+  min-width: 8.5rem;
+  padding: 0.15rem 0.35rem;
+  text-align: center;
+  user-select: none;
+  pointer-events: none;
+}
+
+.battle-arena-menu-label-title {
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(214, 238, 255, 0.78);
+  text-shadow: 0 0 8px rgba(84, 207, 255, 0.18);
+  transition:
+    color 0.22s ease,
+    text-shadow 0.22s ease;
+}
+
+.battle-arena-menu-label-sub {
+  font-family: var(--font-body);
+  font-size: 0.42rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 170, 120, 0.72);
+}
+
+.battle-arena-menu-label.is-lit .battle-arena-menu-label-title {
+  color: #f3fbff;
+  text-shadow:
+    0 0 12px rgba(84, 207, 255, 0.75),
+    0 0 24px rgba(84, 207, 255, 0.35);
+}
+
+.battle-arena-menu-label.is-disabled .battle-arena-menu-label-title {
+  color: rgba(190, 200, 210, 0.55);
+}
+
+.battle-arena-menu-label.is-disabled.is-lit .battle-arena-menu-label-title {
+  color: rgba(255, 210, 180, 0.72);
+  text-shadow: 0 0 10px rgba(255, 140, 80, 0.35);
 }
 
 .focus-tree {
@@ -885,5 +999,235 @@ body {
   .tile-focus-section p,
   .tile-focus-section ul {
     font-size: 0.82rem;
+  }
+}
+
+.oms-attract-host {
+  position: absolute;
+  inset: 0;
+  z-index: 12;
+  background: #050314;
+  touch-action: none;
+  user-select: none;
+}
+
+.oms-attract-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.oms-attract-hud-mount {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.oms-signin-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 165;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(2, 4, 10, 0.55);
+  pointer-events: auto;
+}
+
+.oms-signin-card {
+  width: min(28rem, calc(100vw - 2.5rem));
+  text-align: center;
+  border: 1px solid rgba(92, 225, 255, 0.35);
+  padding: 2.4rem 2.2rem;
+  background: rgba(4, 8, 18, 0.9);
+  box-shadow: 0 0 80px rgba(92, 225, 255, 0.12);
+  color: #d7fbff;
+  font-family: var(--font-display), "Segoe UI", sans-serif;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.oms-signin-card p {
+  margin: 0;
+}
+
+.oms-signin-card #oms-signin-title {
+  font-size: 1.15rem;
+  letter-spacing: 0.28em;
+  text-shadow: 0 0 18px #5ce1ff;
+}
+
+.oms-signin-copy,
+.oms-signin-status {
+  margin-top: 0.9rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  color: #8ad7e8;
+  text-transform: none;
+}
+
+.oms-signin-card .google-auth-button {
+  margin-top: 1.4rem;
+}
+
+.oms-leaderboard {
+  position: fixed;
+  top: 50%;
+  right: max(1rem, env(safe-area-inset-right));
+  transform: translateY(-50%);
+  z-index: 160;
+  width: min(22rem, 32vw);
+  min-width: 16rem;
+  pointer-events: none;
+  color: #d6eeff;
+  font-family: var(--font-display), "Segoe UI", sans-serif;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: var(--oms-board-bg);
+  border: 2px solid var(--oms-board-edge);
+  box-shadow: 0 0 28px rgba(0, 232, 255, 0.22);
+  padding: 1.1rem 1rem 1rem;
+}
+
+.oms-leaderboard h2 {
+  margin: 0 0 0.85rem;
+  text-align: center;
+  font-size: 1.05rem;
+  letter-spacing: 0.18em;
+  color: #f3fbff;
+  text-shadow: 0 0 12px var(--oms-board-edge);
+}
+
+.oms-leaderboard-head,
+.oms-leaderboard li {
+  display: grid;
+  grid-template-columns: 2rem 1fr 5.5rem;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.oms-leaderboard-head {
+  color: var(--oms-board-edge);
+  font-size: 0.72rem;
+  margin-bottom: 0.45rem;
+}
+
+.oms-leaderboard-head span:last-child,
+.oms-leaderboard li span:last-child {
+  text-align: right;
+}
+
+.oms-leaderboard ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: var(--oms-board-inset);
+  padding: 0.35rem;
+}
+
+.oms-leaderboard li {
+  background: var(--oms-board-row);
+  margin-bottom: 0.28rem;
+  padding: 0.38rem 0.45rem;
+  font-size: 0.82rem;
+}
+
+.oms-leaderboard li:last-child {
+  margin-bottom: 0;
+}
+
+.oms-leaderboard li.is-first {
+  color: #fff4c8;
+}
+
+.oms-landscape-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: rgba(5, 3, 20, 0.94);
+  color: #d7fbff;
+  text-align: center;
+  font-family: var(--font-display), "Segoe UI", sans-serif;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.oms-landscape-card {
+  width: min(22rem, calc(100vw - 2rem));
+  border: 1px solid rgba(92, 225, 255, 0.4);
+  background: rgba(4, 8, 18, 0.92);
+  box-shadow: 0 0 48px rgba(92, 225, 255, 0.14);
+  padding: 1.6rem 1.4rem;
+}
+
+.oms-landscape-card p {
+  margin: 0;
+}
+
+.oms-landscape-card #oms-landscape-title {
+  font-size: 1.05rem;
+  letter-spacing: 0.28em;
+  text-shadow: 0 0 16px #5ce1ff;
+}
+
+.oms-landscape-card p + p {
+  margin-top: 0.85rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: none;
+  color: #8ad7e8;
+  line-height: 1.5;
+}
+
+.flamecore-badge {
+  position: fixed;
+  right: max(0.75rem, env(safe-area-inset-right));
+  bottom: max(0.75rem, env(safe-area-inset-bottom));
+  z-index: 150;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.38rem 0.7rem 0.38rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid rgba(232, 196, 92, 0.85);
+  background: linear-gradient(180deg, rgba(62, 42, 12, 0.94), rgba(22, 14, 6, 0.96));
+  color: #f3d48a;
+  text-decoration: none;
+  font-family: var(--font-display), "Segoe UI", sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  box-shadow: 0 0 18px rgba(232, 196, 92, 0.28), 0 8px 22px rgba(0, 0, 0, 0.4);
+  pointer-events: auto;
+}
+
+.flamecore-badge:hover {
+  color: #ffe7ad;
+  border-color: #f6d56a;
+  box-shadow: 0 0 24px rgba(246, 213, 106, 0.4), 0 8px 22px rgba(0, 0, 0, 0.4);
+}
+
+.flamecore-badge:focus-visible {
+  outline: 2px solid #f6d56a;
+  outline-offset: 3px;
+}
+
+.flamecore-badge-mark {
+  width: 1.05rem;
+  height: 1.05rem;
+  flex: 0 0 auto;
+  color: #f0c75a;
+  filter: drop-shadow(0 0 6px rgba(240, 199, 90, 0.55));
+}
+
+@media (pointer: coarse) and (orientation: portrait) {
+  .oms-leaderboard {
+    display: none;
   }
 }

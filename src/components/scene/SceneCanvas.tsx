@@ -1,16 +1,16 @@
 'use client';
 
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { MathUtils } from 'three';
 import type { OrthographicCamera } from 'three';
 
 import Image from 'next/image';
 import type { StaticImageData } from 'next/image';
+import { usePathname, useRouter } from 'next/navigation';
 import MarblePartyImg from '@/assets/MarbleParty.png';
-
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { AudioControl } from '@/components/ui/AudioControl';
 import { WebGLFallback } from '@/components/ui/WebGLFallback';
@@ -18,8 +18,38 @@ import { useIsMobile } from '@/lib/hooks/useIsMobile';
 import { useReducedMotion } from '@/lib/hooks/useReducedMotion';
 import { useTimePhase } from '@/lib/hooks/useTimePhase';
 import { getTargetDpr } from '@/lib/performanceMonitor';
+import { BATTLE_ARENA_ZOOM_SCALE } from '@/lib/battleArenaLayout';
+import {
+  WORLD_PORTFOLIO_URL,
+  type ProjectsInnerTileNavigatePayload,
+} from '@/lib/projectInnerTiles';
+import {
+  MARBLE_PARTY_TILE_POSITION,
+  OUR_PROJECTS_TILE_POSITION,
+  SCENE_HOME,
+  SCENE_MARBLE_PARTY,
+  SCENE_ONE_MORE_SECOND,
+  SCENE_PROJECTS,
+  isOneMoreSecondSceneRoute,
+  isProjectsSceneRoute,
+  normalizeScenePathname,
+} from '@/lib/sceneRoutes';
+import { FlameCoreR3FHost } from '@/flamecore';
+import { ProjectsTileWorld } from './ProjectsTileWorld';
 
 const GridWorld = dynamic(() => import('./GridWorld').then((m) => m.GridWorld), { ssr: false });
+const OneMoreSecondAttractHost = dynamic(
+  () => import('./OneMoreSecondAttractHost').then((m) => m.OneMoreSecondAttractHost),
+  { ssr: false },
+);
+const OneMoreSecondLeaderboardOverlay = dynamic(
+  () => import('./OneMoreSecondLeaderboardOverlay').then((m) => m.OneMoreSecondLeaderboardOverlay),
+  { ssr: false },
+);
+const CyberNeonFlowDriver = dynamic(
+  () => import('./CyberNeonFlowDriver').then((m) => m.CyberNeonFlowDriver),
+  { ssr: false },
+);
 const FocusTreesDecor = dynamic(() => import('./GridWorld').then((m) => m.FocusTreesDecor), { ssr: false });
 const SkyDome = dynamic(() => import('./SkyDome').then((m) => m.SkyDome), { ssr: false });
 const Birds = dynamic(() => import('./Birds').then((m) => m.Birds), { ssr: false });
@@ -112,12 +142,24 @@ const PAGE_FOCUS_CONTENT: Record<string, PageFocusContent> = {
         heading: 'Built on the Right Foundation',
         paragraphs: [
           'Every technology decision at Everburn starts with one question: what does this specific experience actually need?',
-          'We do not default to tools because they are popular. We choose them because they are the right fit for what we are building.',
+          'We do not default to tools because they are popular. We choose them because they are the right fit for what we are building. This site and our browser games run on FlameCore. Marble Party is built in Unreal Engine 5.',
         ],
       },
       {
-        heading: 'Game Engine:Unreal Engine 5',
-        paragraphs: ['Our primary engine is Unreal Engine 5, built on C++. For Marble Party specifically:'],
+        heading: 'FlameCore Engine',
+        paragraphs: [
+          'FlameCore is our in-house browser 3D engine, written in TypeScript on Three.js. It powers this website and browser games such as One More Second.',
+        ],
+        bullets: [
+          'Runtime for actor and component scenes, animation, physics, audio, particles, and LOD tools',
+          'Visual editor and export pipeline for static HTML, JavaScript, and assets',
+          'Web stack: TypeScript, Three.js, Next.js on this site, and Vite for the editor',
+          'WebGL-first games that run in the browser without a native install',
+        ],
+      },
+      {
+        heading: 'Game Engine: Unreal Engine 5',
+        paragraphs: ['For native, physics-heavy live-audience games we use Unreal Engine 5 with C++. For Marble Party specifically:'],
         bullets: [
           'Server-authoritative physics for consistent marble simulation for every player and viewer',
           'Chaos Physics for high-fidelity, deterministic simulation at scale',
@@ -317,13 +359,22 @@ function CameraRig({
   }, [focus]);
 
   useEffect(() => {
-    // Skip the initial mount — camera is already at CAMERA_POSITION from Canvas init.
+    const activeCamera = camera as OrthographicCamera;
+
+    // First mount: host may boot at campsite zoom while this scene already
+    // targets a different zoom (e.g. Battle Arena on hard refresh). Snap so
+    // client navigation and refresh match.
     if (isInitialMountRef.current) {
       isInitialMountRef.current = false;
+      if (Math.abs(activeCamera.zoom - baseZoom) > 0.5) {
+        activeCamera.zoom = baseZoom;
+        activeCamera.updateProjectionMatrix();
+      }
       return;
     }
+
     isAnimatingRef.current = true;
-  }, [resetSignal]);
+  }, [resetSignal, baseZoom, camera]);
 
   useFrame((_, delta) => {
     if (!isAnimatingRef.current) return;
@@ -381,6 +432,9 @@ interface SceneCanvasProps {
 }
 
 export function SceneCanvas({ isActive }: SceneCanvasProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const scenePath = normalizeScenePathname(pathname);
   const isMobile = useIsMobile();
   const baseZoom = isMobile ? 42 : 80;
   const timePhase = useTimePhase();
@@ -395,7 +449,10 @@ export function SceneCanvas({ isActive }: SceneCanvasProps) {
   const overlayHideTimerRef = useRef<number | null>(null);
   const panelRef = useRef<HTMLElement | null>(null);
   const controlsRef = useRef<React.ComponentRef<typeof OrbitControls>>(null);
+  const previousProjectsSceneRef = useRef<string | null>(null);
+  const previousPathnameRef = useRef(scenePath);
   const [isResettingCamera, setIsResettingCamera] = useState<boolean>(false);
+  const [omsChrome, setOmsChrome] = useState<'attract' | 'run' | 'dead'>('attract');
   const [supportsWebGl] = useState<boolean>(() => {
     if (typeof window === 'undefined') {
       return true;
@@ -406,10 +463,19 @@ export function SceneCanvas({ isActive }: SceneCanvasProps) {
     return context !== null;
   });
 
+  const handleFlameCoreReady = useCallback(() => {
+    // Keep the loader up briefly after the host reports a usable layout so the
+    // first WebGL frames are not flashed under a fading overlay.
+    window.setTimeout(() => {
+      setIsLoaded(true);
+    }, 220);
+  }, []);
+
   useEffect(() => {
+    // Safety net if onReady never fires (layout stuck at 0×0, etc.).
     const timer = window.setTimeout(() => {
       setIsLoaded(true);
-    }, 650);
+    }, 8000);
 
     return () => {
       window.clearTimeout(timer);
@@ -451,6 +517,28 @@ export function SceneCanvas({ isActive }: SceneCanvasProps) {
     };
   }, []);
 
+  const clearOverlayTimers = useCallback(() => {
+    if (settleFallbackTimerRef.current !== null) {
+      window.clearTimeout(settleFallbackTimerRef.current);
+    }
+
+    if (overlayHideTimerRef.current !== null) {
+      window.clearTimeout(overlayHideTimerRef.current);
+    }
+  }, []);
+
+  const openFocusOverlay = useCallback((href: string, tileWorldPosition: [number, number, number]) => {
+    clearOverlayTimers();
+    setFocus({ href, tilePosition: tileWorldPosition });
+    setFocusSettled(false);
+    setShowFocusOverlay(false);
+
+    settleFallbackTimerRef.current = window.setTimeout(() => {
+      setFocusSettled(true);
+      setShowFocusOverlay(true);
+    }, 900);
+  }, [clearOverlayTimers]);
+
   const handleNavigate = useCallback((href: string, tileWorldPosition: [number, number, number]) => {
     if (settleFallbackTimerRef.current !== null) {
       window.clearTimeout(settleFallbackTimerRef.current);
@@ -458,6 +546,18 @@ export function SceneCanvas({ isActive }: SceneCanvasProps) {
 
     if (overlayHideTimerRef.current !== null) {
       window.clearTimeout(overlayHideTimerRef.current);
+    }
+
+    if (href === '/games') {
+      clearOverlayTimers();
+      setOverlayHref(null);
+      setFocus(null);
+      setFocusSettled(false);
+      setShowFocusOverlay(false);
+      setIsResettingCamera(true);
+      setResetSignal((current) => current + 1);
+      router.push(SCENE_PROJECTS);
+      return;
     }
 
     setOverlayHref(href);
@@ -470,7 +570,34 @@ export function SceneCanvas({ isActive }: SceneCanvasProps) {
       setFocusSettled(true);
       setShowFocusOverlay(true);
     }, 900);
-  }, []);
+  }, [
+    clearOverlayTimers,
+    router,
+  ]);
+
+  const handleProjectsInnerNavigate = useCallback(({ action }: ProjectsInnerTileNavigatePayload) => {
+    if (action === 'world-portfolio-link') {
+      window.open(WORLD_PORTFOLIO_URL, '_blank', 'noopener,noreferrer');
+      return;
+    }
+
+    if (action === 'battle-arena-racing') {
+      router.push(SCENE_ONE_MORE_SECOND);
+      return;
+    }
+
+    if (action === 'marble-party-overlay') {
+      router.push(SCENE_MARBLE_PARTY);
+    }
+  }, [router]);
+
+  const closeBattleArenaRacing = useCallback(() => {
+    router.push(SCENE_PROJECTS);
+  }, [router]);
+
+  const closeProjectsInnerOverlay = useCallback(() => {
+    router.push(SCENE_PROJECTS);
+  }, [router]);
 
   const closeFocusOverlay = useCallback(() => {
     if (settleFallbackTimerRef.current !== null) {
@@ -481,16 +608,31 @@ export function SceneCanvas({ isActive }: SceneCanvasProps) {
       window.clearTimeout(overlayHideTimerRef.current);
     }
 
+    if (isProjectsSceneRoute(scenePath)) {
+      if (isOneMoreSecondSceneRoute(scenePath) || scenePath === SCENE_MARBLE_PARTY) {
+        router.push(SCENE_PROJECTS);
+        return;
+      }
+
+      router.push(SCENE_HOME);
+      return;
+    }
+
+    const hadCameraFocus = focus !== null;
+
     setFocusSettled(false);
     setShowFocusOverlay(false);
     setFocus(null);
-    setIsResettingCamera(true);
-    setResetSignal((current) => current + 1);
+
+    if (hadCameraFocus) {
+      setIsResettingCamera(true);
+      setResetSignal((current) => current + 1);
+    }
 
     overlayHideTimerRef.current = window.setTimeout(() => {
       setOverlayHref(null);
     }, 320);
-  }, []);
+  }, [focus, router, scenePath]);
 
   const handleResetComplete = useCallback(() => {
     setIsResettingCamera(false);
@@ -500,10 +642,130 @@ export function SceneCanvas({ isActive }: SceneCanvasProps) {
     }
   }, []);
 
-  const effectiveShowFocusOverlay = isActive && overlayHref !== null;
+  const onProjectsScene = isProjectsSceneRoute(scenePath);
+  const shouldShowProjectsWorld = onProjectsScene;
+  const projectsTileWorldActive = shouldShowProjectsWorld;
+  const battleArenaRacingActive = isOneMoreSecondSceneRoute(scenePath) && shouldShowProjectsWorld;
+  const projectsInnerOverlayActive = scenePath === SCENE_MARBLE_PARTY && shouldShowProjectsWorld;
+  const omsRunActive = battleArenaRacingActive && omsChrome === 'run';
+  const showOmsLeaderboard = battleArenaRacingActive && omsChrome === 'attract';
+  const showProjectsBack =
+    onProjectsScene && !projectsInnerOverlayActive && !omsRunActive;
+  const showCampsiteGrid = scenePath === SCENE_HOME;
+  const ambientIntensity = battleArenaRacingActive
+    ? Math.max(0.72, timePhase.ambientIntensity * 1.05)
+    : projectsTileWorldActive
+      ? Math.max(0.42, timePhase.ambientIntensity * 0.72)
+      : Math.max(0.18, timePhase.ambientIntensity * 0.45);
+  const effectiveShowFocusOverlay =
+    isActive
+    && ((overlayHref !== null && scenePath === SCENE_HOME) || projectsInnerOverlayActive);
   const effectiveFocus = isActive ? focus : null;
 
-  const activeContent = overlayHref ? PAGE_FOCUS_CONTENT[overlayHref] : null;
+  const overlayContentHref = projectsInnerOverlayActive ? '/games' : overlayHref;
+  const activeContent = overlayContentHref ? PAGE_FOCUS_CONTENT[overlayContentHref] : null;
+  const closeActiveOverlay = projectsInnerOverlayActive ? closeProjectsInnerOverlay : closeFocusOverlay;
+  const sceneBaseZoom = battleArenaRacingActive ? baseZoom * BATTLE_ARENA_ZOOM_SCALE : baseZoom;
+  const orbitControlsEnabled =
+    isActive && !effectiveFocus && !isResettingCamera && !battleArenaRacingActive;
+  const flameCamera = useMemo(
+    () => ({
+      position: CAMERA_POSITION,
+      zoom: sceneBaseZoom,
+      near: 0.1,
+      far: 200,
+    }),
+    [sceneBaseZoom],
+  );
+
+  useEffect(() => {
+    if (!battleArenaRacingActive) {
+      setOmsChrome('attract');
+    }
+  }, [battleArenaRacingActive]);
+
+  useEffect(() => {
+    if (!omsRunActive) {
+      return;
+    }
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        closeBattleArenaRacing();
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, [closeBattleArenaRacing, omsRunActive]);
+
+  // Open the public games overlay when arriving with ?overlay=games.
+  useEffect(() => {
+    if (!isActive || scenePath !== SCENE_HOME) {
+      return;
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('overlay') !== 'games') {
+      return;
+    }
+
+    openFocusOverlay('/games', OUR_PROJECTS_TILE_POSITION);
+    router.replace(SCENE_HOME);
+  }, [isActive, openFocusOverlay, router, scenePath]);
+
+  // Open the Marble Party overlay when its route is active (including browser back/forward).
+  useEffect(() => {
+    if (!isActive) {
+      return;
+    }
+
+    if (scenePath === SCENE_MARBLE_PARTY) {
+      openFocusOverlay('/games', MARBLE_PARTY_TILE_POSITION);
+      return;
+    }
+
+    if (scenePath === SCENE_PROJECTS || isOneMoreSecondSceneRoute(scenePath)) {
+      clearOverlayTimers();
+      setFocusSettled(false);
+      setShowFocusOverlay(false);
+      setFocus(null);
+    }
+  }, [clearOverlayTimers, isActive, openFocusOverlay, scenePath]);
+
+  // Reset camera when entering or moving within the projects scene tree.
+  useEffect(() => {
+    const enteredProjectsScene =
+      onProjectsScene && !isProjectsSceneRoute(previousPathnameRef.current);
+    const movedWithinProjectsScene =
+      onProjectsScene
+      && isProjectsSceneRoute(previousPathnameRef.current)
+      && previousPathnameRef.current !== scenePath;
+
+    if (
+      enteredProjectsScene
+      || (movedWithinProjectsScene && scenePath !== SCENE_MARBLE_PARTY)
+    ) {
+      clearOverlayTimers();
+      setFocusSettled(false);
+      setShowFocusOverlay(false);
+      setFocus(null);
+      setIsResettingCamera(true);
+      setResetSignal((current) => current + 1);
+    }
+
+    previousPathnameRef.current = scenePath;
+
+    if (!onProjectsScene) {
+      previousProjectsSceneRef.current = null;
+      return;
+    }
+
+    previousProjectsSceneRef.current = scenePath;
+  }, [clearOverlayTimers, onProjectsScene, scenePath]);
 
   // Auto-focus the dialog panel when it becomes visible for keyboard accessibility.
   useEffect(() => {
@@ -512,9 +774,35 @@ export function SceneCanvas({ isActive }: SceneCanvasProps) {
     }
   }, [showFocusOverlay, focusSettled]);
 
+  useEffect(() => {
+    if (!projectsTileWorldActive || !isActive) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        if (scenePath === SCENE_MARBLE_PARTY) {
+          closeProjectsInnerOverlay();
+        } else if (isOneMoreSecondSceneRoute(scenePath)) {
+          closeBattleArenaRacing();
+        } else {
+          closeFocusOverlay();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [
+    projectsTileWorldActive,
+    isActive,
+    scenePath,
+    closeProjectsInnerOverlay,
+    closeBattleArenaRacing,
+    closeFocusOverlay,
+  ]);
+
   const handlePanelKeyDown = useCallback((event: React.KeyboardEvent<HTMLElement>): void => {
     if (event.key === 'Escape') {
-      closeFocusOverlay();
+      closeActiveOverlay();
       return;
     }
 
@@ -542,7 +830,7 @@ export function SceneCanvas({ isActive }: SceneCanvasProps) {
         }
       }
     }
-  }, [closeFocusOverlay]);
+  }, [closeActiveOverlay]);
 
   if (!supportsWebGl) {
     return <WebGLFallback />;
@@ -551,39 +839,42 @@ export function SceneCanvas({ isActive }: SceneCanvasProps) {
   return (
     <>
       <main className={`scene-root ${isActive ? 'is-active' : 'is-passive'}`}>
-        <Canvas
-          frameloop={isActive ? 'always' : 'demand'}
-          shadows="percentage"
-          orthographic
-          camera={{ position: CAMERA_POSITION, zoom: baseZoom, near: 0.1, far: 200 }}
-          dpr={[0.75, 1.5]}
-          onCreated={({ camera }) => {
-            camera.lookAt(0, 0, 0);
-          }}
-        >
+        <FlameCoreR3FHost isActive={isActive && !battleArenaRacingActive} camera={flameCamera} onReady={handleFlameCoreReady}>
           <color attach="background" args={[timePhase.skyColorBottom]} />
           <fog attach="fog" args={[timePhase.fogColor, 48, 195]} />
-          <SkyDome dimmed={timePhase.phase === 'night'} />
-          <ambientLight intensity={Math.max(0.18, timePhase.ambientIntensity * 0.45)} />
+          <SkyDome dimmed={timePhase.phase === 'night'} showClouds={!battleArenaRacingActive} />
+          <ambientLight intensity={ambientIntensity} />
           <directionalLight
             position={[8, 18, 3]}
-            intensity={timePhase.phase === 'night' ? 0.42 : 1.35}
+            intensity={
+              battleArenaRacingActive
+                ? timePhase.phase === 'night'
+                  ? 1.05
+                  : 2.1
+                : projectsTileWorldActive
+                  ? timePhase.phase === 'night'
+                    ? 0.55
+                    : 1.45
+                  : timePhase.phase === 'night'
+                    ? 0.42
+                    : 1.35
+            }
             castShadow
             shadow-mapSize-width={1024}
             shadow-mapSize-height={1024}
             shadow-camera-near={1}
-            shadow-camera-far={90}
-            shadow-camera-left={-14}
-            shadow-camera-right={14}
-            shadow-camera-top={14}
-            shadow-camera-bottom={-14}
+            shadow-camera-far={battleArenaRacingActive ? 72 : projectsTileWorldActive ? 48 : 90}
+            shadow-camera-left={battleArenaRacingActive ? -28 : projectsTileWorldActive ? -20 : -14}
+            shadow-camera-right={battleArenaRacingActive ? 28 : projectsTileWorldActive ? 20 : 14}
+            shadow-camera-top={battleArenaRacingActive ? 28 : projectsTileWorldActive ? 20 : 14}
+            shadow-camera-bottom={battleArenaRacingActive ? -28 : projectsTileWorldActive ? -20 : -14}
             shadow-bias={-0.00008}
             shadow-normalBias={0.015}
           />
           <OrbitControls
             ref={controlsRef}
-            enabled={isActive && !effectiveFocus && !isResettingCamera}
-            enableRotate={isActive && !effectiveFocus && !isResettingCamera}
+            enabled={orbitControlsEnabled}
+            enableRotate={orbitControlsEnabled}
             enableZoom={false}
             enablePan={false}
             enableDamping
@@ -595,7 +886,7 @@ export function SceneCanvas({ isActive }: SceneCanvasProps) {
           <CameraRig
             focus={effectiveFocus}
             resetSignal={resetSignal}
-            baseZoom={baseZoom}
+            baseZoom={sceneBaseZoom}
             onResetComplete={handleResetComplete}
             onFocusSettled={() => {
               if (settleFallbackTimerRef.current !== null) {
@@ -607,18 +898,43 @@ export function SceneCanvas({ isActive }: SceneCanvasProps) {
             }}
           />
           <AdaptiveDpr />
+          <CyberNeonFlowDriver />
           {timePhase.starsActive ? <Stars count={420} reducedMotion={reducedMotion} /> : null}
           {timePhase.starsActive ? <ShootingStars /> : null}
-          {timePhase.birdsActive ? <Birds count={4} reducedMotion={reducedMotion} /> : null}
-          <GridWorld active={isActive} reducedMotion={reducedMotion} onNavigate={handleNavigate} />
-        </Canvas>
+          {timePhase.birdsActive && !battleArenaRacingActive ? <Birds count={4} reducedMotion={reducedMotion} /> : null}
+          {onProjectsScene ? (
+            shouldShowProjectsWorld && !battleArenaRacingActive ? (
+              <ProjectsTileWorld active={isActive} onInnerTileNavigate={handleProjectsInnerNavigate} />
+            ) : null
+          ) : showCampsiteGrid ? (
+            <GridWorld active={isActive} reducedMotion={reducedMotion} onNavigate={handleNavigate} />
+          ) : null}
+        </FlameCoreR3FHost>
+        {battleArenaRacingActive ? (
+          <>
+            <OneMoreSecondAttractHost onChromeChange={setOmsChrome} />
+            {showOmsLeaderboard ? <OneMoreSecondLeaderboardOverlay /> : null}
+          </>
+        ) : null}
       </main>
       <LoadingScreen loaded={isLoaded} />
+      {showProjectsBack ? (
+        <div
+          className={`projects-world-back${battleArenaRacingActive ? ' projects-world-back--top-left' : ''}`}
+        >
+          <button
+            type="button"
+            onClick={battleArenaRacingActive ? closeBattleArenaRacing : closeFocusOverlay}
+          >
+            {battleArenaRacingActive ? '← Back to Projects' : '← Back to Campsite'}
+          </button>
+        </div>
+      ) : null}
       {effectiveShowFocusOverlay && activeContent ? (
         <section
           className={`tile-focus-overlay ${showFocusOverlay ? 'is-visible' : ''}`}
           aria-label={`${activeContent.title} information`}
-          onClick={closeFocusOverlay}
+          onClick={closeActiveOverlay}
         >
           <FocusTreesDecor />
           <article
@@ -641,7 +957,7 @@ export function SceneCanvas({ isActive }: SceneCanvasProps) {
                 type="button"
                 className="tile-focus-close"
                 aria-label="Close panel"
-                onClick={closeFocusOverlay}
+                onClick={closeActiveOverlay}
               >
                 ✕
               </button>
@@ -672,8 +988,8 @@ export function SceneCanvas({ isActive }: SceneCanvasProps) {
               ))}
             </div>
             <footer className="tile-focus-footer">
-              <button type="button" onClick={closeFocusOverlay}>
-                ← Back To Grid
+              <button type="button" onClick={closeActiveOverlay}>
+                {projectsInnerOverlayActive ? '← Back to Projects' : '← Back To Grid'}
               </button>
             </footer>
           </article>

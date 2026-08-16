@@ -27,6 +27,30 @@ export interface Database {
         };
         Relationships: [];
       };
+      one_more_second_scores: {
+        Row: {
+          user_id: string;
+          display_name: string;
+          best_seconds: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          user_id: string;
+          display_name?: string;
+          best_seconds: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          user_id?: string;
+          display_name?: string;
+          best_seconds?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
@@ -36,3 +60,4 @@ export interface Database {
 }
 
 export type Profile = Database['public']['Tables']['profiles']['Row'];
+export type OneMoreSecondScore = Database['public']['Tables']['one_more_second_scores']['Row'];

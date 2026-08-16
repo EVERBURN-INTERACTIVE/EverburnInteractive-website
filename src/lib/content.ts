@@ -53,12 +53,23 @@ export const TECHNOLOGY_AREAS: TechArea[] = [
   {
     title: 'Built on the Right Foundation',
     intro:
-      'Every technology decision at Everburn Interactive starts with a single question: what does this specific experience actually need? We do not default to tools because they are popular. We choose them because they are the right fit for the systems we are building — and we go deep.',
+      'Every technology decision at Everburn Interactive starts with a single question: what does this specific experience actually need? We do not default to tools because they are popular. We choose them because they are the right fit for the systems we are building. That is why this site and our browser games run on FlameCore, while Marble Party is built in Unreal Engine 5.',
+  },
+  {
+    title: 'FlameCore Engine',
+    intro:
+      'FlameCore is our in-house browser 3D engine. It is written in TypeScript on Three.js, with a runtime that ships inside this website, a visual editor for authoring scenes, and an export pipeline for static hosts. We use it for the Everburn Interactive site and for browser games such as One More Second:',
+    bullets: [
+      { label: 'Runtime', text: 'actor and component scenes with animation, physics, audio, particles, text/UI, and LOD/quality tools' },
+      { label: 'Editor and pipeline', text: 'visual authoring, asset and project storage, and export to static HTML, JavaScript, and assets' },
+      { label: 'Web stack', text: 'TypeScript and Three.js, with Next.js on this site and Vite for the FlameCore editor' },
+      { label: 'Browser games', text: 'WebGL-first experiences that run without a native install, including One More Second' },
+    ],
   },
   {
     title: 'Game Engine — Unreal Engine 5',
     intro:
-      'Our primary development engine is Unreal Engine 5, used with C++ as the core programming language. UE5 gives us the performance headroom, physics fidelity, and networking architecture that our games demand. For Marble Party specifically, we build on:',
+      'For native, physics-heavy live-audience games we use Unreal Engine 5 with C++ as the core programming language. UE5 gives us the performance headroom, physics fidelity, and networking architecture those titles demand. For Marble Party specifically, we build on:',
     bullets: [
       { label: 'Server-authoritative physics', text: 'ensuring every marble behaves consistently for every player and viewer, regardless of their connection' },
       { label: 'Chaos Physics', text: 'for high-fidelity, deterministic marble simulation at scale' },
@@ -107,10 +118,10 @@ export const TECHNOLOGY_AREAS: TechArea[] = [
 
 export const TECHNOLOGY_PROJECTS: ProjectCard[] = [
   {
-    title: 'Everburn Scene Runtime',
+    title: 'FlameCore Engine',
     description:
-      'A modular rendering layer for atmosphere-heavy environments with strict performance budgets and deterministic state transitions.',
-    techStack: ['TypeScript', 'Next.js', 'Three.js', 'R3F'],
+      'The in-house browser 3D engine powering this site and games such as One More Second: actor/component scenes, a visual editor, and an export pipeline for static hosts.',
+    techStack: ['TypeScript', 'FlameCore', 'Three.js', 'Next.js'],
   },
   {
     title: 'Ember Telemetry Toolkit',

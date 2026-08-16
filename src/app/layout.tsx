@@ -5,6 +5,7 @@ import '@/styles/globals.css';
 import { AccountButton } from '@/components/auth/AccountButton';
 import { AuthProvider } from '@/components/auth/AuthProvider';
 import { CampsiteScene } from '@/components/scene/CampsiteScene';
+import { FlameCoreBadge } from '@/components/ui/FlameCoreBadge';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://everburninteractive.com'),
@@ -39,6 +40,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <AuthProvider>
           <CampsiteScene />
           <AccountButton />
+          <FlameCoreBadge />
           <nav aria-label="Main navigation" className="sr-only focus-within:not-sr-only">
             <a href="/games" className="skip-link">
               Games

@@ -11,27 +11,29 @@ interface Props {
 
 interface State {
   hasError: boolean;
+  assetLoadError: boolean;
 }
 
 export class SceneErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { hasError: false };
+    this.state = { hasError: false, assetLoadError: false };
   }
 
-  static getDerivedStateFromError(): State {
-    return { hasError: true };
+  static getDerivedStateFromError(error: Error): State {
+    const assetLoadError = /glb|gltf|could not load|404/i.test(error.message);
+    return { hasError: true, assetLoadError };
   }
 
   componentDidCatch(error: Error, info: ErrorInfo): void {
     if (process.env.NODE_ENV === 'development') {
-      console.error('[SceneErrorBoundary] WebGL scene crashed:', error, info);
+      console.error('[SceneErrorBoundary] Scene crashed:', error, info);
     }
   }
 
   render(): ReactNode {
     if (this.state.hasError) {
-      return <WebGLFallback />;
+      return <WebGLFallback assetLoadError={this.state.assetLoadError} />;
     }
 
     return this.props.children;

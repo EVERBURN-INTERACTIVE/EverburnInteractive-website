@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { consumeAuthNextPath } from '@/lib/supabase/auth-redirect';
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 
 export default function AuthCallbackPage() {
@@ -18,6 +19,15 @@ export default function AuthCallbackPage() {
     }
 
     let isActive = true;
+    const nextPath = consumeAuthNextPath();
+
+    const goNext = () => {
+      if (!isActive) {
+        return;
+      }
+
+      router.replace(nextPath);
+    };
 
     const {
       data: { subscription },
@@ -27,7 +37,7 @@ export default function AuthCallbackPage() {
       }
 
       if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session) {
-        router.replace('/');
+        goNext();
       }
     });
 
@@ -42,7 +52,7 @@ export default function AuthCallbackPage() {
       }
 
       if (session) {
-        router.replace('/');
+        goNext();
       }
     });
 
