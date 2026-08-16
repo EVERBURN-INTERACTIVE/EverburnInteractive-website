@@ -114,6 +114,7 @@ The site compiles against a private engine that is copied into `vendor/FlameCore
 
 - Local development: keep a sibling checkout named `FlameCore` next to this website repo (the postinstall script looks at `../../FlameCore`).
 - GitHub Pages: add a repository secret named `FLAMECORE_PAT` with read access to that private engine. CI checks it out into `.ci-flamecore` and copies only the runtime into `vendor/FlameCore` on the runner.
+- CI fails if `vendor/FlameCore` is ever committed. Do not use vendoring as a deploy workaround.
 
 ## Security baseline
 

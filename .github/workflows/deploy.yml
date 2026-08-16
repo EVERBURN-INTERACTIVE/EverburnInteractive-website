@@ -21,6 +21,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Refuse tracked FlameCore source
+        run: node scripts/assert-no-tracked-flamecore.mjs
+
       - name: Require private FlameCore access
         env:
           FLAMECORE_PAT: ${{ secrets.FLAMECORE_PAT }}
@@ -38,6 +41,13 @@ jobs:
           path: .ci-flamecore
           persist-credentials: false
 
+      - name: Verify private FlameCore checkout
+        run: |
+          if [ ! -f .ci-flamecore/src/runtime/runtime.ts ]; then
+            echo "FLAMECORE_PAT did not provide a usable FlameCore checkout."
+            exit 1
+          fi
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -51,7 +61,9 @@ jobs:
         run: npm ci
 
       - name: Verify FlameCore vendor
-        run: test -f vendor/FlameCore/src/runtime/runtime.ts
+        run: |
+          test -f vendor/FlameCore/src/runtime/runtime.ts
+          node scripts/assert-no-tracked-flamecore.mjs
 
       - name: Security Audit
         run: npm run audit

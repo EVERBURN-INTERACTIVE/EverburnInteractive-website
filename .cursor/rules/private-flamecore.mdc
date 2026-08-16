@@ -1,0 +1,13 @@
+---
+description: Never commit private FlameCore source into this public website repository.
+alwaysApply: true
+---
+
+# Private FlameCore
+
+FlameCore is proprietary and private. Never add `vendor/FlameCore`, `vendor/FlameCore-clone`, or `.ci-flamecore` to git.
+
+- Local builds copy runtime from a sibling `FlameCore` checkout via `scripts/ensure-flamecore.mjs`.
+- GitHub Pages checks out the private engine with `secrets.FLAMECORE_PAT` into `.ci-flamecore`.
+- If Pages cannot clone FlameCore, fail the deploy. Do not vendor engine source into this public repo as a workaround.
+- The Made with FlameCore mark is a non-interactive watermark. Do not link to the FlameCore GitHub repository from the site.

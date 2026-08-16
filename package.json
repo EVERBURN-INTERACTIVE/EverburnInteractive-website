@@ -10,6 +10,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "audit": "npm audit --audit-level=moderate",
+    "guard:flamecore": "node scripts/assert-no-tracked-flamecore.mjs",
     "postinstall": "node scripts/ensure-flamecore.mjs"
   },
   "repository": {
