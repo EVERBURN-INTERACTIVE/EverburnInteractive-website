@@ -1,6 +1,6 @@
 .vs
 node_modules
-vendor/FlameCore
+vendor/FlameCore-clone
 .next
 out
 dist
