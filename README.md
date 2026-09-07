@@ -93,9 +93,12 @@ Recommended: create these repository **Variables**:
 NEXT_PUBLIC_SUPABASE_URL
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
 NEXT_PUBLIC_SITE_URL
+NEXT_PUBLIC_BUILD_WHATSAPP
 ```
 
 `NEXT_PUBLIC_SITE_URL` should be `https://everburninteractive.com` for production deploys. CI falls back to that value if the variable is missing.
+
+`NEXT_PUBLIC_BUILD_WHATSAPP` is optional. It overrides the founder WhatsApp number already set in the site for `/build/` click-to-chat. Use country code and no plus sign (for example `91XXXXXXXXXX`). The number is public in the client bundle, which is expected for `wa.me` links.
 
 Supported alternative: create one `DBVARS` entry (repository **Variable** or **Secret**) and paste the same `.env.local` contents into it. Names are case-sensitive:
 

@@ -74,6 +74,7 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
           NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL || 'https://everburninteractive.com' }}
+          NEXT_PUBLIC_BUILD_WHATSAPP: ${{ vars.NEXT_PUBLIC_BUILD_WHATSAPP }}
         run: |
           touch .env.local
           if [ -n "$DBVARS" ]; then
@@ -87,6 +88,9 @@ jobs:
           fi
           if [ -n "$NEXT_PUBLIC_SITE_URL" ]; then
             printf 'NEXT_PUBLIC_SITE_URL=%s\n' "$NEXT_PUBLIC_SITE_URL" >> .env.local
+          fi
+          if [ -n "$NEXT_PUBLIC_BUILD_WHATSAPP" ]; then
+            printf 'NEXT_PUBLIC_BUILD_WHATSAPP=%s\n' "$NEXT_PUBLIC_BUILD_WHATSAPP" >> .env.local
           fi
 
       - name: Verify Supabase public env for build

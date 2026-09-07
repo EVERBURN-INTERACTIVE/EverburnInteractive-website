@@ -428,6 +428,17 @@ html.build-forge .app-content {
   background: linear-gradient(180deg, rgba(8, 4, 2, 0), rgba(8, 4, 2, 0.28));
 }
 
+.build-send-options {
+  display: flex;
+  flex-wrap: wrap;
+  flex: 1 1 12rem;
+  gap: 0.7rem;
+}
+
+.build-send-options .build-primary {
+  flex: 1 1 8rem;
+}
+
 .build-primary,
 .build-secondary {
   min-height: 2.85rem;
@@ -566,6 +577,10 @@ html.build-forge .app-content {
   }
 
   .build-actions {
+    gap: 0.5rem;
+  }
+
+  .build-send-options {
     gap: 0.5rem;
   }
 

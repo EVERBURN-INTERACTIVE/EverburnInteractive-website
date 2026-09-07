@@ -228,5 +228,15 @@ export const CONTACT_CONTENT = {
   ],
 };
 
+/** Destination for /build/ briefs. The public Contact page still uses CONTACT_CONTENT.email. */
+export const BUILD_INQUIRY_CONTACT = {
+  email: 'founder@everburninteractive.com',
+  /**
+   * Founder click-to-chat number (personal WhatsApp, not Business API).
+   * Country code + number, digits only. Override with NEXT_PUBLIC_BUILD_WHATSAPP.
+   */
+  whatsappDigits: (process.env.NEXT_PUBLIC_BUILD_WHATSAPP ?? '917054652798').replace(/\D/g, ''),
+};
+
 export const CONTACT_FOLLOW_NOTE =
   'Marble Party is in active development. Development updates, behind-the-scenes content, and community announcements will be shared across our channels as the project progresses. Follow along and be part of what we are building.';

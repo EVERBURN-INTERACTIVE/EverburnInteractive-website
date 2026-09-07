@@ -19,7 +19,7 @@ import {
   type ChapterId,
 } from '@/lib/buildInquiry';
 import { useReducedMotion } from '@/lib/hooks/useReducedMotion';
-import { submitBuildInquiry } from '@/lib/submitBuildInquiry';
+import { submitBuildInquiry, type SubmitChannel } from '@/lib/submitBuildInquiry';
 
 const BuildSceneHost = dynamic(
   () => import('./BuildSceneHost').then((module) => module.BuildSceneHost),
@@ -168,7 +168,7 @@ export function BuildLanding() {
     }
   }, [chapterIndex, goTo, sequence]);
 
-  const onSubmit = useCallback(async () => {
+  const onSubmit = useCallback(async (channel: SubmitChannel) => {
     const invalid = firstInvalidChapter(inquiry);
     if (invalid) {
       setErrors(invalid.errors);
@@ -179,7 +179,7 @@ export function BuildLanding() {
     setSubmitting(true);
     setSubmitError('');
     try {
-      const result = await submitBuildInquiry(inquiry);
+      const result = await submitBuildInquiry(inquiry, channel);
       if (result.ok) {
         setSent(true);
         clearDraft();
@@ -241,8 +241,8 @@ export function BuildLanding() {
         onHover={setHoverKey}
         onContinue={onContinue}
         onBack={onBack}
-        onSubmit={() => {
-          void onSubmit();
+        onSubmit={(channel) => {
+          void onSubmit(channel);
         }}
         onRestart={onRestart}
       />

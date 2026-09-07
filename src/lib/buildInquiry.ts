@@ -294,9 +294,9 @@ export const VISUAL_STYLE_OPTIONS: ChoiceOption<Exclude<VisualStyleId, ''>>[] = 
 ];
 
 export const CONTACT_METHOD_OPTIONS: ChoiceOption<Exclude<ContactMethodId, ''>>[] = [
+  { id: 'phone', label: 'Call' },
+  { id: 'email', label: 'Mail' },
   { id: 'whatsapp', label: 'WhatsApp' },
-  { id: 'phone', label: 'Phone' },
-  { id: 'email', label: 'Email' },
 ];
 
 export const CONTACT_TIME_OPTIONS: ChoiceOption<Exclude<ContactTimeId, ''>>[] = [
@@ -528,7 +528,7 @@ export function validateChapter(chapter: ChapterId, inquiry: BuildInquiry): Chap
       errors.contactPhone = 'Enter a phone or WhatsApp number.';
     }
     if (!inquiry.contactMethod) {
-      errors.contactMethod = 'Choose how we should contact you.';
+      errors.contactMethod = 'Choose your preferred method of contact.';
     }
     if (!inquiry.contactTime) {
       errors.contactTime = 'Choose the best time to contact you.';
@@ -628,4 +628,20 @@ export function formatInquiryPlainText(inquiry: BuildInquiry): string {
   );
 
   return lines.join('\n');
+}
+
+export function formatInquiryCompact(inquiry: BuildInquiry): string {
+  return [
+    `Website brief from ${inquiry.contactName.trim()}`,
+    inquiry.businessName.trim(),
+    `Need: ${labelFor(LOOKING_FOR_OPTIONS, inquiry.lookingFor)}`,
+    `Goal: ${labelFor(MAIN_GOAL_OPTIONS, inquiry.mainGoal)}${inquiry.goalOther.trim() ? ` (${inquiry.goalOther.trim()})` : ''}`,
+    `Budget: ${labelFor(BUDGET_OPTIONS, inquiry.budget)}`,
+    `Timeline: ${labelFor(TIMELINE_OPTIONS, inquiry.timeline)}`,
+    `Contact: ${inquiry.contactPhone.trim()} / ${inquiry.contactEmail.trim()}`,
+    `Prefer: ${labelFor(CONTACT_METHOD_OPTIONS, inquiry.contactMethod)} (${labelFor(CONTACT_TIME_OPTIONS, inquiry.contactTime)})`,
+    `Success: ${inquiry.successDefinition.trim()}`,
+  ]
+    .filter(Boolean)
+    .join('\n');
 }

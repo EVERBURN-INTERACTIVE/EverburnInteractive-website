@@ -26,6 +26,7 @@ import {
   type ChapterId,
   type ChoiceOption,
 } from '@/lib/buildInquiry';
+import type { SubmitChannel } from '@/lib/submitBuildInquiry';
 
 interface BuildIntakeProps {
   chapter: ChapterId;
@@ -39,7 +40,7 @@ interface BuildIntakeProps {
   onHover: (key: string) => void;
   onContinue: () => void;
   onBack: () => void;
-  onSubmit: () => void;
+  onSubmit: (channel: SubmitChannel) => void;
   onRestart: () => void;
 }
 
@@ -137,12 +138,15 @@ const CHAPTER_COPY: Partial<Record<ChapterId, { title: string; body: string }>> 
   timeline: { title: 'When do you need it?', body: 'Pick a timeframe.' },
   assets: { title: 'What do you already have?', body: 'Pick all that apply.' },
   design: { title: 'What should it look like?', body: 'Pick a style.' },
-  contact: { title: 'How can we reach you?', body: 'We only use this to talk about your project.' },
+  contact: { title: 'How can we reach you?', body: 'We only use this to talk about your project. Choose how you would like us to reply.' },
   success: {
     title: 'What would make this site a success?',
     body: 'More customers, more sales, a better first look. Write it in your own words.',
   },
-  review: { title: 'Ready to send?', body: 'Check your answers. You can go back and change anything.' },
+  review: {
+    title: 'Ready to send?',
+    body: 'Check your answers, then send this brief by email or WhatsApp.',
+  },
 };
 
 function ReviewRow({ label, value }: { label: string; value: string }) {
@@ -202,7 +206,6 @@ export function BuildIntake({
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     if (chapter === 'review') {
-      onSubmit();
       return;
     }
     onContinue();
@@ -595,7 +598,7 @@ export function BuildIntake({
             </label>
           </div>
           <fieldset className="build-fieldset">
-            <legend>How should we contact you?</legend>
+            <legend>Preferred method of contact</legend>
             <ChoiceGrid
               options={CONTACT_METHOD_OPTIONS}
               value={inquiry.contactMethod}
@@ -648,6 +651,7 @@ export function BuildIntake({
             <ReviewRow label="Budget" value={labelFor(BUDGET_OPTIONS, inquiry.budget)} />
             <ReviewRow label="Timeline" value={labelFor(TIMELINE_OPTIONS, inquiry.timeline)} />
             <ReviewRow label="Contact" value={`${inquiry.contactName} · ${inquiry.contactEmail}`} />
+            <ReviewRow label="Preferred contact" value={labelFor(CONTACT_METHOD_OPTIONS, inquiry.contactMethod)} />
           </dl>
           {submitError ? <p className="build-error">{submitError}</p> : null}
         </>
@@ -659,9 +663,30 @@ export function BuildIntake({
                 Previous
               </button>
             ) : null}
-            <button type="submit" className="build-primary" disabled={submitting}>
-              {chapter === 'review' ? (submitting ? 'Sending' : 'Send') : 'Next'}
-            </button>
+            {chapter === 'review' ? (
+              <div className="build-send-options">
+                <button
+                  type="button"
+                  className="build-primary"
+                  disabled={submitting}
+                  onClick={() => onSubmit('mailto')}
+                >
+                  Email
+                </button>
+                <button
+                  type="button"
+                  className="build-primary"
+                  disabled={submitting}
+                  onClick={() => onSubmit('whatsapp')}
+                >
+                  WhatsApp
+                </button>
+              </div>
+            ) : (
+              <button type="submit" className="build-primary" disabled={submitting}>
+                Next
+              </button>
+            )}
           </div>
         </>
       )}
