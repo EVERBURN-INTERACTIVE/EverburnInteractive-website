@@ -185,7 +185,6 @@ export function FlameCoreR3FHost({
       });
 
       // The canvas and R3F root exist; expose them to the React tree.
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- WebGL boot gate
       setReady(true);
     } catch (error) {
       console.error('[FlameCoreR3FHost] Failed to boot WebGL host:', error);

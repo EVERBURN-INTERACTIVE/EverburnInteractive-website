@@ -391,11 +391,9 @@ function CameraRig({
     const lambda = focus ? 6 : 4;
 
     // Three.js camera objects are intentionally mutated inside the render loop.
-    // eslint-disable-next-line react-hooks/immutability
     activeCamera.position.x = MathUtils.damp(activeCamera.position.x, targetX, lambda, delta);
     activeCamera.position.y = MathUtils.damp(activeCamera.position.y, targetY, lambda, delta);
     activeCamera.position.z = MathUtils.damp(activeCamera.position.z, targetZ, lambda, delta);
-    // eslint-disable-next-line react-hooks/immutability
     activeCamera.zoom = MathUtils.damp(activeCamera.zoom, targetZoom, lambda, delta);
     activeCamera.lookAt(focus ? focus.tilePosition[0] : 0, 0, focus ? focus.tilePosition[2] : 0);
     activeCamera.updateProjectionMatrix();
