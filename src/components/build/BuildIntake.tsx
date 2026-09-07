@@ -219,7 +219,7 @@ export function BuildIntake({
       </div>
 
       {chapter === 'arrival' ? (
-        <>
+        <div className="build-arrival">
           <ChapterCopy
             title="Tell us about your website."
             body="A few short questions. Press Start when you are ready."
@@ -227,7 +227,7 @@ export function BuildIntake({
           <button type="submit" className="build-primary">
             Start
           </button>
-        </>
+        </div>
       ) : null}
 
       {chapter === 'lookingFor' ? (

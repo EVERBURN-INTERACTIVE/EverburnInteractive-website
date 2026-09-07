@@ -192,6 +192,7 @@ export function FlameCoreR3FHost({
       canvasRef.current = null;
       bundleRef.current = null;
       rootRef.current = null;
+      onReadyRef.current?.();
       return;
     }
 

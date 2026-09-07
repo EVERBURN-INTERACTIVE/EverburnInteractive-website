@@ -10,12 +10,17 @@ export interface EverburnFlameCoreBundle {
   version: string;
 }
 
+function prefersCoarsePointer(): boolean {
+  return typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
+}
+
 /** Boots FlameCore for Everburn — shared renderer/scene; R3F drives the render loop. */
 export function createEverburnRuntime(canvas: HTMLCanvasElement): EverburnFlameCoreBundle {
+  const coarse = prefersCoarsePointer();
   const runtime = Runtime.create({
     canvas,
-    antialias: true,
-    maxPixelRatio: 2,
+    antialias: !coarse,
+    maxPixelRatio: coarse ? 1.25 : 2,
     alpha: false,
   });
 

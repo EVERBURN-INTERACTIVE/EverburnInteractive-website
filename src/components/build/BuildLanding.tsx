@@ -1,13 +1,13 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import EverFlame from '@/assets/EverFlame.png';
 import { BuildIntake } from '@/components/build/BuildIntake';
 import { SceneErrorBoundary } from '@/components/ui/SceneErrorBoundary';
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { WebGLFallback } from '@/components/ui/WebGLFallback';
 import {
   BUILD_DRAFT_KEY,
   createEmptyInquiry,
@@ -50,21 +50,37 @@ function readDraft(): StoredDraft | null {
   }
 }
 
+function writeDraft(payload: StoredDraft): void {
+  try {
+    window.localStorage.setItem(BUILD_DRAFT_KEY, JSON.stringify(payload));
+  } catch {
+    // Safari private mode and some in-app browsers throw on quota or access.
+  }
+}
+
+function clearDraft(): void {
+  try {
+    window.localStorage.removeItem(BUILD_DRAFT_KEY);
+  } catch {
+    // Ignore the same private-mode / blocked-storage failures as writeDraft.
+  }
+}
+
+function probeWebGl(): boolean {
+  const canvas = document.createElement('canvas');
+  const gl = canvas.getContext('webgl2') ?? canvas.getContext('webgl');
+  const ok = Boolean(gl);
+  gl?.getExtension('WEBGL_lose_context')?.loseContext();
+  return ok;
+}
+
 export function BuildLanding() {
   const reducedMotion = useReducedMotion();
-  const [supportsWebGl] = useState(() => {
-    if (typeof window === 'undefined') {
-      return true;
-    }
-    const canvas = document.createElement('canvas');
-    return Boolean(canvas.getContext('webgl2') ?? canvas.getContext('webgl'));
-  });
+  const [sceneEnabled, setSceneEnabled] = useState(false);
   const [inquiry, setInquiry] = useState<BuildInquiry>(createEmptyInquiry);
   const [chapter, setChapter] = useState<ChapterId>('arrival');
   const [errors, setErrors] = useState<ChapterErrors>({});
   const [hoverKey, setHoverKey] = useState('');
-  const [worldReady, setWorldReady] = useState(false);
-  const [forceLoaded, setForceLoaded] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [sent, setSent] = useState(false);
@@ -77,16 +93,17 @@ export function BuildLanding() {
 
   useEffect(() => {
     document.documentElement.classList.add('build-forge');
-    const timeout = window.setTimeout(() => setForceLoaded(true), 5000);
     const draft = readDraft();
     if (draft) {
       setInquiry(draft.inquiry);
       setChapter(draft.chapter);
     }
     setDraftReady(true);
+    if (probeWebGl()) {
+      setSceneEnabled(true);
+    }
     return () => {
       document.documentElement.classList.remove('build-forge');
-      window.clearTimeout(timeout);
     };
   }, []);
 
@@ -94,8 +111,7 @@ export function BuildLanding() {
     if (!draftReady || sent) {
       return;
     }
-    const payload: StoredDraft = { inquiry, chapter: activeChapter };
-    window.localStorage.setItem(BUILD_DRAFT_KEY, JSON.stringify(payload));
+    writeDraft({ inquiry, chapter: activeChapter });
   }, [activeChapter, draftReady, inquiry, sent]);
 
   useEffect(() => {
@@ -166,7 +182,7 @@ export function BuildLanding() {
       const result = await submitBuildInquiry(inquiry);
       if (result.ok) {
         setSent(true);
-        window.localStorage.removeItem(BUILD_DRAFT_KEY);
+        clearDraft();
       } else {
         setSubmitError(result.message);
       }
@@ -180,33 +196,36 @@ export function BuildLanding() {
     setChapter('arrival');
     setSent(false);
     setSubmitError('');
-    window.localStorage.removeItem(BUILD_DRAFT_KEY);
+    clearDraft();
   }, []);
-
-  if (!supportsWebGl) {
-    return <WebGLFallback />;
-  }
 
   return (
     <main className="build-root">
-      <SceneErrorBoundary>
-        <BuildSceneHost
-          chapter={activeChapter}
-          inquiry={inquiry}
-          progress={progress}
-          reducedMotion={reducedMotion}
-          hoverKey={hoverKey}
-          onIgnite={() => {
-            if (activeChapter === 'arrival') {
-              goTo('lookingFor');
-            }
-          }}
-          onReady={() => setWorldReady(true)}
-        />
-      </SceneErrorBoundary>
-      <LoadingScreen loaded={worldReady} force={forceLoaded} progress={worldReady || forceLoaded ? 100 : 28} />
+      {sceneEnabled ? (
+        <SceneErrorBoundary fallback={null}>
+          <BuildSceneHost
+            chapter={activeChapter}
+            inquiry={inquiry}
+            progress={progress}
+            reducedMotion={reducedMotion}
+            hoverKey={hoverKey}
+            onIgnite={() => {
+              if (activeChapter === 'arrival') {
+                goTo('lookingFor');
+              }
+            }}
+          />
+        </SceneErrorBoundary>
+      ) : null}
       <div className="build-vignette" aria-hidden="true" />
-      <p className="build-brand">Everburn</p>
+      <p className="build-brand" aria-label="Everburn Interactive LLP">
+        <Image src={EverFlame} alt="" className="build-brand-mark" width={64} height={64} priority />
+        <span className="build-brand-name">
+          <span className="build-brand-word is-flame">Everburn</span>
+          <span className="build-brand-word is-ember">Interactive</span>
+          <span className="build-brand-word is-arc">LLP</span>
+        </span>
+      </p>
       <Link href="/" className="build-camp-link">
         Return to camp
       </Link>

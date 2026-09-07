@@ -35,6 +35,12 @@ html.build-forge .app-content {
   inset: 0;
   z-index: 0;
   background: #050308;
+  pointer-events: none;
+}
+
+.build-scene canvas,
+.build-scene [data-flamecore-host] {
+  pointer-events: none;
 }
 
 .build-vignette {
@@ -58,18 +64,52 @@ html.build-forge .app-content {
 
 .build-brand {
   position: fixed;
-  top: max(0.85rem, env(safe-area-inset-top));
+  top: max(0.7rem, env(safe-area-inset-top));
   left: 50%;
   z-index: 8;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  max-width: min(42rem, calc(100vw - 10.5rem));
   margin: 0;
   transform: translateX(-50%);
   font-family: var(--font-display);
   font-size: clamp(1.15rem, 2.4vw, 1.7rem);
-  letter-spacing: 0.22em;
+  letter-spacing: 0.12em;
+  line-height: 1.15;
   text-transform: uppercase;
-  color: #ffe0b8;
-  text-shadow: 0 0 18px rgba(255, 138, 48, 0.35);
   pointer-events: none;
+}
+
+.build-brand-name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.35em;
+}
+
+.build-brand-word.is-flame {
+  color: #ee3124;
+  text-shadow: 0 0 14px rgba(238, 49, 36, 0.4);
+}
+
+.build-brand-word.is-ember {
+  color: #f47920;
+  text-shadow: 0 0 14px rgba(244, 121, 32, 0.4);
+}
+
+.build-brand-word.is-arc {
+  color: #2e9bff;
+  text-shadow: 0 0 14px rgba(46, 155, 255, 0.38);
+}
+
+.build-brand-mark {
+  width: 2.15rem;
+  height: 2.15rem;
+  flex: 0 0 auto;
+  object-fit: contain;
+  filter: drop-shadow(0 0 10px rgba(255, 138, 48, 0.35));
 }
 
 .build-camp-link {
@@ -77,6 +117,8 @@ html.build-forge .app-content {
   top: max(0.9rem, env(safe-area-inset-top));
   left: max(1rem, env(safe-area-inset-left));
   z-index: 8;
+  pointer-events: auto;
+  isolation: isolate;
   color: #c9a078;
   text-decoration: none;
   font-size: 0.78rem;
@@ -93,24 +135,27 @@ html.build-forge .app-content {
 .build-panel {
   position: fixed;
   z-index: 6;
-  top: max(3.8rem, calc(env(safe-area-inset-top) + 3.25rem));
-  left: max(1rem, env(safe-area-inset-left));
-  bottom: max(1rem, env(safe-area-inset-bottom));
-  width: min(42rem, calc(100% - 2rem));
+  isolation: isolate;
+  inset: 0;
+  width: auto;
+  height: auto;
+  max-height: none;
   margin: 0;
   display: flex;
   flex-direction: column;
   min-height: 0;
   overflow: hidden;
-  padding: 1.25rem 1.25rem 1rem;
-  border: 1px solid rgba(255, 214, 165, 0.22);
-  border-radius: 16px;
+  padding:
+    max(4.35rem, calc(env(safe-area-inset-top) + 3.5rem))
+    max(1.25rem, env(safe-area-inset-right))
+    max(1.15rem, env(safe-area-inset-bottom), var(--build-keyboard-inset))
+    max(1.25rem, env(safe-area-inset-left));
+  border: 0;
+  border-radius: 0;
   background:
     linear-gradient(180deg, rgba(255, 214, 165, 0.07), rgba(12, 7, 4, 0.12)),
     rgba(8, 4, 2, 0.22);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 214, 165, 0.16),
-    0 18px 42px rgba(0, 0, 0, 0.16);
+  box-shadow: inset 0 1px 0 rgba(255, 214, 165, 0.12);
   backdrop-filter: blur(8px) saturate(120%);
   -webkit-backdrop-filter: blur(8px) saturate(120%);
   transform: translateZ(0);
@@ -126,20 +171,6 @@ html.build-forge .app-content {
   -webkit-overflow-scrolling: touch;
   touch-action: pan-y;
   padding-right: 0.2rem;
-}
-
-.build-panel.chapter-arrival {
-  position: relative;
-  top: auto;
-  left: auto;
-  bottom: auto;
-  display: block;
-  overflow: visible;
-  background: transparent;
-  border: 0;
-  box-shadow: none;
-  backdrop-filter: none;
-  margin: clamp(4.2rem, 16vh, 7rem) auto 1.5rem 1rem;
 }
 
 .build-progress {
@@ -159,6 +190,36 @@ html.build-forge .app-content {
 
 .chapter-arrival .build-progress {
   display: none;
+}
+
+.chapter-arrival .build-panel-scroll {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.build-arrival {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: min(36rem, 100%);
+}
+
+.chapter-arrival .build-copy h1,
+.chapter-arrival .build-copy p {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.chapter-arrival .build-copy p {
+  max-width: 28ch;
+}
+
+.chapter-arrival .build-primary {
+  margin-top: 0.15rem;
 }
 
 .build-copy h1 {
@@ -349,6 +410,7 @@ html.build-forge .app-content {
   gap: 0.7rem;
   margin-top: auto;
   padding-top: 0.85rem;
+  padding-right: 2.5rem;
   border-top: 1px solid rgba(255, 214, 165, 0.16);
   background: linear-gradient(180deg, rgba(8, 4, 2, 0), rgba(8, 4, 2, 0.28));
 }
@@ -418,27 +480,21 @@ html.build-forge .app-content {
   overflow: hidden;
 }
 
-@media (min-width: 900px) {
-  .build-panel {
-    left: 6vw;
-    width: min(40rem, 44vw);
-  }
-
-  .build-panel.chapter-arrival {
-    margin-left: 6vw;
-  }
-
+@media (min-width: 1024px) {
   .build-vignette {
     background:
-      radial-gradient(ellipse at 72% 58%, transparent 28%, rgba(5, 2, 1, 0.04) 58%, rgba(5, 2, 1, 0.22) 100%),
-      linear-gradient(90deg, rgba(5, 2, 1, 0.18) 0%, rgba(5, 2, 1, 0.04) 38%, transparent 68%);
+      radial-gradient(ellipse at 50% 58%, transparent 36%, rgba(5, 2, 1, 0.08) 100%);
+  }
+
+  .build-copy p {
+    max-width: 52ch;
   }
 }
 
-@media (max-width: 899px) {
+@media (max-width: 1023px) {
   .build-vignette {
     background:
-      linear-gradient(180deg, rgba(5, 2, 1, 0.12) 0%, transparent 22%, transparent 48%, rgba(5, 2, 1, 0.16) 78%, rgba(5, 2, 1, 0.28) 100%);
+      radial-gradient(ellipse at 50% 58%, transparent 34%, rgba(5, 2, 1, 0.14) 100%);
   }
 
   html.build-forge .flamecore-badge {
@@ -448,15 +504,15 @@ html.build-forge .app-content {
   }
 
   .build-brand {
-    left: auto;
-    right: max(0.85rem, env(safe-area-inset-right));
-    transform: none;
-    letter-spacing: 0.12em;
-    font-size: 1rem;
-    max-width: 42vw;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    gap: 0.5rem;
+    max-width: min(34rem, calc(100vw - 9.5rem));
+    font-size: 1.05rem;
+    letter-spacing: 0.08em;
+  }
+
+  .build-brand-mark {
+    width: 1.85rem;
+    height: 1.85rem;
   }
 
   .build-camp-link {
@@ -466,27 +522,11 @@ html.build-forge .app-content {
   }
 
   .build-panel {
-    left: 0.55rem;
-    right: 0.55rem;
-    width: auto;
-    top: auto;
-    bottom: max(0.55rem, env(safe-area-inset-bottom), var(--build-keyboard-inset));
-    height: min(48dvh, calc(var(--build-vvh, 100dvh) - 5.1rem));
-    max-height: min(48dvh, calc(var(--build-vvh, 100dvh) - 5.1rem));
-    padding: 0.95rem 0.9rem 0.8rem;
-    border-radius: 18px 18px 14px 14px;
-  }
-
-  .build-panel.chapter-arrival {
-    position: relative;
-    left: auto;
-    right: auto;
-    bottom: auto;
-    width: calc(100% - 1.4rem);
-    max-height: none;
-    height: auto;
-    margin: clamp(3.4rem, 10vh, 5rem) 0.7rem 1rem;
-    padding: 0;
+    padding:
+      max(3.7rem, calc(env(safe-area-inset-top) + 3.05rem))
+      max(0.9rem, env(safe-area-inset-right))
+      max(0.9rem, env(safe-area-inset-bottom), var(--build-keyboard-inset))
+      max(0.9rem, env(safe-area-inset-left));
   }
 
   .build-copy h1 {
@@ -511,7 +551,6 @@ html.build-forge .app-content {
 
   .build-actions {
     gap: 0.5rem;
-    padding-right: 2.35rem;
   }
 
   .build-actions .build-primary,
@@ -530,23 +569,30 @@ html.build-forge .app-content {
   }
 }
 
-@media (max-width: 899px) and (orientation: landscape) {
-  .build-panel:not(.chapter-arrival) {
-    top: max(2.45rem, calc(env(safe-area-inset-top) + 2.05rem));
-    right: auto;
-    left: max(0.45rem, env(safe-area-inset-left));
-    bottom: max(0.4rem, env(safe-area-inset-bottom), var(--build-keyboard-inset));
-    width: min(24.5rem, 48vw);
-    height: auto;
-    max-height: none;
+@media (max-width: 520px) {
+  .build-brand {
+    top: max(2.7rem, calc(env(safe-area-inset-top) + 2.3rem));
+    max-width: calc(100vw - 1.6rem);
+    font-size: 1rem;
+  }
+
+  .build-brand-mark {
+    width: 1.7rem;
+    height: 1.7rem;
+  }
+
+  .build-panel {
+    padding-top: max(5.05rem, calc(env(safe-area-inset-top) + 4.3rem));
+  }
+}
+
+@media (max-width: 1023px) and (orientation: landscape) {
+  .build-panel {
+    padding-top: max(2.7rem, calc(env(safe-area-inset-top) + 2.2rem));
   }
 
   .build-vignette {
-    background: linear-gradient(90deg, rgba(5, 2, 1, 0.16) 0%, transparent 46%);
-  }
-
-  .build-actions {
-    padding-right: 0.15rem;
+    background: radial-gradient(ellipse at 50% 50%, transparent 28%, rgba(5, 2, 1, 0.12) 100%);
   }
 }
 

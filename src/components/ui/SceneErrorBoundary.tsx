@@ -7,6 +7,8 @@ import { WebGLFallback } from './WebGLFallback';
 
 interface Props {
   children: ReactNode;
+  /** When set, replaces the default WebGL fallback. Pass null to hide the scene only. */
+  fallback?: ReactNode;
 }
 
 interface State {
@@ -33,6 +35,9 @@ export class SceneErrorBoundary extends Component<Props, State> {
 
   render(): ReactNode {
     if (this.state.hasError) {
+      if (this.props.fallback !== undefined) {
+        return this.props.fallback;
+      }
       return <WebGLFallback assetLoadError={this.state.assetLoadError} />;
     }
 

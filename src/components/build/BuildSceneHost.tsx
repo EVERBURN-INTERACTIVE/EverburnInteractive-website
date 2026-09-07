@@ -24,7 +24,7 @@ export interface BuildSceneHostProps {
   reducedMotion: boolean;
   hoverKey: string;
   onIgnite: () => void;
-  onReady: () => void;
+  onReady?: () => void;
 }
 
 export function BuildSceneHost({

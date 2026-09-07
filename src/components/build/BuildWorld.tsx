@@ -667,7 +667,7 @@ function CameraRig({
 
   useFrame(({ camera, size }, delta) => {
     const station = STATIONS[chapter];
-    const compact = isMobile || size.width < 900;
+    const compact = isMobile || size.width < 1024;
     const lift = compact ? 0.72 : 0;
     // On compact screens the sheet covers the lower frame, so the hearth sits higher in view.
     targetPos.current.set(station.position[0], station.position[1] + lift * 0.45, station.position[2]);
