@@ -126,6 +126,25 @@ function ChapterCopy({ title, body }: { title: string; body: string }) {
   );
 }
 
+const CHAPTER_COPY: Partial<Record<ChapterId, { title: string; body: string }>> = {
+  lookingFor: { title: 'What do you need?', body: 'Pick one.' },
+  goal: { title: 'What should the site do?', body: 'Pick the main goal.' },
+  business: { title: 'About your business', body: 'Keep this short.' },
+  scope: { title: 'What should it include?', body: 'Pick all that apply.' },
+  size: { title: 'How big is the site?', body: 'A rough size is fine.' },
+  threeD: { title: 'How will you use 3D?', body: 'Pick all that apply.' },
+  budget: { title: 'What is your budget?', body: 'This helps us plan the right build.' },
+  timeline: { title: 'When do you need it?', body: 'Pick a timeframe.' },
+  assets: { title: 'What do you already have?', body: 'Pick all that apply.' },
+  design: { title: 'What should it look like?', body: 'Pick a style.' },
+  contact: { title: 'How can we reach you?', body: 'We only use this to talk about your project.' },
+  success: {
+    title: 'What would make this site a success?',
+    body: 'More customers, more sales, a better first look. Write it in your own words.',
+  },
+  review: { title: 'Ready to send?', body: 'Check your answers. You can go back and change anything.' },
+};
+
 function ReviewRow({ label, value }: { label: string; value: string }) {
   if (!value) {
     return null;
@@ -155,6 +174,7 @@ export function BuildIntake({
   onRestart,
 }: BuildIntakeProps) {
   const showBack = chapter !== 'arrival' && !sent;
+  const copy = CHAPTER_COPY[chapter];
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -213,11 +233,6 @@ export function BuildIntake({
       noValidate
       onWheel={(event) => event.stopPropagation()}
     >
-      <div className="build-panel-scroll" ref={scrollRef}>
-      <div className="build-progress" aria-hidden="true">
-        <span style={{ transform: `scaleX(${Math.max(progress, 0.04)})` }} />
-      </div>
-
       {chapter === 'arrival' ? (
         <div className="build-arrival">
           <ChapterCopy
@@ -228,11 +243,17 @@ export function BuildIntake({
             Start
           </button>
         </div>
-      ) : null}
-
+      ) : (
+        <>
+          <div className="build-panel-head">
+            <div className="build-progress" aria-hidden="true">
+              <span style={{ transform: `scaleX(${Math.max(progress, 0.04)})` }} />
+            </div>
+            {copy ? <ChapterCopy title={copy.title} body={copy.body} /> : null}
+          </div>
+          <div className="build-panel-scroll" ref={scrollRef}>
       {chapter === 'lookingFor' ? (
         <>
-          <ChapterCopy title="What do you need?" body="Pick one." />
           <ChoiceGrid
             options={LOOKING_FOR_OPTIONS}
             value={inquiry.lookingFor}
@@ -245,7 +266,6 @@ export function BuildIntake({
 
       {chapter === 'goal' ? (
         <>
-          <ChapterCopy title="What should the site do?" body="Pick the main goal." />
           <ChoiceGrid
             options={MAIN_GOAL_OPTIONS}
             value={inquiry.mainGoal}
@@ -267,7 +287,6 @@ export function BuildIntake({
 
       {chapter === 'business' ? (
         <>
-          <ChapterCopy title="About your business" body="Keep this short." />
           <div className="build-fields">
             <Field label="Business / brand name" htmlFor="businessName" error={errors.businessName}>
               <input
@@ -338,7 +357,6 @@ export function BuildIntake({
 
       {chapter === 'scope' ? (
         <>
-          <ChapterCopy title="What should it include?" body="Pick all that apply." />
           <ChoiceGrid
             options={INCLUDE_OPTIONS}
             value={inquiry.includes}
@@ -361,7 +379,6 @@ export function BuildIntake({
 
       {chapter === 'size' ? (
         <>
-          <ChapterCopy title="How big is the site?" body="A rough size is fine." />
           <ChoiceGrid
             options={SITE_SIZE_OPTIONS}
             value={inquiry.siteSize}
@@ -374,7 +391,6 @@ export function BuildIntake({
 
       {chapter === 'threeD' ? (
         <>
-          <ChapterCopy title="How will you use 3D?" body="Pick all that apply." />
           <ChoiceGrid
             options={THREE_D_USE_OPTIONS}
             value={inquiry.threeDUse}
@@ -427,10 +443,6 @@ export function BuildIntake({
 
       {chapter === 'budget' ? (
         <>
-          <ChapterCopy
-            title="What is your budget?"
-            body="This helps us plan the right build."
-          />
           <ChoiceGrid
             options={BUDGET_OPTIONS}
             value={inquiry.budget}
@@ -443,7 +455,6 @@ export function BuildIntake({
 
       {chapter === 'timeline' ? (
         <>
-          <ChapterCopy title="When do you need it?" body="Pick a timeframe." />
           <ChoiceGrid
             options={TIMELINE_OPTIONS}
             value={inquiry.timeline}
@@ -467,7 +478,6 @@ export function BuildIntake({
 
       {chapter === 'assets' ? (
         <>
-          <ChapterCopy title="What do you already have?" body="Pick all that apply." />
           <ChoiceGrid
             options={ASSET_OPTIONS}
             value={inquiry.assets}
@@ -500,7 +510,6 @@ export function BuildIntake({
 
       {chapter === 'design' ? (
         <>
-          <ChapterCopy title="What should it look like?" body="Pick a style." />
           <div className="build-style-grid">
             {VISUAL_STYLE_OPTIONS.map((option) => {
               const selected = inquiry.visualStyle === option.id;
@@ -540,7 +549,6 @@ export function BuildIntake({
 
       {chapter === 'contact' ? (
         <>
-          <ChapterCopy title="How can we reach you?" body="We only use this to talk about your project." />
           <div className="build-fields">
             <Field label="Your name" htmlFor="contactName" error={errors.contactName}>
               <input
@@ -611,10 +619,6 @@ export function BuildIntake({
 
       {chapter === 'success' ? (
         <>
-          <ChapterCopy
-            title="What would make this site a success?"
-            body="More customers, more sales, a better first look. Write it in your own words."
-          />
           <Field label="Success looks like" htmlFor="successDefinition" error={errors.successDefinition}>
             <textarea
               id="successDefinition"
@@ -629,7 +633,6 @@ export function BuildIntake({
 
       {chapter === 'review' ? (
         <>
-          <ChapterCopy title="Ready to send?" body="Check your answers. You can go back and change anything." />
           <dl className="build-review">
             <ReviewRow label="Looking for" value={labelFor(LOOKING_FOR_OPTIONS, inquiry.lookingFor)} />
             <ReviewRow
@@ -649,20 +652,19 @@ export function BuildIntake({
           {submitError ? <p className="build-error">{submitError}</p> : null}
         </>
       ) : null}
-      </div>
-
-      {chapter !== 'arrival' ? (
-        <div className="build-actions">
-          {showBack ? (
-            <button type="button" className="build-secondary" onClick={onBack}>
-              Previous
+          </div>
+          <div className="build-actions">
+            {showBack ? (
+              <button type="button" className="build-secondary" onClick={onBack}>
+                Previous
+              </button>
+            ) : null}
+            <button type="submit" className="build-primary" disabled={submitting}>
+              {chapter === 'review' ? (submitting ? 'Sending' : 'Send') : 'Next'}
             </button>
-          ) : null}
-          <button type="submit" className="build-primary" disabled={submitting}>
-            {chapter === 'review' ? (submitting ? 'Sending' : 'Send') : 'Next'}
-          </button>
-        </div>
-      ) : null}
+          </div>
+        </>
+      )}
     </form>
   );
 }

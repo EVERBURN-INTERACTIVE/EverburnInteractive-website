@@ -79,14 +79,22 @@ html.build-forge .app-content {
   line-height: 1.15;
   text-transform: uppercase;
   pointer-events: none;
+  padding: 0.32rem 0.9rem 0.32rem 0.4rem;
+  background: rgba(8, 4, 2, 0.82);
+  border: 1px solid rgba(255, 214, 165, 0.28);
+  border-radius: 999px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
 }
 
 .build-brand-name {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: baseline;
   justify-content: center;
   gap: 0.35em;
+  white-space: nowrap;
 }
 
 .build-brand-word.is-flame {
@@ -162,6 +170,14 @@ html.build-forge .app-content {
   pointer-events: auto;
 }
 
+.build-panel-head {
+  flex: 0 0 auto;
+}
+
+.build-panel-head .build-copy p {
+  margin-bottom: 0.65rem;
+}
+
 .build-panel-scroll {
   flex: 1 1 auto;
   min-height: 0;
@@ -192,10 +208,7 @@ html.build-forge .app-content {
   display: none;
 }
 
-.chapter-arrival .build-panel-scroll {
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
+.build-panel.chapter-arrival {
   justify-content: flex-start;
   align-items: center;
 }
@@ -504,26 +517,29 @@ html.build-forge .app-content {
   }
 
   .build-brand {
-    gap: 0.5rem;
-    max-width: min(34rem, calc(100vw - 9.5rem));
-    font-size: 1.05rem;
-    letter-spacing: 0.08em;
+    top: max(0.35rem, env(safe-area-inset-top));
+    left: 50%;
+    transform: translateX(-50%);
+    gap: 0.45rem;
+    max-width: calc(100vw - 1rem);
+    font-size: 0.88rem;
+    letter-spacing: 0.06em;
+    border-radius: 999px;
+    flex-wrap: nowrap;
   }
 
   .build-brand-mark {
-    width: 1.85rem;
-    height: 1.85rem;
+    width: 1.7rem;
+    height: 1.7rem;
   }
 
   .build-camp-link {
-    max-width: 46vw;
-    font-size: 0.72rem;
-    padding: 0.35rem 0;
+    display: none;
   }
 
   .build-panel {
     padding:
-      max(3.7rem, calc(env(safe-area-inset-top) + 3.05rem))
+      max(4.85rem, calc(env(safe-area-inset-top) + 4.15rem))
       max(0.9rem, env(safe-area-inset-right))
       max(0.9rem, env(safe-area-inset-bottom), var(--build-keyboard-inset))
       max(0.9rem, env(safe-area-inset-left));
@@ -569,26 +585,9 @@ html.build-forge .app-content {
   }
 }
 
-@media (max-width: 520px) {
-  .build-brand {
-    top: max(2.7rem, calc(env(safe-area-inset-top) + 2.3rem));
-    max-width: calc(100vw - 1.6rem);
-    font-size: 1rem;
-  }
-
-  .build-brand-mark {
-    width: 1.7rem;
-    height: 1.7rem;
-  }
-
-  .build-panel {
-    padding-top: max(5.05rem, calc(env(safe-area-inset-top) + 4.3rem));
-  }
-}
-
 @media (max-width: 1023px) and (orientation: landscape) {
   .build-panel {
-    padding-top: max(2.7rem, calc(env(safe-area-inset-top) + 2.2rem));
+    padding-top: max(4.35rem, calc(env(safe-area-inset-top) + 3.65rem));
   }
 
   .build-vignette {
