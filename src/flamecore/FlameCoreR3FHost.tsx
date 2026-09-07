@@ -55,16 +55,21 @@ export interface FlameCoreCameraConfig {
   zoom: number;
   near: number;
   far: number;
+  fov?: number;
 }
 
 export interface FlameCoreR3FHostProps {
   isActive: boolean;
   camera: FlameCoreCameraConfig;
+  /** Defaults to orthographic to match the campsite world. */
+  orthographic?: boolean;
   dpr?: [number, number];
   className?: string;
   onCreated?: (state: RootState) => void;
   /** Fires once the shared WebGL host has a non-zero layout and an R3F store. */
   onReady?: () => void;
+  /** Defaults to the shared Everburn runtime. The forge landing supplies its own. */
+  createRuntime?: (canvas: HTMLCanvasElement) => EverburnFlameCoreBundle;
   children: ReactNode;
 }
 
@@ -72,10 +77,12 @@ export interface FlameCoreR3FHostProps {
 export function FlameCoreR3FHost({
   isActive,
   camera,
+  orthographic = true,
   dpr = [0.75, 1.5],
   className,
   onCreated,
   onReady,
+  createRuntime = createEverburnRuntime,
   children,
 }: FlameCoreR3FHostProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -89,19 +96,29 @@ export function FlameCoreR3FHost({
   const [bootId, setBootId] = useState(0);
   const [ready, setReady] = useState(false);
 
-  onCreatedRef.current = onCreated;
-  onReadyRef.current = onReady;
+  useEffect(() => {
+    onCreatedRef.current = onCreated;
+    onReadyRef.current = onReady;
+  }, [onCreated, onReady]);
 
   const frameloop = isActive ? 'always' : 'demand';
 
   const cameraConfig = useMemo(
-    () => ({
-      position: camera.position,
-      zoom: camera.zoom,
-      near: camera.near,
-      far: camera.far,
-    }),
-    [camera.far, camera.near, camera.position, camera.zoom],
+    () =>
+      orthographic
+        ? {
+            position: camera.position,
+            zoom: camera.zoom,
+            near: camera.near,
+            far: camera.far,
+          }
+        : {
+            position: camera.position,
+            fov: camera.fov ?? 42,
+            near: camera.near,
+            far: camera.far,
+          },
+    [camera.far, camera.fov, camera.near, camera.position, camera.zoom, orthographic],
   );
 
   const notifyReadyIfLaidOut = (container: HTMLDivElement, state: RootState) => {
@@ -142,14 +159,14 @@ export function FlameCoreR3FHost({
     let root: ReconcilerRoot<HTMLCanvasElement>;
 
     try {
-      bundle = createEverburnRuntime(canvas);
+      bundle = createRuntime(canvas);
       bundleRef.current = bundle;
 
       root = createRoot(canvas);
       rootRef.current = root;
 
       root.configure({
-        orthographic: true,
+        orthographic,
         camera: cameraConfig,
         gl: bundle.runtime.context.renderer as never,
         scene: bundle.scene.threeScene as never,
@@ -167,6 +184,8 @@ export function FlameCoreR3FHost({
         },
       });
 
+      // The canvas and R3F root exist; expose them to the React tree.
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- WebGL boot gate
       setReady(true);
     } catch (error) {
       console.error('[FlameCoreR3FHost] Failed to boot WebGL host:', error);

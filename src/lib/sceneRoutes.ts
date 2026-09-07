@@ -1,5 +1,7 @@
 /** URL routes for the full-screen 3D campsite experience. Each scene gets its own history entry. */
 export const SCENE_HOME = '/';
+/** Cinematic website-commission landing. Own WebGL host; campsite unmounts here. */
+export const SCENE_BUILD = '/build';
 export const SCENE_PROJECTS = '/projects';
 export const SCENE_ONE_MORE_SECOND = '/projects/one-more-second';
 /** Previous OMS URL. Still recognized so existing bookmarks open the game. */
@@ -22,6 +24,10 @@ export function normalizeScenePathname(pathname: string): string {
   }
 
   return pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
+}
+
+export function isBuildLandingRoute(pathname: string): boolean {
+  return normalizeScenePathname(pathname) === SCENE_BUILD;
 }
 
 export function isSceneCanvasRoute(pathname: string): boolean {

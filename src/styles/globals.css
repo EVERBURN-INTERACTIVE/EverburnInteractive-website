@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import './tokens.css';
+@import './build.css';
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&display=swap');
 
 html,
@@ -1305,25 +1306,20 @@ html.oms-mobile-landscape body {
   margin: 0;
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.22rem 0.5rem 0.22rem 0.38rem;
+  justify-content: center;
+  padding: 0.38rem;
   border-radius: 999px;
   border: 1px solid rgba(232, 196, 92, 0.7);
   background: linear-gradient(180deg, rgba(62, 42, 12, 0.88), rgba(22, 14, 6, 0.9));
   color: #f3d48a;
-  font-family: var(--font-display), "Segoe UI", sans-serif;
-  font-size: 0.58rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
   box-shadow: 0 0 12px rgba(232, 196, 92, 0.2);
   pointer-events: none;
   user-select: none;
 }
 
 .flamecore-badge-mark {
-  width: 0.82rem;
-  height: 0.82rem;
+  width: 1.05rem;
+  height: 1.05rem;
   flex: 0 0 auto;
   color: #f0c75a;
   filter: drop-shadow(0 0 4px rgba(240, 199, 90, 0.45));

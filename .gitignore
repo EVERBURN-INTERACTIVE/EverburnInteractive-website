@@ -13,3 +13,5 @@ tsconfig.tsbuildinfo
 .env.*
 !.env.example
 materialexample.jpg
+CLAUDE.md
+AGENTS.md

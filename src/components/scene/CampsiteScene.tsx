@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 
 import { SceneErrorBoundary } from '@/components/ui/SceneErrorBoundary';
 import { BootLoadingScreen } from '@/components/ui/LoadingScreen';
-import { isSceneCanvasRoute } from '@/lib/sceneRoutes';
+import { isBuildLandingRoute, isSceneCanvasRoute } from '@/lib/sceneRoutes';
 
 const SceneCanvas = dynamic(() => import('./SceneCanvas').then((m) => m.SceneCanvas), {
   ssr: false,
@@ -14,6 +14,11 @@ const SceneCanvas = dynamic(() => import('./SceneCanvas').then((m) => m.SceneCan
 
 export function CampsiteScene() {
   const pathname = usePathname();
+
+  if (isBuildLandingRoute(pathname)) {
+    return null;
+  }
+
   const isActive = isSceneCanvasRoute(pathname);
 
   return (

@@ -197,3 +197,30 @@ using (
   bucket_id = 'profile-photos'
   and split_part(name, '/', 1) = (select auth.uid())::text
 );
+
+create table if not exists public.website_inquiries (
+  id uuid primary key default gen_random_uuid(),
+  payload jsonb not null,
+  looking_for text,
+  budget_range text,
+  contact_email text,
+  contact_name text,
+  contact_phone text,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists website_inquiries_created_at_idx
+  on public.website_inquiries (created_at desc);
+
+alter table public.website_inquiries enable row level security;
+
+drop policy if exists "Anyone can submit a website inquiry" on public.website_inquiries;
+create policy "Anyone can submit a website inquiry"
+on public.website_inquiries
+for insert
+to anon, authenticated
+with check (true);
+
+revoke all on table public.website_inquiries from anon, authenticated;
+grant insert on table public.website_inquiries to anon, authenticated;
+

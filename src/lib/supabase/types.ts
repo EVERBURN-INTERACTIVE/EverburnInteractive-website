@@ -54,6 +54,39 @@ export interface Database {
         };
         Relationships: [];
       };
+      website_inquiries: {
+        Row: {
+          id: string;
+          payload: Json;
+          looking_for: string | null;
+          budget_range: string | null;
+          contact_email: string | null;
+          contact_name: string | null;
+          contact_phone: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          payload: Json;
+          looking_for?: string | null;
+          budget_range?: string | null;
+          contact_email?: string | null;
+          contact_name?: string | null;
+          contact_phone?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          payload?: Json;
+          looking_for?: string | null;
+          budget_range?: string | null;
+          contact_email?: string | null;
+          contact_name?: string | null;
+          contact_phone?: string | null;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;

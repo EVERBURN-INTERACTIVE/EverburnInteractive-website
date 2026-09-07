@@ -20,9 +20,8 @@ function FlameCoreMark() {
 
 export function FlameCoreBadge() {
   return (
-    <p className="flamecore-badge">
+    <div className="flamecore-badge" role="img" aria-label="FlameCore">
       <FlameCoreMark />
-      <span>Made with FlameCore</span>
-    </p>
+    </div>
   );
 }
