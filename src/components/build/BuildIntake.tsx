@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, type FormEvent, type ReactNode } from 'react';
+import Link from 'next/link';
 
 import {
   ASSET_OPTIONS,
@@ -8,6 +9,7 @@ import {
   CONTACT_METHOD_OPTIONS,
   CONTACT_TIME_OPTIONS,
   CONTENT_PROVISION_OPTIONS,
+  FIELD_LIMITS,
   HAS_MODELS_OPTIONS,
   INCLUDE_OPTIONS,
   LOOKING_FOR_OPTIONS,
@@ -34,6 +36,8 @@ interface BuildIntakeProps {
   errors: ChapterErrors;
   submitting: boolean;
   submitError: string;
+  sendHint: string;
+  channelOpened: boolean;
   sent: boolean;
   progress: number;
   onChange: (patch: Partial<BuildInquiry>) => void;
@@ -41,6 +45,8 @@ interface BuildIntakeProps {
   onContinue: () => void;
   onBack: () => void;
   onSubmit: (channel: SubmitChannel) => void;
+  onCopyBrief: () => void;
+  onConfirmSent: () => void;
   onRestart: () => void;
 }
 
@@ -145,7 +151,7 @@ const CHAPTER_COPY: Partial<Record<ChapterId, { title: string; body: string }>> 
   },
   review: {
     title: 'Ready to send?',
-    body: 'Check your answers, then send this brief by email or WhatsApp.',
+    body: 'Check your answers. Email and WhatsApp open a draft. You still need to tap Send there. Copy the brief if nothing opens.',
   },
 };
 
@@ -168,6 +174,8 @@ export function BuildIntake({
   errors,
   submitting,
   submitError,
+  sendHint,
+  channelOpened,
   sent,
   progress,
   onChange,
@@ -175,6 +183,8 @@ export function BuildIntake({
   onContinue,
   onBack,
   onSubmit,
+  onCopyBrief,
+  onConfirmSent,
   onRestart,
 }: BuildIntakeProps) {
   const showBack = chapter !== 'arrival' && !sent;
@@ -216,8 +226,8 @@ export function BuildIntake({
       <section className="build-panel build-panel--thanks" aria-live="polite">
         <div className="build-panel-scroll">
           <ChapterCopy
-            title="We got your answers."
-            body="We will contact you soon using the method you chose."
+            title="Thank you."
+            body="We will reply using the method you chose. If you also sent email or WhatsApp, we will see that too."
           />
         </div>
         <div className="build-actions">
@@ -238,6 +248,9 @@ export function BuildIntake({
     >
       {chapter === 'arrival' ? (
         <div className="build-arrival">
+          <Link href="/" className="build-panel-camp">
+            Camp
+          </Link>
           <ChapterCopy
             title="Tell us about your website."
             body="A few short questions. Press Start when you are ready."
@@ -249,6 +262,11 @@ export function BuildIntake({
       ) : (
         <>
           <div className="build-panel-head">
+            <div className="build-panel-head-bar">
+              <Link href="/" className="build-panel-camp">
+                Camp
+              </Link>
+            </div>
             <div className="build-progress" aria-hidden="true">
               <span style={{ transform: `scaleX(${Math.max(progress, 0.04)})` }} />
             </div>
@@ -323,6 +341,7 @@ export function BuildIntake({
               <textarea
                 id="businessDescription"
                 rows={4}
+                maxLength={FIELD_LIMITS.businessDescription}
                 value={inquiry.businessDescription}
                 onChange={(event) => onChange({ businessDescription: event.target.value })}
               />
@@ -342,6 +361,7 @@ export function BuildIntake({
                   </button>
                 ))}
               </div>
+              {errors.hasWebsite ? <p className="build-error">{errors.hasWebsite}</p> : null}
             </fieldset>
             {inquiry.hasWebsite === 'yes' ? (
               <Field label="Current website URL" htmlFor="currentWebsiteUrl" error={errors.currentWebsiteUrl}>
@@ -543,6 +563,7 @@ export function BuildIntake({
             <textarea
               id="likedWebsites"
               rows={3}
+              maxLength={FIELD_LIMITS.likedWebsites}
               value={inquiry.likedWebsites}
               onChange={(event) => onChange({ likedWebsites: event.target.value })}
             />
@@ -557,6 +578,7 @@ export function BuildIntake({
               <input
                 id="contactName"
                 autoComplete="name"
+                maxLength={FIELD_LIMITS.contactName}
                 value={inquiry.contactName}
                 onChange={(event) => onChange({ contactName: event.target.value })}
               />
@@ -586,10 +608,11 @@ export function BuildIntake({
                 onChange={(event) => onChange({ companyRole: event.target.value })}
               />
             </Field>
-            <label className="build-honeypot" htmlFor="companyFax">
-              Fax number
+            <label className="build-honeypot" htmlFor="intakeExtraField">
+              Leave blank
               <input
-                id="companyFax"
+                id="intakeExtraField"
+                name="company_website_url_confirm"
                 tabIndex={-1}
                 autoComplete="off"
                 value={inquiry.honeypot}
@@ -626,6 +649,7 @@ export function BuildIntake({
             <textarea
               id="successDefinition"
               rows={5}
+              maxLength={FIELD_LIMITS.successDefinition}
               placeholder="More enquiries, more sales, a better first impression, showcasing a product, standing out from competitors, etc."
               value={inquiry.successDefinition}
               onChange={(event) => onChange({ successDefinition: event.target.value })}
@@ -651,15 +675,19 @@ export function BuildIntake({
             <ReviewRow label="Budget" value={labelFor(BUDGET_OPTIONS, inquiry.budget)} />
             <ReviewRow label="Timeline" value={labelFor(TIMELINE_OPTIONS, inquiry.timeline)} />
             <ReviewRow label="Contact" value={`${inquiry.contactName} · ${inquiry.contactEmail}`} />
+            <ReviewRow label="Phone" value={inquiry.contactPhone} />
             <ReviewRow label="Preferred contact" value={labelFor(CONTACT_METHOD_OPTIONS, inquiry.contactMethod)} />
+            <ReviewRow label="Best time" value={labelFor(CONTACT_TIME_OPTIONS, inquiry.contactTime)} />
+            <ReviewRow label="Success" value={inquiry.successDefinition} />
           </dl>
           {submitError ? <p className="build-error">{submitError}</p> : null}
+          {sendHint ? <p className="build-send-hint">{sendHint}</p> : null}
         </>
       ) : null}
           </div>
           <div className="build-actions">
             {showBack ? (
-              <button type="button" className="build-secondary" onClick={onBack}>
+              <button type="button" className="build-secondary" disabled={submitting} onClick={onBack}>
                 Previous
               </button>
             ) : null}
@@ -681,6 +709,14 @@ export function BuildIntake({
                 >
                   WhatsApp
                 </button>
+                <button type="button" className="build-secondary" disabled={submitting} onClick={onCopyBrief}>
+                  Copy brief
+                </button>
+                {channelOpened ? (
+                  <button type="button" className="build-secondary" disabled={submitting} onClick={onConfirmSent}>
+                    I sent it
+                  </button>
+                ) : null}
               </div>
             ) : (
               <button type="submit" className="build-primary" disabled={submitting}>

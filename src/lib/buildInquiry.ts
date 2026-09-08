@@ -390,8 +390,43 @@ export function budgetHeat(budget: BudgetId | ''): number {
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const URL_PATTERN = /^https?:\/\/\S+$/i;
 
-function digitCount(value: string): number {
-  return value.replace(/\D/g, '').length;
+export const FIELD_LIMITS = {
+  businessName: 80,
+  industry: 80,
+  cityCountry: 80,
+  businessDescription: 2000,
+  currentWebsiteUrl: 300,
+  goalOther: 200,
+  includesOther: 200,
+  threeDUseOther: 200,
+  threeDActionsOther: 200,
+  launchEvent: 200,
+  assetsOther: 200,
+  likedWebsites: 800,
+  contactName: 80,
+  contactEmail: 120,
+  contactPhone: 30,
+  companyRole: 80,
+  successDefinition: 800,
+} as const;
+
+function phoneDigits(value: string): string {
+  return value.replace(/\D/g, '');
+}
+
+export function normalizeWebsiteUrl(raw: string): string {
+  const value = raw.trim();
+  if (!value) {
+    return '';
+  }
+  if (/^https?:\/\//i.test(value)) {
+    return value;
+  }
+  return `https://${value}`;
+}
+
+function tooLong(value: string, limit: number): boolean {
+  return value.trim().length > limit;
 }
 
 export function createEmptyInquiry(): BuildInquiry {
@@ -439,25 +474,43 @@ export function validateChapter(chapter: ChapterId, inquiry: BuildInquiry): Chap
     if (inquiry.mainGoal === 'other' && inquiry.goalOther.trim().length < 3) {
       errors.goalOther = 'Tell us the goal in a few words.';
     }
+    if (tooLong(inquiry.goalOther, FIELD_LIMITS.goalOther)) {
+      errors.goalOther = `Keep this under ${FIELD_LIMITS.goalOther} characters.`;
+    }
   }
 
   if (chapter === 'business') {
     if (inquiry.businessName.trim().length < 2) {
       errors.businessName = 'Enter the business or brand name.';
     }
+    if (tooLong(inquiry.businessName, FIELD_LIMITS.businessName)) {
+      errors.businessName = `Keep this under ${FIELD_LIMITS.businessName} characters.`;
+    }
     if (inquiry.industry.trim().length < 2) {
       errors.industry = 'Enter the industry or business type.';
+    }
+    if (tooLong(inquiry.industry, FIELD_LIMITS.industry)) {
+      errors.industry = `Keep this under ${FIELD_LIMITS.industry} characters.`;
     }
     if (inquiry.cityCountry.trim().length < 2) {
       errors.cityCountry = 'Enter city and country.';
     }
+    if (tooLong(inquiry.cityCountry, FIELD_LIMITS.cityCountry)) {
+      errors.cityCountry = `Keep this under ${FIELD_LIMITS.cityCountry} characters.`;
+    }
     if (inquiry.businessDescription.trim().length < 12) {
       errors.businessDescription = 'Give us a short description of the business.';
     }
+    if (tooLong(inquiry.businessDescription, FIELD_LIMITS.businessDescription)) {
+      errors.businessDescription = `Keep this under ${FIELD_LIMITS.businessDescription} characters.`;
+    }
+    if (inquiry.hasWebsite !== 'yes' && inquiry.hasWebsite !== 'no') {
+      errors.hasWebsite = 'Tell us whether you already have a website.';
+    }
     if (inquiry.hasWebsite === 'yes') {
-      const url = inquiry.currentWebsiteUrl.trim();
-      if (!url || !URL_PATTERN.test(url)) {
-        errors.currentWebsiteUrl = 'Add the current website URL, starting with https://';
+      const url = normalizeWebsiteUrl(inquiry.currentWebsiteUrl);
+      if (!url || !URL_PATTERN.test(url) || tooLong(url, FIELD_LIMITS.currentWebsiteUrl)) {
+        errors.currentWebsiteUrl = 'Add the current website URL. A domain is enough.';
       }
     }
   }
@@ -468,6 +521,9 @@ export function validateChapter(chapter: ChapterId, inquiry: BuildInquiry): Chap
     }
     if (inquiry.includes.includes('other') && inquiry.includesOther.trim().length < 2) {
       errors.includesOther = 'Tell us what else to include.';
+    }
+    if (tooLong(inquiry.includesOther, FIELD_LIMITS.includesOther)) {
+      errors.includesOther = `Keep this under ${FIELD_LIMITS.includesOther} characters.`;
     }
   }
 
@@ -482,6 +538,9 @@ export function validateChapter(chapter: ChapterId, inquiry: BuildInquiry): Chap
     if (inquiry.threeDUse.includes('other') && inquiry.threeDUseOther.trim().length < 2) {
       errors.threeDUseOther = 'Tell us how you want to use 3D.';
     }
+    if (tooLong(inquiry.threeDUseOther, FIELD_LIMITS.threeDUseOther)) {
+      errors.threeDUseOther = `Keep this under ${FIELD_LIMITS.threeDUseOther} characters.`;
+    }
     if (!inquiry.hasModels) {
       errors.hasModels = 'Tell us whether you already have 3D models.';
     }
@@ -490,6 +549,9 @@ export function validateChapter(chapter: ChapterId, inquiry: BuildInquiry): Chap
     }
     if (inquiry.threeDActions.includes('other') && inquiry.threeDActionsOther.trim().length < 2) {
       errors.threeDActionsOther = 'Describe the extra 3D interaction.';
+    }
+    if (tooLong(inquiry.threeDActionsOther, FIELD_LIMITS.threeDActionsOther)) {
+      errors.threeDActionsOther = `Keep this under ${FIELD_LIMITS.threeDActionsOther} characters.`;
     }
   }
 
@@ -501,12 +563,19 @@ export function validateChapter(chapter: ChapterId, inquiry: BuildInquiry): Chap
     errors.timeline = 'Choose a launch window.';
   }
 
+  if (chapter === 'timeline' && tooLong(inquiry.launchEvent, FIELD_LIMITS.launchEvent)) {
+    errors.launchEvent = `Keep this under ${FIELD_LIMITS.launchEvent} characters.`;
+  }
+
   if (chapter === 'assets') {
     if (inquiry.assets.length === 0) {
       errors.assets = 'Select what you already have, or choose None of these.';
     }
     if (inquiry.assets.includes('other') && inquiry.assetsOther.trim().length < 2) {
       errors.assetsOther = 'Tell us what other assets you have.';
+    }
+    if (tooLong(inquiry.assetsOther, FIELD_LIMITS.assetsOther)) {
+      errors.assetsOther = `Keep this under ${FIELD_LIMITS.assetsOther} characters.`;
     }
     if (!inquiry.contentProvision) {
       errors.contentProvision = 'Tell us whether you will provide the content.';
@@ -517,15 +586,32 @@ export function validateChapter(chapter: ChapterId, inquiry: BuildInquiry): Chap
     errors.visualStyle = 'Choose a visual direction, or ask us to recommend one.';
   }
 
+  if (chapter === 'design' && tooLong(inquiry.likedWebsites, FIELD_LIMITS.likedWebsites)) {
+    errors.likedWebsites = `Keep this under ${FIELD_LIMITS.likedWebsites} characters.`;
+  }
+
   if (chapter === 'contact') {
     if (inquiry.contactName.trim().length < 2) {
       errors.contactName = 'Enter your name.';
     }
+    if (tooLong(inquiry.contactName, FIELD_LIMITS.contactName)) {
+      errors.contactName = `Keep this under ${FIELD_LIMITS.contactName} characters.`;
+    }
     if (!EMAIL_PATTERN.test(inquiry.contactEmail.trim())) {
       errors.contactEmail = 'Enter a valid email address.';
     }
-    if (digitCount(inquiry.contactPhone) < 10) {
+    if (tooLong(inquiry.contactEmail, FIELD_LIMITS.contactEmail)) {
+      errors.contactEmail = `Keep this under ${FIELD_LIMITS.contactEmail} characters.`;
+    }
+    const digits = phoneDigits(inquiry.contactPhone);
+    if (digits.length < 10 || /^0+$/.test(digits)) {
       errors.contactPhone = 'Enter a phone or WhatsApp number.';
+    }
+    if (tooLong(inquiry.contactPhone, FIELD_LIMITS.contactPhone)) {
+      errors.contactPhone = `Keep this under ${FIELD_LIMITS.contactPhone} characters.`;
+    }
+    if (tooLong(inquiry.companyRole, FIELD_LIMITS.companyRole)) {
+      errors.companyRole = `Keep this under ${FIELD_LIMITS.companyRole} characters.`;
     }
     if (!inquiry.contactMethod) {
       errors.contactMethod = 'Choose your preferred method of contact.';
@@ -537,6 +623,10 @@ export function validateChapter(chapter: ChapterId, inquiry: BuildInquiry): Chap
 
   if (chapter === 'success' && inquiry.successDefinition.trim().length < 8) {
     errors.successDefinition = 'Tell us what success looks like for this website.';
+  }
+
+  if (chapter === 'success' && tooLong(inquiry.successDefinition, FIELD_LIMITS.successDefinition)) {
+    errors.successDefinition = `Keep this under ${FIELD_LIMITS.successDefinition} characters.`;
   }
 
   return errors;

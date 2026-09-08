@@ -13,13 +13,14 @@ import {
   createEmptyInquiry,
   getChapterSequence,
   firstInvalidChapter,
+  normalizeWebsiteUrl,
   validateChapter,
   type BuildInquiry,
   type ChapterErrors,
   type ChapterId,
 } from '@/lib/buildInquiry';
 import { useReducedMotion } from '@/lib/hooks/useReducedMotion';
-import { submitBuildInquiry, type SubmitChannel } from '@/lib/submitBuildInquiry';
+import { copyBuildInquiry, submitBuildInquiry, type SubmitChannel } from '@/lib/submitBuildInquiry';
 
 const BuildSceneHost = dynamic(
   () => import('./BuildSceneHost').then((module) => module.BuildSceneHost),
@@ -42,7 +43,14 @@ function readDraft(): StoredDraft | null {
       return null;
     }
     return {
-      inquiry: { ...createEmptyInquiry(), ...parsed.inquiry },
+      inquiry: {
+        ...createEmptyInquiry(),
+        ...parsed.inquiry,
+        includes: Array.isArray(parsed.inquiry.includes) ? parsed.inquiry.includes : [],
+        threeDUse: Array.isArray(parsed.inquiry.threeDUse) ? parsed.inquiry.threeDUse : [],
+        threeDActions: Array.isArray(parsed.inquiry.threeDActions) ? parsed.inquiry.threeDActions : [],
+        assets: Array.isArray(parsed.inquiry.assets) ? parsed.inquiry.assets : [],
+      },
       chapter: parsed.chapter,
     };
   } catch {
@@ -83,6 +91,8 @@ export function BuildLanding() {
   const [hoverKey, setHoverKey] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
+  const [sendHint, setSendHint] = useState('');
+  const [channelOpened, setChannelOpened] = useState(false);
   const [sent, setSent] = useState(false);
   const [draftReady, setDraftReady] = useState(false);
 
@@ -150,7 +160,17 @@ export function BuildLanding() {
   }, []);
 
   const onContinue = useCallback(() => {
-    const nextErrors = validateChapter(activeChapter, inquiry);
+    if (activeChapter === 'business' && inquiry.hasWebsite === 'yes') {
+      const normalized = normalizeWebsiteUrl(inquiry.currentWebsiteUrl);
+      if (normalized !== inquiry.currentWebsiteUrl) {
+        setInquiry((current) => ({ ...current, currentWebsiteUrl: normalized }));
+      }
+    }
+    const nextInquiry =
+      activeChapter === 'business' && inquiry.hasWebsite === 'yes'
+        ? { ...inquiry, currentWebsiteUrl: normalizeWebsiteUrl(inquiry.currentWebsiteUrl) }
+        : inquiry;
+    const nextErrors = validateChapter(activeChapter, nextInquiry);
     if (Object.keys(nextErrors).length > 0) {
       setErrors(nextErrors);
       return;
@@ -179,10 +199,22 @@ export function BuildLanding() {
     setSubmitting(true);
     setSubmitError('');
     try {
-      const result = await submitBuildInquiry(inquiry, channel);
-      if (result.ok) {
+      if (inquiry.honeypot.trim()) {
         setSent(true);
         clearDraft();
+        return;
+      }
+      const result = await submitBuildInquiry(inquiry, channel);
+      if (result.ok) {
+        setChannelOpened(true);
+        const savedNote = result.stored
+          ? 'We also saved a copy of your answers.'
+          : 'If the app did not open, copy the brief and send it yourself.';
+        setSendHint(
+          channel === 'whatsapp'
+            ? `WhatsApp should have opened. Tap Send there. ${savedNote}`
+            : `Your email app should have opened. Send the message to founder@everburninteractive.com. ${savedNote}`,
+        );
       } else {
         setSubmitError(result.message);
       }
@@ -191,11 +223,30 @@ export function BuildLanding() {
     }
   }, [goTo, inquiry]);
 
+  const onCopyBrief = useCallback(async () => {
+    const copied = await copyBuildInquiry(inquiry);
+    setSubmitError('');
+    setSendHint(
+      copied
+        ? 'The brief was copied. Paste it into email or WhatsApp if nothing opened.'
+        : 'We could not copy the brief. Select the answers above and copy them yourself.',
+    );
+  }, [inquiry]);
+
+  const onConfirmSent = useCallback(() => {
+    setSent(true);
+    setSubmitError('');
+    setSendHint('');
+    clearDraft();
+  }, []);
+
   const onRestart = useCallback(() => {
     setInquiry(createEmptyInquiry());
     setChapter('arrival');
     setSent(false);
     setSubmitError('');
+    setSendHint('');
+    setChannelOpened(false);
     clearDraft();
   }, []);
 
@@ -235,6 +286,8 @@ export function BuildLanding() {
         errors={errors}
         submitting={submitting}
         submitError={submitError}
+        sendHint={sendHint}
+        channelOpened={channelOpened}
         sent={sent}
         progress={progress}
         onChange={patchInquiry}
@@ -244,6 +297,10 @@ export function BuildLanding() {
         onSubmit={(channel) => {
           void onSubmit(channel);
         }}
+        onCopyBrief={() => {
+          void onCopyBrief();
+        }}
+        onConfirmSent={onConfirmSent}
         onRestart={onRestart}
       />
     </main>

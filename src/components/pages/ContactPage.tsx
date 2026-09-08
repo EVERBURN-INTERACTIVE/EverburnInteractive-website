@@ -25,6 +25,10 @@ export function ContactPage() {
           <strong>Location:</strong> {CONTACT_CONTENT.location}
         </p>
         <p>
+          <strong>Commission a website:</strong>{' '}
+          <a href="/build/">everburninteractive.com/build/</a>
+        </p>
+        <p>
           <strong>Email:</strong>{' '}
           <a href={`mailto:${CONTACT_CONTENT.email}`}>{CONTACT_CONTENT.email}</a>
         </p>

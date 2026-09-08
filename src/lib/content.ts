@@ -235,7 +235,7 @@ export const BUILD_INQUIRY_CONTACT = {
    * Founder click-to-chat number (personal WhatsApp, not Business API).
    * Country code + number, digits only. Override with NEXT_PUBLIC_BUILD_WHATSAPP.
    */
-  whatsappDigits: (process.env.NEXT_PUBLIC_BUILD_WHATSAPP ?? '917054652798').replace(/\D/g, ''),
+  whatsappDigits: (process.env.NEXT_PUBLIC_BUILD_WHATSAPP ?? '917041652798').replace(/\D/g, ''),
 };
 
 export const CONTACT_FOLLOW_NOTE =

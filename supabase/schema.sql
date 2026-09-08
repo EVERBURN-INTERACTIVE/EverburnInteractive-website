@@ -198,6 +198,10 @@ using (
   and split_part(name, '/', 1) = (select auth.uid())::text
 );
 
+create schema if not exists private;
+revoke all on schema private from public;
+revoke all on schema private from anon, authenticated;
+
 create table if not exists public.website_inquiries (
   id uuid primary key default gen_random_uuid(),
   payload jsonb not null,
@@ -206,13 +210,54 @@ create table if not exists public.website_inquiries (
   contact_email text,
   contact_name text,
   contact_phone text,
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  constraint website_inquiries_payload_size
+    check (octet_length(payload::text) <= 50000)
 );
 
 create index if not exists website_inquiries_created_at_idx
   on public.website_inquiries (created_at desc);
 
+create index if not exists website_inquiries_email_created_at_idx
+  on public.website_inquiries (contact_email, created_at desc);
+
 alter table public.website_inquiries enable row level security;
+
+create or replace function private.enforce_website_inquiry_rate_limit()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  recent_count integer;
+begin
+  if new.contact_email is null or length(btrim(new.contact_email)) = 0 then
+    return new;
+  end if;
+
+  select count(*) into recent_count
+  from public.website_inquiries
+  where contact_email = new.contact_email
+    and created_at > now() - interval '10 minutes';
+
+  if recent_count >= 3 then
+    raise exception 'Too many inquiries from this email. Try again in a few minutes.'
+      using errcode = 'P0001';
+  end if;
+
+  return new;
+end;
+$$;
+
+revoke all on function private.enforce_website_inquiry_rate_limit() from public;
+revoke all on function private.enforce_website_inquiry_rate_limit() from anon, authenticated;
+
+drop trigger if exists website_inquiries_rate_limit on public.website_inquiries;
+create trigger website_inquiries_rate_limit
+before insert on public.website_inquiries
+for each row
+execute function private.enforce_website_inquiry_rate_limit();
 
 drop policy if exists "Anyone can submit a website inquiry" on public.website_inquiries;
 create policy "Anyone can submit a website inquiry"

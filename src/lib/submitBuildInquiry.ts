@@ -2,6 +2,7 @@ import { BUILD_INQUIRY_CONTACT } from '@/lib/content';
 import {
   formatInquiryCompact,
   formatInquiryPlainText,
+  normalizeWebsiteUrl,
   type BuildInquiry,
 } from '@/lib/buildInquiry';
 import { getSupabaseBrowserClient, isSupabaseConfigured } from '@/lib/supabase/client';
@@ -10,13 +11,20 @@ import type { Json } from '@/lib/supabase/types';
 export type SubmitChannel = 'mailto' | 'whatsapp';
 
 export type SubmitInquiryResult =
-  | { ok: true; channel: SubmitChannel }
+  | { ok: true; channel: SubmitChannel; stored: boolean }
   | { ok: false; message: string };
 
 const MAX_HREF_LENGTH = 1800;
 
+function inquiryForSend(inquiry: BuildInquiry): BuildInquiry {
+  return {
+    ...inquiry,
+    currentWebsiteUrl: normalizeWebsiteUrl(inquiry.currentWebsiteUrl),
+  };
+}
+
 function inquiryPayload(inquiry: BuildInquiry) {
-  const { honeypot: _honeypot, ...safe } = inquiry;
+  const { honeypot: _honeypot, ...safe } = inquiryForSend(inquiry);
   return {
     ...safe,
     source: 'build-landing',
@@ -36,16 +44,14 @@ function buildWhatsAppDigits(): string {
   return normalizeWhatsAppDigits(BUILD_INQUIRY_CONTACT.whatsappDigits);
 }
 
-function openHref(href: string): boolean {
-  if (href.length > MAX_HREF_LENGTH) {
-    return false;
+function firstFittingHref(fullHref: string, compactHref: string): string | null {
+  if (fullHref.length <= MAX_HREF_LENGTH) {
+    return fullHref;
   }
-
-  const opened = window.open(href, '_blank', 'noopener,noreferrer');
-  if (!opened) {
-    window.location.href = href;
+  if (compactHref.length <= MAX_HREF_LENGTH) {
+    return compactHref;
   }
-  return true;
+  return null;
 }
 
 function mailtoHref(inquiry: BuildInquiry, body: string): string {
@@ -58,8 +64,16 @@ function whatsappHref(digits: string, body: string): string {
 }
 
 function openMailto(inquiry: BuildInquiry): boolean {
-  return openHref(mailtoHref(inquiry, formatInquiryPlainText(inquiry)))
-    || openHref(mailtoHref(inquiry, formatInquiryCompact(inquiry)));
+  const href = firstFittingHref(
+    mailtoHref(inquiry, formatInquiryPlainText(inquiry)),
+    mailtoHref(inquiry, formatInquiryCompact(inquiry)),
+  );
+  if (!href) {
+    return false;
+  }
+
+  window.location.assign(href);
+  return true;
 }
 
 function openWhatsApp(inquiry: BuildInquiry): boolean {
@@ -68,27 +82,38 @@ function openWhatsApp(inquiry: BuildInquiry): boolean {
     return false;
   }
 
-  return openHref(whatsappHref(digits, formatInquiryPlainText(inquiry)))
-    || openHref(whatsappHref(digits, formatInquiryCompact(inquiry)));
+  const href = firstFittingHref(
+    whatsappHref(digits, formatInquiryPlainText(inquiry)),
+    whatsappHref(digits, formatInquiryCompact(inquiry)),
+  );
+  if (!href) {
+    return false;
+  }
+
+  const opened = window.open(href, '_blank', 'noopener,noreferrer');
+  if (!opened) {
+    window.location.assign(href);
+  }
+  return true;
 }
 
-async function copyBrief(inquiry: BuildInquiry): Promise<boolean> {
+export async function copyBuildInquiry(inquiry: BuildInquiry): Promise<boolean> {
   try {
-    await navigator.clipboard.writeText(formatInquiryPlainText(inquiry));
+    await navigator.clipboard.writeText(formatInquiryPlainText(inquiryForSend(inquiry)));
     return true;
   } catch {
     return false;
   }
 }
 
-async function tryInsertSupabase(inquiry: BuildInquiry): Promise<void> {
+async function tryInsertSupabase(inquiry: BuildInquiry): Promise<boolean> {
   if (!isSupabaseConfigured) {
-    return;
+    return false;
   }
 
   const client = getSupabaseBrowserClient();
   if (!client) {
-    return;
+    return false;
   }
 
   const { error } = await client.from('website_inquiries').insert({
@@ -102,7 +127,10 @@ async function tryInsertSupabase(inquiry: BuildInquiry): Promise<void> {
 
   if (error) {
     console.error('[submitBuildInquiry] Supabase insert failed:', error.message);
+    return false;
   }
+
+  return true;
 }
 
 export async function submitBuildInquiry(
@@ -110,17 +138,18 @@ export async function submitBuildInquiry(
   channel: SubmitChannel,
 ): Promise<SubmitInquiryResult> {
   if (inquiry.honeypot.trim()) {
-    return { ok: true, channel };
+    return { ok: true, channel, stored: false };
   }
 
-  await tryInsertSupabase(inquiry);
+  const prepared = inquiryForSend(inquiry);
+  const stored = await tryInsertSupabase(prepared);
+  const opened = channel === 'mailto' ? openMailto(prepared) : openWhatsApp(prepared);
 
-  const opened = channel === 'mailto' ? openMailto(inquiry) : openWhatsApp(inquiry);
   if (opened) {
-    return { ok: true, channel };
+    return { ok: true, channel, stored };
   }
 
-  const copied = await copyBrief(inquiry);
+  const copied = await copyBuildInquiry(prepared);
   if (channel === 'whatsapp' && buildWhatsAppDigits().length < 11) {
     return {
       ok: false,

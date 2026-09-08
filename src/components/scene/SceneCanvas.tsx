@@ -285,6 +285,7 @@ const PAGE_FOCUS_CONTENT: Record<string, PageFocusContent> = {
           'Recognition: DPIIT Recognized Startup | LLPIN: ACV-2902',
           'Location: Ahmedabad, Gujarat, India',
           'Email: contact@everburninteractive.com',
+          'Commission a website: everburninteractive.com/build/',
         ],
       },
       {

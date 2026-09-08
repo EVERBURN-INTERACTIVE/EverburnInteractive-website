@@ -64,6 +64,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <a href="/contact" className="skip-link">
               Contact
             </a>
+            <a href="/build/" className="skip-link">
+              Start a website
+            </a>
           </nav>
           <div className="app-content">{children}</div>
         </AuthProvider>

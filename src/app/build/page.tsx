@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Start a website | Everburn Interactive',
     description: 'Tell us about your website in a few short questions.',
-    url: 'https://everburninteractive.com/build',
+    url: 'https://everburninteractive.com/build/',
   },
 };
 
