@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content="FlameCore" />
+    <title>Incendio Woodworks — Custom Hardwood Furniture</title>
+    <link rel="stylesheet" href="./assets/fonts/fonts.css" />
+    <script type="module" crossorigin src="/showcases/incendio-woodworks/runtime.js"></script>
+    <link rel="stylesheet" crossorigin href="/showcases/incendio-woodworks/assets/style.css">
+  </head>
+  <body>
+    <canvas id="flamecore-canvas" tabindex="0" aria-label="Interactive hardwood table. Drag to orbit, scroll or pinch to zoom."></canvas>
+    <div id="flamecore-loading">Loading the table…</div>
+
+    <header class="top">
+      <!-- Logo file is not in this repo. Wordmark is set in Marcellus, their heading face. -->
+      <p class="wordmark">
+        <span class="logo-slot" aria-hidden="true">I</span>
+        <span class="names">
+          <span class="name">Incendio Woodworks</span>
+          <span class="place">Toronto</span>
+        </span>
+      </p>
+      <div class="hero-copy">
+        <h1>Custom Hardwood Furniture, Built in Toronto</h1>
+        <p class="sub">Pick your table, your wood and your finish, and see it before anything is cut.</p>
+      </div>
+    </header>
+
+    <p class="corner-label">Concept demo by Everburn Interactive for Incendio Woodworks, not affiliated</p>
+
+    <aside class="panel" aria-label="Table configurator">
+      <button type="button" id="sheet-toggle" class="sheet-toggle" aria-expanded="false" aria-controls="config-options">Wood and finish</button>
+      <div class="tabs" role="tablist" aria-label="Table type">
+        <button type="button" data-table="dining" role="tab">Dining</button>
+        <button type="button" data-table="poker" role="tab" aria-pressed="true">Poker</button>
+        <button type="button" data-table="coffee" role="tab">Coffee</button>
+      </div>
+      <p class="table-kicker">Showing <span id="table-name">Poker</span></p>
+
+      <div id="config-options" class="options">
+      <h2>Choose Your Wood</h2>
+      <div class="swatches" role="group" aria-label="Choose Your Wood">
+        <button type="button" data-wood="ash"><i class="chip ash"></i><span>Ash</span></button>
+        <button type="button" data-wood="walnut" aria-pressed="true"><i class="chip walnut"></i><span>Walnut</span></button>
+        <button type="button" data-wood="white-oak"><i class="chip white-oak"></i><span>White Oak</span></button>
+        <button type="button" data-wood="hard-maple"><i class="chip hard-maple"></i><span>Hard Maple</span></button>
+        <button type="button" data-wood="red-oak"><i class="chip red-oak"></i><span>Red Oak</span></button>
+      </div>
+
+      <h2>Choose Your Finish</h2>
+      <div class="swatches finishes" role="group" aria-label="Choose Your Finish">
+        <button type="button" data-finish="natural-oil"><i class="chip natural-oil"></i><span>Natural Oil Finish</span></button>
+        <button type="button" data-finish="shou-sugi-ban" aria-pressed="true"><i class="chip shou"></i><span>Shou Sugi Ban</span></button>
+        <button type="button" data-finish="ceruse-oak"><i class="chip ceruse"></i><span>Ceruse Oak</span></button>
+        <button type="button" data-finish="ebonized"><i class="chip ebonized"></i><span>Ebonized</span></button>
+      </div>
+
+      <div id="led-wrap">
+        <h2>Tech: Integrated LED · Wireless charging</h2>
+        <button type="button" id="led-toggle" class="led" aria-pressed="true">Integrated LED</button>
+        <p class="hint">Tap the pad on the near rail for wireless charging.</p>
+      </div>
+      <p class="cta-note">No veneers, no shortcuts. A fixed price before anything is cut. This demo does not send a form.</p>
+      </div>
+
+      <p id="build-summary" class="summary" aria-live="polite">Walnut · Shou Sugi Ban · LED on</p>
+      <a class="cta" href="https://everburninteractive.com/build/">Start Your Commission</a>
+    </aside>
+
+    <div id="hotspot-tip" class="tip" role="tooltip" hidden>
+      <strong>Wireless charging</strong>
+      <p>Built into the poker rail.</p>
+    </div>
+
+    <footer>
+      <p class="trust">FSC-Certified Ontario Hardwood · Ships Across Canada &amp; the USA · 6-10 week typical lead time</p>
+      <p class="affiliation">Concept demo by Everburn Interactive for Incendio Woodworks, not affiliated</p>
+      <p class="everburn">
+        <a href="https://everburninteractive.com/build/">Want this on your site? Build it with Everburn</a>
+      </p>
+      <p class="shop">4300 Steeles Ave W, Toronto, ON L4L 4C2 · incendiowoodworks@gmail.com · (416) 648-7915</p>
+      <details class="credits">
+        <summary>Texture and type credits</summary>
+        <p>Species photos are Poly Haven CC0: ash_veneer, black_walnut_veneer_02, white_oak_veneer, white_maple_veneer, red_oak_veneer. Poker cloth is ambientCG Fabric034 (CC0). Rail leather is ambientCG Leather026 (CC0). Marcellus, Archivo, and Poppins ExtraLight are used under the SIL Open Font License. Full list: <a href="./CREDITS.md">CREDITS.md</a>.</p>
+      </details>
+    </footer>
+  </body>
+</html>

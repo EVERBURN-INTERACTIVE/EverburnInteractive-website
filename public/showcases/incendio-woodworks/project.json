@@ -1,0 +1,345 @@
+{
+  "id": "incendio-woodworks",
+  "name": "Incendio Woodworks",
+  "runtimeVersion": "0.1.0",
+  "scenes": [
+    {
+      "id": "scene-configurator",
+      "name": "Configurator",
+      "settings": {
+        "background": "#1E1E1E",
+        "clearColor": true,
+        "clearDepth": true,
+        "qualityPreset": "auto"
+      },
+      "actors": [
+        {
+          "id": "actor-config-root",
+          "name": "Configurator Setup",
+          "components": [
+            {
+              "type": "TransformComponent",
+              "props": {
+                "_version": 1,
+                "position": [
+                  0,
+                  0,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  0
+                ],
+                "scale": [
+                  1,
+                  1,
+                  1
+                ]
+              }
+            },
+            {
+              "type": "ConfiguratorComponent",
+              "props": {
+                "_version": 1,
+                "variants": [
+                  {
+                    "id": "default",
+                    "name": "Default",
+                    "slots": [
+                      {
+                        "slotName": "body",
+                        "color": [
+                          0.75,
+                          0.75,
+                          0.78
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "red",
+                    "name": "Red",
+                    "slots": [
+                      {
+                        "slotName": "body",
+                        "color": [
+                          0.85,
+                          0.15,
+                          0.12
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "blue",
+                    "name": "Blue",
+                    "slots": [
+                      {
+                        "slotName": "body",
+                        "color": [
+                          0.15,
+                          0.35,
+                          0.85
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "gold",
+                    "name": "Gold",
+                    "slots": [
+                      {
+                        "slotName": "body",
+                        "color": [
+                          0.85,
+                          0.65,
+                          0.2
+                        ],
+                        "metalness": 0.9,
+                        "roughness": 0.25
+                      }
+                    ]
+                  }
+                ],
+                "showOptionPanel": true,
+                "targetActorId": "actor-product",
+                "activeVariantId": "default"
+              }
+            }
+          ]
+        },
+        {
+          "id": "actor-product",
+          "name": "Product",
+          "parentId": "actor-config-root",
+          "components": [
+            {
+              "type": "TransformComponent",
+              "props": {
+                "_version": 1,
+                "position": [
+                  0,
+                  0,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  0
+                ],
+                "scale": [
+                  1,
+                  1,
+                  1
+                ]
+              }
+            },
+            {
+              "type": "ProductViewerComponent",
+              "props": {
+                "_version": 1,
+                "lightingPreset": "studio",
+                "enableOrbit": true,
+                "autoRotate": true,
+                "autoRotateSpeed": 0.5,
+                "minDistance": 1,
+                "maxDistance": 20,
+                "showPlaceholderOnError": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "actor-product",
+          "name": "Product",
+          "parentId": "actor-config-root",
+          "components": [
+            {
+              "type": "TransformComponent",
+              "props": {
+                "_version": 1,
+                "position": [
+                  0,
+                  0,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  0
+                ],
+                "scale": [
+                  1,
+                  1,
+                  1
+                ]
+              }
+            },
+            {
+              "type": "ProductViewerComponent",
+              "props": {
+                "_version": 1,
+                "lightingPreset": "studio",
+                "enableOrbit": true,
+                "autoRotate": true,
+                "autoRotateSpeed": 0.5,
+                "minDistance": 1,
+                "maxDistance": 20,
+                "showPlaceholderOnError": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "actor-main-camera",
+          "name": "Main Camera",
+          "components": [
+            {
+              "type": "TransformComponent",
+              "props": {
+                "_version": 1,
+                "position": [
+                  0,
+                  1.4,
+                  5
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  0
+                ],
+                "scale": [
+                  1,
+                  1,
+                  1
+                ]
+              }
+            },
+            {
+              "type": "CameraComponent",
+              "props": {
+                "_version": 1,
+                "projection": "perspective",
+                "fov": 38,
+                "orthoSize": 5,
+                "near": 0.1,
+                "far": 1000,
+                "isMain": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "actor-fill",
+          "name": "Fill Light",
+          "components": [
+            {
+              "type": "TransformComponent",
+              "props": {
+                "_version": 1,
+                "position": [
+                  2,
+                  3,
+                  2
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  0
+                ],
+                "scale": [
+                  1,
+                  1,
+                  1
+                ]
+              }
+            },
+            {
+              "type": "LightComponent",
+              "props": {
+                "_version": 1,
+                "kind": "point",
+                "color": [
+                  1,
+                  1,
+                  1
+                ],
+                "skyColor": [
+                  0.5,
+                  0.7,
+                  1
+                ],
+                "intensity": 1.5,
+                "distance": 0,
+                "angle": 0.5235987755982988,
+                "penumbra": 0.1,
+                "decay": 2,
+                "castShadow": true
+              }
+            }
+          ]
+        }
+      ],
+      "_version": 1
+    }
+  ],
+  "startupSceneId": "scene-configurator",
+  "assets": [],
+  "folders": [
+    {
+      "path": "/Scenes"
+    },
+    {
+      "path": "/Meshes"
+    },
+    {
+      "path": "/Textures"
+    },
+    {
+      "path": "/Materials"
+    },
+    {
+      "path": "/Audio"
+    },
+    {
+      "path": "/Fonts"
+    },
+    {
+      "path": "/Prefabs"
+    },
+    {
+      "path": "/Animations"
+    },
+    {
+      "path": "/Particles"
+    }
+  ],
+  "siteSlug": "incendio-woodworks",
+  "flameConfig": {
+    "_version": 1,
+    "name": "Incendio Woodworks",
+    "slug": "incendio-woodworks",
+    "templateId": "configurator",
+    "brand": {
+      "primary": "#A26028",
+      "secondary": "#1E1E1E",
+      "accent": "#B46A2C",
+      "background": "#1E1E1E"
+    },
+    "animationStyle": "subtle",
+    "camera": {
+      "fov": 38,
+      "near": 0.05,
+      "far": 50
+    },
+    "assetPaths": {
+      "meshes": "/Meshes",
+      "textures": "/Textures",
+      "audio": "/Audio"
+    },
+    "lightingPreset": "studio",
+    "qualityPreset": "auto"
+  },
+  "_version": 3
+}

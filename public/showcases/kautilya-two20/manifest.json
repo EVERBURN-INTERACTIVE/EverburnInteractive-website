@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "project": {
+    "id": "kautilya-two20",
+    "name": "Kautilya Two20",
+    "runtimeVersion": "0.1.0",
+    "startupSceneId": "scene-two20"
+  },
+  "baseUrl": "/showcases/kautilya-two20/",
+  "bundle": "runtime.js",
+  "project_json": "project.json",
+  "qualityProfile": "auto",
+  "assets": [
+    {
+      "id": "tex-belfast_sunset_puresky",
+      "path": "assets/textures/belfast_sunset_puresky.jpg",
+      "type": "texture",
+      "size": 73836,
+      "mimeType": "image/jpeg",
+      "name": "belfast_sunset_puresky.jpg"
+    },
+    {
+      "id": "tex-clean_asphalt",
+      "path": "assets/textures/clean_asphalt.jpg",
+      "type": "texture",
+      "size": 28239,
+      "mimeType": "image/jpeg",
+      "name": "clean_asphalt.jpg"
+    },
+    {
+      "id": "tex-concrete_floor_worn_001",
+      "path": "assets/textures/concrete_floor_worn_001.jpg",
+      "type": "texture",
+      "size": 25454,
+      "mimeType": "image/jpeg",
+      "name": "concrete_floor_worn_001.jpg"
+    },
+    {
+      "id": "tex-grass_ground",
+      "path": "assets/textures/grass_ground.jpg",
+      "type": "texture",
+      "size": 63232,
+      "mimeType": "image/jpeg",
+      "name": "grass_ground.jpg"
+    },
+    {
+      "id": "tex-rectangular_facade_tiles",
+      "path": "assets/textures/rectangular_facade_tiles.jpg",
+      "type": "texture",
+      "size": 26524,
+      "mimeType": "image/jpeg",
+      "name": "rectangular_facade_tiles.jpg"
+    }
+  ]
+}

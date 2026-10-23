@@ -1,0 +1,21 @@
+{
+  "id": "kautilya-two20",
+  "name": "Kautilya Two20",
+  "runtimeVersion": "0.1.0",
+  "siteSlug": "kautilya-two20",
+  "startupSceneId": "scene-two20",
+  "scenes": [
+    {
+      "id": "scene-two20",
+      "name": "Kautilya Two20",
+      "settings": {
+        "background": "#2a140e",
+        "qualityPreset": "auto"
+      },
+      "actors": []
+    }
+  ],
+  "assets": [],
+  "folders": [],
+  "_version": 3
+}

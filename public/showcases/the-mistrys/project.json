@@ -1,0 +1,1487 @@
+{
+  "id": "starter-the-mistrys",
+  "name": "The Mistrys",
+  "runtimeVersion": "0.1.0",
+  "scenes": [
+    {
+      "id": "scene-the-mistrys",
+      "name": "Hero",
+      "settings": {
+        "background": "#F7F7F5",
+        "clearColor": true,
+        "clearDepth": true,
+        "qualityPreset": "high"
+      },
+      "actors": [
+        {
+          "id": "actor-product-viewer",
+          "name": "Product Viewer",
+          "components": [
+            {
+              "type": "TransformComponent",
+              "props": {
+                "_version": 1,
+                "position": [
+                  0,
+                  0,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  0
+                ],
+                "scale": [
+                  1,
+                  1,
+                  1
+                ]
+              }
+            },
+            {
+              "type": "ProductViewerComponent",
+              "props": {
+                "_version": 1,
+                "lightingPreset": "studio",
+                "enableOrbit": true,
+                "autoRotate": true,
+                "autoRotateSpeed": 0.22,
+                "minDistance": 2.15,
+                "maxDistance": 7.4,
+                "showPlaceholderOnError": true,
+                "meshAssetId": "mesh-anchor"
+              }
+            }
+          ]
+        },
+        {
+          "id": "actor-env",
+          "name": "Environment",
+          "components": [
+            {
+              "type": "TransformComponent",
+              "props": {
+                "_version": 1,
+                "position": [
+                  0,
+                  0,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  0
+                ],
+                "scale": [
+                  1,
+                  1,
+                  1
+                ]
+              }
+            },
+            {
+              "type": "EnvironmentComponent",
+              "props": {
+                "_version": 1,
+                "backgroundMode": "color",
+                "backgroundColor": [
+                  0.9686274509803922,
+                  0.9686274509803922,
+                  0.9607843137254902
+                ],
+                "useHdriAsEnvironment": true,
+                "hdriBlurriness": 0,
+                "fog": {
+                  "enabled": false,
+                  "color": [
+                    0.97,
+                    0.97,
+                    0.96
+                  ],
+                  "near": 20,
+                  "far": 40
+                },
+                "exposure": 1.08
+              }
+            }
+          ]
+        },
+        {
+          "id": "actor-rug",
+          "name": "Rug",
+          "components": [
+            {
+              "type": "TransformComponent",
+              "props": {
+                "_version": 1,
+                "position": [
+                  0,
+                  -0.359,
+                  0.02
+                ],
+                "rotation": [
+                  -1.5707963267948966,
+                  0,
+                  0
+                ],
+                "scale": [
+                  3.2,
+                  2.15,
+                  1
+                ]
+              }
+            },
+            {
+              "type": "MeshRendererComponent",
+              "props": {
+                "_version": 1,
+                "shape": "plane",
+                "color": [
+                  0.7912979403326302,
+                  0.7379104087727308,
+                  0.6583748172794486
+                ],
+                "metalness": 0,
+                "roughness": 0.96,
+                "size": 1,
+                "castShadow": false,
+                "receiveShadow": true,
+                "opacity": 1,
+                "emissiveIntensity": 0,
+                "wireframe": false,
+                "glitchIntensity": 0,
+                "dissolveProgress": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "actor-contact-shadow",
+          "name": "Contact Shadow",
+          "components": [
+            {
+              "type": "TransformComponent",
+              "props": {
+                "_version": 1,
+                "position": [
+                  0,
+                  -0.348,
+                  0.02
+                ],
+                "rotation": [
+                  -1.5707963267948966,
+                  0,
+                  0
+                ],
+                "scale": [
+                  2.25,
+                  1.2,
+                  1
+                ]
+              }
+            },
+            {
+              "type": "MeshRendererComponent",
+              "props": {
+                "_version": 1,
+                "shape": "plane",
+                "color": [
+                  0,
+                  0,
+                  0
+                ],
+                "metalness": 0,
+                "roughness": 1,
+                "size": 1,
+                "castShadow": false,
+                "receiveShadow": false,
+                "opacity": 0.98,
+                "emissiveIntensity": 0,
+                "wireframe": false,
+                "glitchIntensity": 0,
+                "dissolveProgress": 1,
+                "textureAssetId": "tex-contact-shadow"
+              }
+            }
+          ]
+        },
+        {
+          "id": "actor-sofa-fabric",
+          "name": "Sofa Fabric",
+          "components": [
+            {
+              "type": "TransformComponent",
+              "props": {
+                "_version": 1,
+                "position": [
+                  0,
+                  0,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  0
+                ],
+                "scale": [
+                  1,
+                  1,
+                  1
+                ]
+              }
+            },
+            {
+              "type": "MeshRendererComponent",
+              "props": {
+                "_version": 1,
+                "shape": "box",
+                "color": [
+                  0.017641954488384078,
+                  0.0953074666309647,
+                  0.27467731206038465
+                ],
+                "metalness": 0,
+                "roughness": 0.7,
+                "size": 1,
+                "castShadow": true,
+                "receiveShadow": true,
+                "opacity": 1,
+                "emissiveIntensity": 0,
+                "wireframe": false,
+                "glitchIntensity": 0,
+                "dissolveProgress": 1,
+                "meshAssetId": "sofa-fabric"
+              }
+            },
+            {
+              "type": "ConfiguratorComponent",
+              "props": {
+                "_version": 1,
+                "variants": [
+                  {
+                    "id": "cream-linen",
+                    "name": "Cream Linen",
+                    "slots": [
+                      {
+                        "slotName": "fabric",
+                        "color": [
+                          0.8962693533742664,
+                          0.7912979403326302,
+                          0.6583748172794486
+                        ],
+                        "textureAssetId": "tex-rough-linen",
+                        "roughness": 0.88,
+                        "metalness": 0
+                      },
+                      {
+                        "slotName": "piping",
+                        "color": [
+                          0.5915377732270158,
+                          0.522256640619536,
+                          0.4345273794044361
+                        ],
+                        "textureAssetId": "tex-rough-linen",
+                        "roughness": 0.5,
+                        "metalness": 0
+                      }
+                    ]
+                  },
+                  {
+                    "id": "navy-velvet",
+                    "name": "Navy Velvet",
+                    "slots": [
+                      {
+                        "slotName": "fabric",
+                        "color": [
+                          0.017641954488384078,
+                          0.0953074666309647,
+                          0.27467731206038465
+                        ],
+                        "textureAssetId": "tex-velour-velvet",
+                        "roughness": 0.74,
+                        "metalness": 0
+                      },
+                      {
+                        "slotName": "piping",
+                        "color": [
+                          0.011643689962333491,
+                          0.0629029279764367,
+                          0.18128702595985388
+                        ],
+                        "textureAssetId": "tex-velour-velvet",
+                        "roughness": 0.5,
+                        "metalness": 0
+                      }
+                    ]
+                  },
+                  {
+                    "id": "grey-herringbone",
+                    "name": "Grey Herringbone",
+                    "slots": [
+                      {
+                        "slotName": "fabric",
+                        "color": [
+                          1,
+                          1,
+                          1
+                        ],
+                        "textureAssetId": "tex-herringbone",
+                        "roughness": 0.82,
+                        "metalness": 0
+                      },
+                      {
+                        "slotName": "piping",
+                        "color": [
+                          0.66,
+                          0.66,
+                          0.66
+                        ],
+                        "textureAssetId": "tex-herringbone",
+                        "roughness": 0.5,
+                        "metalness": 0
+                      }
+                    ]
+                  },
+                  {
+                    "id": "oatmeal-boucle",
+                    "name": "Oatmeal Bouclé",
+                    "slots": [
+                      {
+                        "slotName": "fabric",
+                        "color": [
+                          0.7758222183174236,
+                          0.6307571363461468,
+                          0.45641102318040466
+                        ],
+                        "textureAssetId": "tex-wool-boucle",
+                        "roughness": 0.92,
+                        "metalness": 0
+                      },
+                      {
+                        "slotName": "piping",
+                        "color": [
+                          0.5120426640894996,
+                          0.41629970998845695,
+                          0.30123127529906707
+                        ],
+                        "textureAssetId": "tex-wool-boucle",
+                        "roughness": 0.5,
+                        "metalness": 0
+                      }
+                    ]
+                  },
+                  {
+                    "id": "tan-leather",
+                    "name": "Tan Leather",
+                    "slots": [
+                      {
+                        "slotName": "fabric",
+                        "color": [
+                          1,
+                          1,
+                          1
+                        ],
+                        "textureAssetId": "tex-brown-leather",
+                        "roughness": 0.46,
+                        "metalness": 0
+                      },
+                      {
+                        "slotName": "piping",
+                        "color": [
+                          0.66,
+                          0.66,
+                          0.66
+                        ],
+                        "textureAssetId": "tex-brown-leather",
+                        "roughness": 0.46,
+                        "metalness": 0
+                      }
+                    ]
+                  },
+                  {
+                    "id": "white-leather",
+                    "name": "White Leather",
+                    "slots": [
+                      {
+                        "slotName": "fabric",
+                        "color": [
+                          0.9301108583754237,
+                          0.9046611743911496,
+                          0.8631572134541023
+                        ],
+                        "textureAssetId": "tex-leather-white",
+                        "roughness": 0.4,
+                        "metalness": 0
+                      },
+                      {
+                        "slotName": "piping",
+                        "color": [
+                          0.6138731665277797,
+                          0.5970763750981587,
+                          0.5696837608797076
+                        ],
+                        "textureAssetId": "tex-leather-white",
+                        "roughness": 0.4,
+                        "metalness": 0
+                      }
+                    ]
+                  }
+                ],
+                "showOptionPanel": false,
+                "targetActorId": "actor-sofa-fabric",
+                "activeVariantId": "navy-velvet"
+              }
+            }
+          ]
+        },
+        {
+          "id": "actor-sofa-wood",
+          "name": "Sofa Wood",
+          "components": [
+            {
+              "type": "TransformComponent",
+              "props": {
+                "_version": 1,
+                "position": [
+                  0,
+                  0,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  0
+                ],
+                "scale": [
+                  1,
+                  1,
+                  1
+                ]
+              }
+            },
+            {
+              "type": "MeshRendererComponent",
+              "props": {
+                "_version": 1,
+                "shape": "box",
+                "color": [
+                  0.017641954488384078,
+                  0.0953074666309647,
+                  0.27467731206038465
+                ],
+                "metalness": 0,
+                "roughness": 0.7,
+                "size": 1,
+                "castShadow": true,
+                "receiveShadow": true,
+                "opacity": 1,
+                "emissiveIntensity": 0,
+                "wireframe": false,
+                "glitchIntensity": 0,
+                "dissolveProgress": 1,
+                "meshAssetId": "sofa-wood"
+              }
+            },
+            {
+              "type": "ConfiguratorComponent",
+              "props": {
+                "_version": 1,
+                "variants": [
+                  {
+                    "id": "natural-teak",
+                    "name": "Natural Teak",
+                    "slots": [
+                      {
+                        "slotName": "wood",
+                        "color": [
+                          1,
+                          1,
+                          1
+                        ],
+                        "textureAssetId": "tex-teak",
+                        "roughness": 0.55,
+                        "metalness": 0
+                      }
+                    ]
+                  },
+                  {
+                    "id": "walnut-tone",
+                    "name": "Walnut-tone",
+                    "slots": [
+                      {
+                        "slotName": "wood",
+                        "color": [
+                          1,
+                          1,
+                          1
+                        ],
+                        "textureAssetId": "tex-walnut",
+                        "roughness": 0.5,
+                        "metalness": 0
+                      }
+                    ]
+                  },
+                  {
+                    "id": "sheesham-tone",
+                    "name": "Sheesham-tone",
+                    "slots": [
+                      {
+                        "slotName": "wood",
+                        "color": [
+                          1,
+                          1,
+                          1
+                        ],
+                        "textureAssetId": "tex-rosewood",
+                        "roughness": 0.48,
+                        "metalness": 0
+                      }
+                    ]
+                  }
+                ],
+                "showOptionPanel": false,
+                "targetActorId": "actor-sofa-wood",
+                "activeVariantId": "natural-teak"
+              }
+            }
+          ]
+        },
+        {
+          "id": "actor-proxy-fabric-cream-linen",
+          "name": "fabric Cream Linen",
+          "components": [
+            {
+              "type": "TransformComponent",
+              "props": {
+                "_version": 1,
+                "position": [
+                  0,
+                  -8,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  0
+                ],
+                "scale": [
+                  1,
+                  1,
+                  1
+                ]
+              }
+            },
+            {
+              "type": "UIButtonComponent",
+              "props": {
+                "_version": 1,
+                "anchor": "top-left",
+                "offset": [
+                  -4000,
+                  -4000
+                ],
+                "width": 4,
+                "height": 4,
+                "zIndex": 0,
+                "opacity": 0,
+                "visible": true,
+                "pointerEvents": "none",
+                "className": "swap-proxy fabric-cream-linen",
+                "paddingPx": 0,
+                "borderRadiusPx": 0,
+                "text": "Cream Linen",
+                "color": "#ffffff",
+                "backgroundColor": "rgba(60,90,255,0.95)",
+                "hoverBackgroundColor": "rgba(80,110,255,1)",
+                "fontFamily": "system-ui, sans-serif",
+                "fontSizePx": 16,
+                "fontWeight": "600",
+                "eventName": "configurator:variant:cream-linen",
+                "disabled": false
+              }
+            },
+            {
+              "type": "ConfiguratorHudRelayComponent",
+              "props": {
+                "_version": 1,
+                "ownerActorId": "actor-sofa-fabric"
+              }
+            }
+          ]
+        },
+        {
+          "id": "actor-proxy-fabric-navy-velvet",
+          "name": "fabric Navy Velvet",
+          "components": [
+            {
+              "type": "TransformComponent",
+              "props": {
+                "_version": 1,
+                "position": [
+                  0,
+                  -8,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  0
+                ],
+                "scale": [
+                  1,
+                  1,
+                  1
+                ]
+              }
+            },
+            {
+              "type": "UIButtonComponent",
+              "props": {
+                "_version": 1,
+                "anchor": "top-left",
+                "offset": [
+                  -4000,
+                  -4000
+                ],
+                "width": 4,
+                "height": 4,
+                "zIndex": 0,
+                "opacity": 0,
+                "visible": true,
+                "pointerEvents": "none",
+                "className": "swap-proxy fabric-navy-velvet",
+                "paddingPx": 0,
+                "borderRadiusPx": 0,
+                "text": "Navy Velvet",
+                "color": "#ffffff",
+                "backgroundColor": "rgba(60,90,255,0.95)",
+                "hoverBackgroundColor": "rgba(80,110,255,1)",
+                "fontFamily": "system-ui, sans-serif",
+                "fontSizePx": 16,
+                "fontWeight": "600",
+                "eventName": "configurator:variant:navy-velvet",
+                "disabled": false
+              }
+            },
+            {
+              "type": "ConfiguratorHudRelayComponent",
+              "props": {
+                "_version": 1,
+                "ownerActorId": "actor-sofa-fabric"
+              }
+            }
+          ]
+        },
+        {
+          "id": "actor-proxy-fabric-grey-herringbone",
+          "name": "fabric Grey Herringbone",
+          "components": [
+            {
+              "type": "TransformComponent",
+              "props": {
+                "_version": 1,
+                "position": [
+                  0,
+                  -8,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  0
+                ],
+                "scale": [
+                  1,
+                  1,
+                  1
+                ]
+              }
+            },
+            {
+              "type": "UIButtonComponent",
+              "props": {
+                "_version": 1,
+                "anchor": "top-left",
+                "offset": [
+                  -4000,
+                  -4000
+                ],
+                "width": 4,
+                "height": 4,
+                "zIndex": 0,
+                "opacity": 0,
+                "visible": true,
+                "pointerEvents": "none",
+                "className": "swap-proxy fabric-grey-herringbone",
+                "paddingPx": 0,
+                "borderRadiusPx": 0,
+                "text": "Grey Herringbone",
+                "color": "#ffffff",
+                "backgroundColor": "rgba(60,90,255,0.95)",
+                "hoverBackgroundColor": "rgba(80,110,255,1)",
+                "fontFamily": "system-ui, sans-serif",
+                "fontSizePx": 16,
+                "fontWeight": "600",
+                "eventName": "configurator:variant:grey-herringbone",
+                "disabled": false
+              }
+            },
+            {
+              "type": "ConfiguratorHudRelayComponent",
+              "props": {
+                "_version": 1,
+                "ownerActorId": "actor-sofa-fabric"
+              }
+            }
+          ]
+        },
+        {
+          "id": "actor-proxy-fabric-oatmeal-boucle",
+          "name": "fabric Oatmeal Bouclé",
+          "components": [
+            {
+              "type": "TransformComponent",
+              "props": {
+                "_version": 1,
+                "position": [
+                  0,
+                  -8,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  0
+                ],
+                "scale": [
+                  1,
+                  1,
+                  1
+                ]
+              }
+            },
+            {
+              "type": "UIButtonComponent",
+              "props": {
+                "_version": 1,
+                "anchor": "top-left",
+                "offset": [
+                  -4000,
+                  -4000
+                ],
+                "width": 4,
+                "height": 4,
+                "zIndex": 0,
+                "opacity": 0,
+                "visible": true,
+                "pointerEvents": "none",
+                "className": "swap-proxy fabric-oatmeal-boucle",
+                "paddingPx": 0,
+                "borderRadiusPx": 0,
+                "text": "Oatmeal Bouclé",
+                "color": "#ffffff",
+                "backgroundColor": "rgba(60,90,255,0.95)",
+                "hoverBackgroundColor": "rgba(80,110,255,1)",
+                "fontFamily": "system-ui, sans-serif",
+                "fontSizePx": 16,
+                "fontWeight": "600",
+                "eventName": "configurator:variant:oatmeal-boucle",
+                "disabled": false
+              }
+            },
+            {
+              "type": "ConfiguratorHudRelayComponent",
+              "props": {
+                "_version": 1,
+                "ownerActorId": "actor-sofa-fabric"
+              }
+            }
+          ]
+        },
+        {
+          "id": "actor-proxy-fabric-tan-leather",
+          "name": "fabric Tan Leather",
+          "components": [
+            {
+              "type": "TransformComponent",
+              "props": {
+                "_version": 1,
+                "position": [
+                  0,
+                  -8,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  0
+                ],
+                "scale": [
+                  1,
+                  1,
+                  1
+                ]
+              }
+            },
+            {
+              "type": "UIButtonComponent",
+              "props": {
+                "_version": 1,
+                "anchor": "top-left",
+                "offset": [
+                  -4000,
+                  -4000
+                ],
+                "width": 4,
+                "height": 4,
+                "zIndex": 0,
+                "opacity": 0,
+                "visible": true,
+                "pointerEvents": "none",
+                "className": "swap-proxy fabric-tan-leather",
+                "paddingPx": 0,
+                "borderRadiusPx": 0,
+                "text": "Tan Leather",
+                "color": "#ffffff",
+                "backgroundColor": "rgba(60,90,255,0.95)",
+                "hoverBackgroundColor": "rgba(80,110,255,1)",
+                "fontFamily": "system-ui, sans-serif",
+                "fontSizePx": 16,
+                "fontWeight": "600",
+                "eventName": "configurator:variant:tan-leather",
+                "disabled": false
+              }
+            },
+            {
+              "type": "ConfiguratorHudRelayComponent",
+              "props": {
+                "_version": 1,
+                "ownerActorId": "actor-sofa-fabric"
+              }
+            }
+          ]
+        },
+        {
+          "id": "actor-proxy-fabric-white-leather",
+          "name": "fabric White Leather",
+          "components": [
+            {
+              "type": "TransformComponent",
+              "props": {
+                "_version": 1,
+                "position": [
+                  0,
+                  -8,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  0
+                ],
+                "scale": [
+                  1,
+                  1,
+                  1
+                ]
+              }
+            },
+            {
+              "type": "UIButtonComponent",
+              "props": {
+                "_version": 1,
+                "anchor": "top-left",
+                "offset": [
+                  -4000,
+                  -4000
+                ],
+                "width": 4,
+                "height": 4,
+                "zIndex": 0,
+                "opacity": 0,
+                "visible": true,
+                "pointerEvents": "none",
+                "className": "swap-proxy fabric-white-leather",
+                "paddingPx": 0,
+                "borderRadiusPx": 0,
+                "text": "White Leather",
+                "color": "#ffffff",
+                "backgroundColor": "rgba(60,90,255,0.95)",
+                "hoverBackgroundColor": "rgba(80,110,255,1)",
+                "fontFamily": "system-ui, sans-serif",
+                "fontSizePx": 16,
+                "fontWeight": "600",
+                "eventName": "configurator:variant:white-leather",
+                "disabled": false
+              }
+            },
+            {
+              "type": "ConfiguratorHudRelayComponent",
+              "props": {
+                "_version": 1,
+                "ownerActorId": "actor-sofa-fabric"
+              }
+            }
+          ]
+        },
+        {
+          "id": "actor-proxy-wood-natural-teak",
+          "name": "wood Natural Teak",
+          "components": [
+            {
+              "type": "TransformComponent",
+              "props": {
+                "_version": 1,
+                "position": [
+                  0,
+                  -8,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  0
+                ],
+                "scale": [
+                  1,
+                  1,
+                  1
+                ]
+              }
+            },
+            {
+              "type": "UIButtonComponent",
+              "props": {
+                "_version": 1,
+                "anchor": "top-left",
+                "offset": [
+                  -4000,
+                  -4000
+                ],
+                "width": 4,
+                "height": 4,
+                "zIndex": 0,
+                "opacity": 0,
+                "visible": true,
+                "pointerEvents": "none",
+                "className": "swap-proxy wood-natural-teak",
+                "paddingPx": 0,
+                "borderRadiusPx": 0,
+                "text": "Natural Teak",
+                "color": "#ffffff",
+                "backgroundColor": "rgba(60,90,255,0.95)",
+                "hoverBackgroundColor": "rgba(80,110,255,1)",
+                "fontFamily": "system-ui, sans-serif",
+                "fontSizePx": 16,
+                "fontWeight": "600",
+                "eventName": "configurator:variant:natural-teak",
+                "disabled": false
+              }
+            },
+            {
+              "type": "ConfiguratorHudRelayComponent",
+              "props": {
+                "_version": 1,
+                "ownerActorId": "actor-sofa-wood"
+              }
+            }
+          ]
+        },
+        {
+          "id": "actor-proxy-wood-walnut-tone",
+          "name": "wood Walnut-tone",
+          "components": [
+            {
+              "type": "TransformComponent",
+              "props": {
+                "_version": 1,
+                "position": [
+                  0,
+                  -8,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  0
+                ],
+                "scale": [
+                  1,
+                  1,
+                  1
+                ]
+              }
+            },
+            {
+              "type": "UIButtonComponent",
+              "props": {
+                "_version": 1,
+                "anchor": "top-left",
+                "offset": [
+                  -4000,
+                  -4000
+                ],
+                "width": 4,
+                "height": 4,
+                "zIndex": 0,
+                "opacity": 0,
+                "visible": true,
+                "pointerEvents": "none",
+                "className": "swap-proxy wood-walnut-tone",
+                "paddingPx": 0,
+                "borderRadiusPx": 0,
+                "text": "Walnut-tone",
+                "color": "#ffffff",
+                "backgroundColor": "rgba(60,90,255,0.95)",
+                "hoverBackgroundColor": "rgba(80,110,255,1)",
+                "fontFamily": "system-ui, sans-serif",
+                "fontSizePx": 16,
+                "fontWeight": "600",
+                "eventName": "configurator:variant:walnut-tone",
+                "disabled": false
+              }
+            },
+            {
+              "type": "ConfiguratorHudRelayComponent",
+              "props": {
+                "_version": 1,
+                "ownerActorId": "actor-sofa-wood"
+              }
+            }
+          ]
+        },
+        {
+          "id": "actor-proxy-wood-sheesham-tone",
+          "name": "wood Sheesham-tone",
+          "components": [
+            {
+              "type": "TransformComponent",
+              "props": {
+                "_version": 1,
+                "position": [
+                  0,
+                  -8,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  0
+                ],
+                "scale": [
+                  1,
+                  1,
+                  1
+                ]
+              }
+            },
+            {
+              "type": "UIButtonComponent",
+              "props": {
+                "_version": 1,
+                "anchor": "top-left",
+                "offset": [
+                  -4000,
+                  -4000
+                ],
+                "width": 4,
+                "height": 4,
+                "zIndex": 0,
+                "opacity": 0,
+                "visible": true,
+                "pointerEvents": "none",
+                "className": "swap-proxy wood-sheesham-tone",
+                "paddingPx": 0,
+                "borderRadiusPx": 0,
+                "text": "Sheesham-tone",
+                "color": "#ffffff",
+                "backgroundColor": "rgba(60,90,255,0.95)",
+                "hoverBackgroundColor": "rgba(80,110,255,1)",
+                "fontFamily": "system-ui, sans-serif",
+                "fontSizePx": 16,
+                "fontWeight": "600",
+                "eventName": "configurator:variant:sheesham-tone",
+                "disabled": false
+              }
+            },
+            {
+              "type": "ConfiguratorHudRelayComponent",
+              "props": {
+                "_version": 1,
+                "ownerActorId": "actor-sofa-wood"
+              }
+            }
+          ]
+        },
+        {
+          "id": "actor-main-camera",
+          "name": "Main Camera",
+          "components": [
+            {
+              "type": "TransformComponent",
+              "props": {
+                "_version": 1,
+                "position": [
+                  1.62,
+                  0.32,
+                  2.52
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  0
+                ],
+                "scale": [
+                  1,
+                  1,
+                  1
+                ]
+              }
+            },
+            {
+              "type": "CameraComponent",
+              "props": {
+                "_version": 1,
+                "projection": "perspective",
+                "fov": 30,
+                "orthoSize": 5,
+                "near": 0.05,
+                "far": 40,
+                "isMain": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "actor-fill-light",
+          "name": "Fill Light",
+          "components": [
+            {
+              "type": "TransformComponent",
+              "props": {
+                "_version": 1,
+                "position": [
+                  -2.1,
+                  1.15,
+                  1.7
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  0
+                ],
+                "scale": [
+                  1,
+                  1,
+                  1
+                ]
+              }
+            },
+            {
+              "type": "LightComponent",
+              "props": {
+                "_version": 1,
+                "kind": "directional",
+                "color": [
+                  0.9,
+                  0.93,
+                  1
+                ],
+                "skyColor": [
+                  0.5,
+                  0.7,
+                  1
+                ],
+                "intensity": 0.42,
+                "distance": 0,
+                "angle": 0.5235987755982988,
+                "penumbra": 0.1,
+                "decay": 2,
+                "castShadow": false
+              }
+            }
+          ]
+        },
+        {
+          "id": "actor-spot",
+          "name": "Shadow Spot",
+          "components": [
+            {
+              "type": "TransformComponent",
+              "props": {
+                "_version": 1,
+                "position": [
+                  0.85,
+                  2.7,
+                  1.35
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  0
+                ],
+                "scale": [
+                  1,
+                  1,
+                  1
+                ]
+              }
+            },
+            {
+              "type": "LightComponent",
+              "props": {
+                "_version": 1,
+                "kind": "spot",
+                "color": [
+                  1,
+                  0.97,
+                  0.92
+                ],
+                "skyColor": [
+                  0.5,
+                  0.7,
+                  1
+                ],
+                "intensity": 1.35,
+                "distance": 8,
+                "angle": 0.72,
+                "penumbra": 0.85,
+                "decay": 1,
+                "castShadow": true
+              }
+            }
+          ]
+        }
+      ],
+      "_version": 1
+    }
+  ],
+  "startupSceneId": "scene-the-mistrys",
+  "assets": [
+    {
+      "id": "tex-rough-linen",
+      "name": "Cream Linen",
+      "type": "texture",
+      "path": "/Textures/tex-rough-linen",
+      "meta": {
+        "sourceFile": "tex-rough-linen.jpg",
+        "mimeType": "image/jpeg"
+      },
+      "createdAt": 0,
+      "updatedAt": 0,
+      "_version": 1
+    },
+    {
+      "id": "tex-velour-velvet",
+      "name": "Navy Velvet",
+      "type": "texture",
+      "path": "/Textures/tex-velour-velvet",
+      "meta": {
+        "sourceFile": "tex-velour-velvet.jpg",
+        "mimeType": "image/jpeg"
+      },
+      "createdAt": 0,
+      "updatedAt": 0,
+      "_version": 1
+    },
+    {
+      "id": "tex-herringbone",
+      "name": "Grey Herringbone",
+      "type": "texture",
+      "path": "/Textures/tex-herringbone",
+      "meta": {
+        "sourceFile": "tex-herringbone.jpg",
+        "mimeType": "image/jpeg"
+      },
+      "createdAt": 0,
+      "updatedAt": 0,
+      "_version": 1
+    },
+    {
+      "id": "tex-wool-boucle",
+      "name": "Oatmeal Bouclé",
+      "type": "texture",
+      "path": "/Textures/tex-wool-boucle",
+      "meta": {
+        "sourceFile": "tex-wool-boucle.jpg",
+        "mimeType": "image/jpeg"
+      },
+      "createdAt": 0,
+      "updatedAt": 0,
+      "_version": 1
+    },
+    {
+      "id": "tex-brown-leather",
+      "name": "Tan Leather",
+      "type": "texture",
+      "path": "/Textures/tex-brown-leather",
+      "meta": {
+        "sourceFile": "tex-brown-leather.jpg",
+        "mimeType": "image/jpeg"
+      },
+      "createdAt": 0,
+      "updatedAt": 0,
+      "_version": 1
+    },
+    {
+      "id": "tex-leather-white",
+      "name": "White Leather",
+      "type": "texture",
+      "path": "/Textures/tex-leather-white",
+      "meta": {
+        "sourceFile": "tex-leather-white.jpg",
+        "mimeType": "image/jpeg"
+      },
+      "createdAt": 0,
+      "updatedAt": 0,
+      "_version": 1
+    },
+    {
+      "id": "tex-teak",
+      "name": "Natural Teak",
+      "type": "texture",
+      "path": "/Textures/tex-teak",
+      "meta": {
+        "sourceFile": "tex-teak.jpg",
+        "mimeType": "image/jpeg"
+      },
+      "createdAt": 0,
+      "updatedAt": 0,
+      "_version": 1
+    },
+    {
+      "id": "tex-walnut",
+      "name": "Walnut-tone",
+      "type": "texture",
+      "path": "/Textures/tex-walnut",
+      "meta": {
+        "sourceFile": "tex-walnut.jpg",
+        "mimeType": "image/jpeg"
+      },
+      "createdAt": 0,
+      "updatedAt": 0,
+      "_version": 1
+    },
+    {
+      "id": "tex-rosewood",
+      "name": "Sheesham-tone",
+      "type": "texture",
+      "path": "/Textures/tex-rosewood",
+      "meta": {
+        "sourceFile": "tex-rosewood.jpg",
+        "mimeType": "image/jpeg"
+      },
+      "createdAt": 0,
+      "updatedAt": 0,
+      "_version": 1
+    },
+    {
+      "id": "tex-contact-shadow",
+      "name": "Contact Shadow",
+      "type": "texture",
+      "path": "/Textures/tex-contact-shadow",
+      "meta": {
+        "sourceFile": "tex-contact-shadow.png",
+        "mimeType": "image/png"
+      },
+      "createdAt": 0,
+      "updatedAt": 0,
+      "_version": 1
+    },
+    {
+      "id": "sofa-fabric",
+      "name": "Sofa fabric",
+      "type": "mesh",
+      "path": "/Meshes/sofa-fabric.glb",
+      "meta": {
+        "sourceFile": "sofa-fabric.glb",
+        "mimeType": "model/gltf-binary"
+      },
+      "createdAt": 0,
+      "updatedAt": 0,
+      "_version": 1
+    },
+    {
+      "id": "sofa-wood",
+      "name": "Sofa wood",
+      "type": "mesh",
+      "path": "/Meshes/sofa-wood.glb",
+      "meta": {
+        "sourceFile": "sofa-wood.glb",
+        "mimeType": "model/gltf-binary"
+      },
+      "createdAt": 0,
+      "updatedAt": 0,
+      "_version": 1
+    },
+    {
+      "id": "mesh-anchor",
+      "name": "Viewer anchor",
+      "type": "mesh",
+      "path": "/Meshes/mesh-anchor.glb",
+      "meta": {
+        "sourceFile": "mesh-anchor.glb",
+        "mimeType": "model/gltf-binary"
+      },
+      "createdAt": 0,
+      "updatedAt": 0,
+      "_version": 1
+    }
+  ],
+  "folders": [
+    {
+      "path": "/Scenes"
+    },
+    {
+      "path": "/Meshes"
+    },
+    {
+      "path": "/Textures"
+    },
+    {
+      "path": "/Materials"
+    },
+    {
+      "path": "/Audio"
+    },
+    {
+      "path": "/Fonts"
+    },
+    {
+      "path": "/Prefabs"
+    },
+    {
+      "path": "/Animations"
+    },
+    {
+      "path": "/Particles"
+    }
+  ],
+  "siteSlug": "the-mistrys",
+  "flameConfig": {
+    "_version": 1,
+    "name": "The Mistrys",
+    "slug": "the-mistrys",
+    "templateId": "product-viewer",
+    "brand": {
+      "primary": "#071C31",
+      "secondary": "#0B2945",
+      "accent": "#C8912E",
+      "background": "#F7F7F5"
+    },
+    "animationStyle": "subtle",
+    "camera": {
+      "fov": 34,
+      "near": 0.1,
+      "far": 100
+    },
+    "assetPaths": {
+      "meshes": "/Meshes",
+      "textures": "/Textures",
+      "audio": "/Audio"
+    },
+    "lightingPreset": "studio",
+    "qualityPreset": "auto"
+  },
+  "_version": 3
+}

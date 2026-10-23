@@ -1,0 +1,25 @@
+{
+  "_version": 1,
+  "name": "The Mistrys",
+  "slug": "the-mistrys",
+  "templateId": "product-viewer",
+  "brand": {
+    "primary": "#071C31",
+    "secondary": "#0B2945",
+    "accent": "#C8912E",
+    "background": "#F7F7F5"
+  },
+  "animationStyle": "subtle",
+  "camera": {
+    "fov": 34,
+    "near": 0.1,
+    "far": 100
+  },
+  "assetPaths": {
+    "meshes": "/Meshes",
+    "textures": "/Textures",
+    "audio": "/Audio"
+  },
+  "lightingPreset": "studio",
+  "qualityPreset": "auto"
+}

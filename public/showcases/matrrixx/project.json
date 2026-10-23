@@ -1,0 +1,6 @@
+{
+  "id": "matrrixx",
+  "name": "Matrrixx",
+  "runtimeVersion": "0.1.0",
+  "note": "Procedural bats are drawn by runtime.js. ConfiguratorComponent only swaps material colours and ProductViewerComponent only loads a GLTF, so neither hosts this bat."
+}

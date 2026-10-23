@@ -1,0 +1,2 @@
+# Keep published showcase builds byte-for-byte. autocrlf must not rewrite them.
+public/showcases/** -text

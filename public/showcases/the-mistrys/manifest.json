@@ -1,0 +1,119 @@
+{
+  "assets": [
+    {
+      "id": "mesh-anchor",
+      "mimeType": "model/gltf-binary",
+      "name": "Viewer anchor",
+      "path": "assets/mesh-anchor.glb",
+      "size": 1900,
+      "type": "mesh"
+    },
+    {
+      "id": "sofa-fabric",
+      "mimeType": "model/gltf-binary",
+      "name": "Sofa fabric",
+      "path": "assets/sofa-fabric.glb",
+      "size": 799076,
+      "type": "mesh"
+    },
+    {
+      "id": "sofa-wood",
+      "mimeType": "model/gltf-binary",
+      "name": "Sofa wood",
+      "path": "assets/sofa-wood.glb",
+      "size": 378404,
+      "type": "mesh"
+    },
+    {
+      "id": "tex-brown-leather",
+      "mimeType": "image/jpeg",
+      "name": "Tan Leather",
+      "path": "assets/tex-brown-leather.jpg",
+      "size": 50711,
+      "type": "texture"
+    },
+    {
+      "id": "tex-contact-shadow",
+      "mimeType": "image/png",
+      "name": "Contact Shadow",
+      "path": "assets/tex-contact-shadow.png",
+      "size": 25851,
+      "type": "texture"
+    },
+    {
+      "id": "tex-herringbone",
+      "mimeType": "image/jpeg",
+      "name": "Grey Herringbone",
+      "path": "assets/tex-herringbone.jpg",
+      "size": 77495,
+      "type": "texture"
+    },
+    {
+      "id": "tex-leather-white",
+      "mimeType": "image/jpeg",
+      "name": "White Leather",
+      "path": "assets/tex-leather-white.jpg",
+      "size": 27778,
+      "type": "texture"
+    },
+    {
+      "id": "tex-rosewood",
+      "mimeType": "image/jpeg",
+      "name": "Sheesham-tone",
+      "path": "assets/tex-rosewood.jpg",
+      "size": 64721,
+      "type": "texture"
+    },
+    {
+      "id": "tex-rough-linen",
+      "mimeType": "image/jpeg",
+      "name": "Cream Linen",
+      "path": "assets/tex-rough-linen.jpg",
+      "size": 22467,
+      "type": "texture"
+    },
+    {
+      "id": "tex-teak",
+      "mimeType": "image/jpeg",
+      "name": "Natural Teak",
+      "path": "assets/tex-teak.jpg",
+      "size": 47838,
+      "type": "texture"
+    },
+    {
+      "id": "tex-velour-velvet",
+      "mimeType": "image/jpeg",
+      "name": "Navy Velvet",
+      "path": "assets/tex-velour-velvet.jpg",
+      "size": 209567,
+      "type": "texture"
+    },
+    {
+      "id": "tex-walnut",
+      "mimeType": "image/jpeg",
+      "name": "Walnut-tone",
+      "path": "assets/tex-walnut.jpg",
+      "size": 46070,
+      "type": "texture"
+    },
+    {
+      "id": "tex-wool-boucle",
+      "mimeType": "image/jpeg",
+      "name": "Oatmeal Bouclé",
+      "path": "assets/tex-wool-boucle.jpg",
+      "size": 195570,
+      "type": "texture"
+    }
+  ],
+  "baseUrl": "/showcases/the-mistrys/",
+  "bundle": "runtime.js",
+  "project": {
+    "id": "starter-the-mistrys",
+    "name": "The Mistrys",
+    "runtimeVersion": "0.1.0",
+    "startupSceneId": "scene-the-mistrys"
+  },
+  "project_json": "project.json",
+  "qualityProfile": "auto",
+  "version": 1
+}
