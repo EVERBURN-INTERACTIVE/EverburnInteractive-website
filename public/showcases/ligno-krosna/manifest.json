@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "name": "LIGNO Stand Showcase",
+  "assets": [
+    {
+      "id": "mesh-ligno-stand",
+      "type": "mesh",
+      "path": "assets/models/ligno-stand.glb"
+    },
+    {
+      "id": "mesh-ligno-laptop",
+      "type": "mesh",
+      "path": "assets/models/ligno-laptop.glb"
+    }
+  ]
+}
