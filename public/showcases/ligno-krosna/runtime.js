@@ -31715,28 +31715,28 @@ var Hw = {
 	],
 	etsyUrl: "https://www.etsy.com/listing/1822313547/handcrafted-ash-wood-laptop-stand",
 	brandUrl: "https://ligno.com.ua/en/accessories/730-laptop-stand-krosna.html"
-}, Jw = 1500, Yw = .2, Xw = .52, Zw = .52, Qw = .64, $w = .66, eT = {
+}, Jw = 1500, Yw = .2, Xw = .52, Zw = .52, Qw = .64, $w = {
 	overview: [0, .2],
 	craft: [0, .22],
 	ergonomics: [.2, .64],
 	specs: [.62, .82],
 	buy: [.78, 1.01]
-}, tT = .22, nT = .28, rT = 2.2, iT = 9.5;
+}, eT = .22, tT = .28, nT = 2.2, rT = 9.5;
 //#endregion
 //#region src/sites/ligno-stand/main.ts
 W();
-async function aT() {
+async function iT() {
 	let e = document.getElementById("flamecore-canvas");
 	if (!(e instanceof HTMLCanvasElement)) throw Error("Expected #flamecore-canvas");
 	let t = document.getElementById("flamecore-loading"), n = document.getElementById("load-bar-fill"), r = document.getElementById("load-text"), i = document.getElementById("scroll-hint"), a = Array.from(document.querySelectorAll("[data-float]")), o = (e) => {
 		for (let t of a) {
 			let n = t.dataset.float;
-			if (!n || !(n in eT)) continue;
-			let [r, i] = eT[n];
+			if (!n || !(n in $w)) continue;
+			let [r, i] = $w[n];
 			t.classList.toggle("is-on", e >= r && e < i);
 		}
 	};
-	kT();
+	OT();
 	let s = (e, t) => {
 		n && (n.style.width = `${Math.round(e * 100)}%`), r && t && (r.textContent = t);
 	};
@@ -31768,32 +31768,32 @@ async function aT() {
 	let p = c.context.renderer;
 	l.settings.background = Hw.background, l.settings.clearColor = !0;
 	let m = new R(Uw);
-	p.setClearColor(m, 1), p.toneMapping = 4, p.toneMappingExposure = 1.12, p.outputColorSpace = aa, l.threeScene.background = m, CT(l.threeScene), s(.18, "Loading ash stand…");
-	let h = await wT(c, f.object3D, Ww, "mesh-ligno-stand", (e) => s(.18 + e * .45, "Loading ash stand…")), g = gT(h.root), _ = _T(h.root);
-	_ ? (s(.9, "Preparing laptop…"), DT(_)) : (s(.66, "Loading laptop…"), _ = (await wT(c, f.object3D, Gw, "mesh-ligno-laptop", (e) => s(.66 + e * .28, "Loading laptop…"), { prepareMaterials: DT })).root);
+	p.setClearColor(m, 1), p.toneMapping = 4, p.toneMappingExposure = 1.12, p.outputColorSpace = aa, l.threeScene.background = m, ST(l.threeScene), s(.18, "Loading ash stand…");
+	let h = await CT(c, f.object3D, Ww, "mesh-ligno-stand", (e) => s(.18 + e * .45, "Loading ash stand…")), g = hT(h.root), _ = gT(h.root);
+	_ ? (s(.9, "Preparing laptop…"), ET(_)) : (s(.66, "Loading laptop…"), _ = (await CT(c, f.object3D, Gw, "mesh-ligno-laptop", (e) => s(.66 + e * .28, "Loading laptop…"), { prepareMaterials: ET })).root);
 	let v = { root: _ }, y = d.camera;
 	if (!y) throw Error("Main camera missing");
-	let b = uT(h.root), x = h.mixer, S = h.clips.map((e) => {
+	let b = lT(h.root), x = h.mixer, S = h.clips.map((e) => {
 		let t = x.clipAction(e);
 		return t.enabled = !0, t.setEffectiveWeight(1), t.play(), t.paused = !0, t;
-	}), C = Math.max(...h.clips.map((e) => e.duration), 1 / 24), w = sT(b, S, x, C, 0), T = sT(b, S, x, C, 1), E = pT(w, T);
-	!E && b.length >= 2 && (lT(w, T), E = pT(w, T)), mT(b, w);
-	let D = dT(b);
-	mT(b, T);
-	let O = dT(b);
-	mT(b, w);
-	let k = D.clone().union(O).getSize(new I()), A = rT / (Math.max(k.x, k.y, k.z) || 1);
-	h.root.scale.setScalar(A), mT(b, w), h.root.position.set(0, 0, 0), h.root.updateMatrixWorld(!0);
-	let j = dT(b).getCenter(new I());
+	}), C = Math.max(...h.clips.map((e) => e.duration), 1 / 24), w = oT(b, S, x, C, 0), T = oT(b, S, x, C, 1), E = fT(w, T);
+	!E && b.length >= 2 && (cT(w, T), E = fT(w, T)), pT(b, w);
+	let D = uT(b);
+	pT(b, T);
+	let O = uT(b);
+	pT(b, w);
+	let k = D.clone().union(O).getSize(new I()), A = nT / (Math.max(k.x, k.y, k.z) || 1);
+	h.root.scale.setScalar(A), pT(b, w), h.root.position.set(0, 0, 0), h.root.updateMatrixWorld(!0);
+	let j = uT(b).getCenter(new I());
 	h.root.position.copy(j).multiplyScalar(-1);
 	let ee = h.root.position.clone(), te = new I(0, 0, 0);
-	mT(b, w), h.root.updateMatrixWorld(!0);
-	let ne = dT(b).getCenter(new I());
-	mT(b, T), h.root.position.copy(ee), h.root.updateMatrixWorld(!0);
-	let re = dT(b).getCenter(new I());
-	mT(b, w), h.root.position.copy(ee);
-	let ie = g ?? gT(h.root), ae = !!(ie && v.root.parent === ie);
-	ae || ST(v.root), mT(b, T), h.root.position.copy(ee).add(te).sub(re), h.root.updateMatrixWorld(!0);
+	pT(b, w), h.root.updateMatrixWorld(!0);
+	let ne = uT(b).getCenter(new I());
+	pT(b, T), h.root.position.copy(ee), h.root.updateMatrixWorld(!0);
+	let re = uT(b).getCenter(new I());
+	pT(b, w), h.root.position.copy(ee);
+	let ie = g ?? hT(h.root), ae = !!(ie && v.root.parent === ie);
+	ae || xT(v.root), pT(b, T), h.root.position.copy(ee).add(te).sub(re), h.root.updateMatrixWorld(!0);
 	let oe = new I(), se = new so(), ce = 1, le = new I(0, ae ? 0 : .02, ae ? 0 : .008);
 	if (ie && ae) {
 		ie.visible = !0, ie.updateMatrixWorld(!0);
@@ -31804,50 +31804,44 @@ async function aT() {
 		let e = new I();
 		ie.matrixWorld.decompose(oe, se, e), ce = Math.max(e.x, e.y, e.z);
 	} else {
-		let e = vT(b, v.root);
+		let e = _T(b, v.root);
 		oe = e.position.clone(), se = e.quaternion.clone(), ce = e.scale, v.root.scale.setScalar(ce), v.root.quaternion.copy(se), v.root.position.copy(oe).add(le);
 	}
-	mT(b, w), h.root.position.copy(ee), OT(v.root, 0), v.root.visible = !1;
+	pT(b, w), h.root.position.copy(ee), DT(v.root, 0), v.root.visible = !1;
 	let ue = k.clone().multiplyScalar(A), de = Math.max(ue.x, ue.y, ue.z) * 1.65, fe = (e, t, n) => {
 		let r = e.elevation, i = e.azimuth, a = de * e.distance, o = Math.cos(r);
 		n.set(te.x, te.y + e.targetY * de, te.z), t.set(n.x + Math.sin(i) * o * a, n.y + Math.sin(r) * a, n.z + Math.cos(i) * o * a);
 	}, pe = () => typeof window < "u" && window.innerWidth <= 820, me = (e) => {
-		let t = pe(), n, r;
+		let t = pe(), n = t ? 1.26 : 1.12, r = t ? .4 : .34, i = t ? .02 : .03, a, o, s;
 		if (e <= .2) {
-			let i = NT(AT(e / Yw)), a = t ? 1.12 : .55;
-			n = a + i * ((t ? 1.18 : .72) - a), r = (t ? .36 : .22) + i * .05;
-		} else if (e <= .52) {
-			let i = NT(AT((e - Yw) / Math.max(Xw - Yw, 1e-4))), a = t ? 1.18 : .72;
-			n = a + i * ((t ? 1.26 : 1.12) - a), r = (t ? .4 : .28) + i * .06;
-		} else {
-			let i = NT(AT((e - Xw) / Math.max(1 - Xw, 1e-4))), a = t ? 1.26 : 1.12;
-			n = a + i * ((t ? 1.3 : 1.08) - a), r = (t ? .44 : .4) - i * .02;
-		}
-		let i = .03;
-		if (t) {
-			let t = .08, n = .02, r = -.16, a = Math.max($w + .08, Qw + .12);
-			i = e <= .2 ? t + NT(AT(e / Yw)) * (n - t) : e <= .52 ? n : e <= a ? n + NT(AT((e - Xw) / Math.max(a - Xw, 1e-4))) * (r - n) : r;
-		}
+			let n = MT(kT(e / Yw)), r = t ? 1.12 : .55;
+			a = r + n * ((t ? 1.18 : .72) - r), o = (t ? .36 : .22) + n * .05;
+			let c = t ? .08 : .03;
+			s = c + n * (i - c);
+		} else if (e < .52) {
+			let c = MT(kT((e - Yw) / Math.max(Xw - Yw, 1e-4))), l = t ? 1.18 : .72;
+			a = l + c * (n - l), o = (t ? .4 : .28) + c * (r - (t ? .4 : .28)), s = i;
+		} else a = n, o = r, s = i;
 		return {
 			azimuth: .42,
-			elevation: r,
-			distance: n,
-			targetY: i
+			elevation: o,
+			distance: a,
+			targetY: s
 		};
 	}, he = new I(), ge = new I(), _e = new I(), ve = new I();
 	fe(me(0), _e, ve), he.copy(_e), ge.copy(ve), y.position.copy(_e), y.near = .05, y.far = 200, y.updateProjectionMatrix();
 	let ye = new Hm(y, e);
-	ye.target.copy(ve), ye.enableDamping = !0, ye.dampingFactor = .07, ye.enableZoom = !1, ye.zoomSpeed = 0, ye.enablePan = !1, ye.minDistance = de * .35, ye.maxDistance = de * 3.2, ye.autoRotate = !1, ye.autoRotateSpeed = nT, ye.enableRotate = !1, ye.enabled = !1, ye.update(), "scrollRestoration" in history && (history.scrollRestoration = "manual"), window.scrollTo(0, 0);
+	ye.target.copy(ve), ye.enableDamping = !0, ye.dampingFactor = .07, ye.enableZoom = !1, ye.zoomSpeed = 0, ye.enablePan = !1, ye.minDistance = de * .35, ye.maxDistance = de * 3.2, ye.autoRotate = !1, ye.autoRotateSpeed = tT, ye.enableRotate = !1, ye.enabled = !1, ye.update(), "scrollRestoration" in history && (history.scrollRestoration = "manual"), window.scrollTo(0, 0);
 	let be = 0, xe = 0, Se = performance.now(), Ce = performance.now() + 200, we = performance.now(), M = 0, Te = !1, Ee = 0, De = 0, Oe = !1, ke = (e) => {
-		xe = AT(e);
-		let t = AT(xe / Xw);
-		E ? hT(b, w, T, t) : S.length > 0 && oT(S, x, C, t);
+		xe = kT(e);
+		let t = kT(xe / Xw);
+		E ? mT(b, w, T, t) : S.length > 0 && aT(S, x, C, t);
 		let n = ne.clone().lerp(re, t);
 		h.root.position.copy(ee).add(te).sub(n);
-		let r = MT(jT((xe - Zw) / Math.max(Qw - Zw, 1e-4)));
-		v.root.visible = r > .001, ae || (v.root.quaternion.copy(se), v.root.scale.setScalar(ce), v.root.position.copy(oe).addScaledVector(le, 1 - r)), OT(v.root, r), fe(me(xe), he, ge), o(xe), i && (xe >= .95 ? (i.textContent = Kw.idleHint, i.classList.add("is-hidden")) : xe >= .66 ? (i.textContent = Kw.hint, i.classList.remove("is-hidden")) : xe >= .52 ? (i.textContent = Kw.laptopHint, i.classList.remove("is-hidden")) : xe >= .2 ? (i.textContent = Kw.openHint, i.classList.remove("is-hidden")) : (i.textContent = Kw.hint, i.classList.remove("is-hidden")));
+		let r = jT(AT((xe - Zw) / Math.max(Qw - Zw, 1e-4)));
+		v.root.visible = r > .001, ae || (v.root.quaternion.copy(se), v.root.scale.setScalar(ce), v.root.position.copy(oe).addScaledVector(le, 1 - r)), DT(v.root, r), fe(me(xe), he, ge), o(xe), i && (xe >= .95 ? (i.textContent = Kw.idleHint, i.classList.add("is-hidden")) : xe >= .66 ? (i.textContent = Kw.hint, i.classList.remove("is-hidden")) : xe >= .52 ? (i.textContent = Kw.laptopHint, i.classList.remove("is-hidden")) : xe >= .2 ? (i.textContent = Kw.openHint, i.classList.remove("is-hidden")) : (i.textContent = Kw.hint, i.classList.remove("is-hidden")));
 	}, Ae = (e, t = !1) => {
-		if (be = AT(e), Se = performance.now(), Te = !1, ye.enabled = !1, ye.enableRotate = !1, ye.autoRotate = !1, !t) {
+		if (be = kT(e), Se = performance.now(), Te = !1, ye.enabled = !1, ye.enableRotate = !1, ye.autoRotate = !1, !t) {
 			let e = be * Jw;
 			Math.abs(window.scrollY - e) > 2 && (Ce = performance.now() + 80, window.scrollTo({
 				top: e,
@@ -31860,7 +31854,7 @@ async function aT() {
 		let t = e.deltaY / Jw * .85;
 		Ae(be + t);
 	}, { passive: !1 }), e.addEventListener("touchstart", (e) => {
-		e.touches.length === 1 && (Oe = !0, Ee = e.touches[0].clientY, De = be, Te = !1, ye.enabled = !1);
+		e.touches.length === 1 && (Oe = !0, Ee = e.touches[0].clientY, De = be, ye.enabled = !1);
 	}, { passive: !0 }), e.addEventListener("touchmove", (e) => {
 		if (!Oe || e.touches.length !== 1) return;
 		e.preventDefault();
@@ -31874,19 +31868,21 @@ async function aT() {
 		performance.now() < Ce || Oe || Ae(window.scrollY / Jw, !0);
 	}, { passive: !0 }), ke(xe), fe(me(xe), he, ge), _e.copy(he), ve.copy(ge), y.position.copy(_e), ye.target.copy(ve), window.addEventListener("resize", () => {
 		fe(me(xe), he, ge);
-	}, { passive: !0 }), c.events.on("afterUpdate", () => {
+	}, { passive: !0 }), ye.addEventListener("start", () => {
+		Te = !0;
+	}), c.events.on("afterUpdate", () => {
 		let e = performance.now(), t = Math.min(.05, (e - we) / 1e3);
 		if (we = e, Math.abs(be - xe) > 1e-4) {
-			let e = 1 - Math.exp(-iT * t);
+			let e = 1 - Math.exp(-rT * t);
 			xe += (be - xe) * e, Math.abs(be - xe) < 5e-4 && (xe = be);
 		}
-		ke(xe), M += tT * t, f.object3D.rotation.y = M;
+		ke(xe), M += eT * t, f.object3D.rotation.y = M;
 		let n = xe >= .985, r = _e.distanceTo(he), i = r < de * .025, a = Math.abs(be - xe), o = r > de * .12 || a > .3;
 		if (!Te) {
 			let e = 1 - Math.exp(-(o ? 11 : 7) * t);
 			_e.lerp(he, e), ve.lerp(ge, e), y.position.copy(_e), ye.target.copy(ve);
 		}
-		n && i && e - Se > 900 * 1.4 && (Te = !0, ye.enabled = !0, ye.enableRotate = !0), ye.enabled && ye.update();
+		n && i && e - Se > 900 * 1.4 && (ye.enabled = !0, ye.enableRotate = !0), ye.enabled && ye.update();
 	}), s(1, "Ready"), t?.classList.add("is-done");
 	let Me = {
 		mode: ae ? "blender-seat-helper" : "runtime-fit",
@@ -31912,8 +31908,8 @@ async function aT() {
 		})(),
 		seat: Me,
 		lip: (() => {
-			mT(b, T), h.root.position.copy(ee).add(te).sub(re), h.root.updateMatrixWorld(!0);
-			let e = bT(b), t = xT(b);
+			pT(b, T), h.root.position.copy(ee).add(te).sub(re), h.root.updateMatrixWorld(!0);
+			let e = yT(b), t = bT(b);
 			return ke(xe), {
 				midX: Number(e.midX.toFixed(3)),
 				gapX: Number(e.gapX.toFixed(3)),
@@ -31935,15 +31931,15 @@ async function aT() {
 		}
 	};
 }
-function oT(e, t, n, r) {
-	let i = AT(r) * n;
+function aT(e, t, n, r) {
+	let i = kT(r) * n;
 	for (let t of e) t.enabled = !0, t.paused = !0, t.time = Math.min(i, t.getClip().duration), t.setEffectiveWeight(1);
 	t.time = i, t.update(0);
 }
-function sT(e, t, n, r, i) {
-	return t.length > 0 && oT(t, n, r, i), fT(e);
+function oT(e, t, n, r, i) {
+	return t.length > 0 && aT(t, n, r, i), dT(e);
 }
-var cT = {
+var sT = {
 	Stand_Rail_01: {
 		position: [
 			-2.6,
@@ -31971,24 +31967,24 @@ var cT = {
 		]
 	}
 };
-function lT(e, t) {
+function cT(e, t) {
 	for (let n = 0; n < t.length; n++) {
-		let r = e[n]?.object.name, i = r ? cT[r] : void 0;
+		let r = e[n]?.object.name, i = r ? sT[r] : void 0;
 		!i || !t[n] || (t[n].position.set(...i.position), t[n].quaternion.set(...i.quaternion), t[n].scale.copy(e[n].scale));
 	}
 }
-function uT(e) {
+function lT(e) {
 	let t = [];
 	return e.traverse((e) => {
 		/^Stand_Rail_0[12]$/i.test(e.name) && t.push(e);
 	}), t.sort((e, t) => e.name.localeCompare(t.name)), t;
 }
-function dT(e) {
+function uT(e) {
 	let t = new uo();
 	for (let n of e) t.expandByObject(n);
 	return t;
 }
-function fT(e) {
+function dT(e) {
 	return e.map((e) => ({
 		object: e,
 		position: e.position.clone(),
@@ -31996,50 +31992,50 @@ function fT(e) {
 		scale: e.scale.clone()
 	}));
 }
-function pT(e, t) {
+function fT(e, t) {
 	if (e.length === 0 || e.length !== t.length) return !1;
 	for (let n = 0; n < e.length; n++) if (e[n].position.distanceTo(t[n].position) > 1e-4 || e[n].quaternion.angleTo(t[n].quaternion) > .001) return !0;
 	return !1;
 }
-function mT(e, t) {
+function pT(e, t) {
 	for (let n = 0; n < e.length; n++) {
 		let r = t[n];
 		r && (e[n].position.copy(r.position), e[n].quaternion.copy(r.quaternion), e[n].scale.copy(r.scale));
 	}
 }
-function hT(e, t, n, r) {
+function mT(e, t, n, r) {
 	for (let i = 0; i < e.length; i++) {
 		let a = t[i], o = n[i];
 		!a || !o || (e[i].position.lerpVectors(a.position, o.position, r), e[i].quaternion.slerpQuaternions(a.quaternion, o.quaternion, r), e[i].scale.lerpVectors(a.scale, o.scale, r));
 	}
 }
-function gT(e) {
+function hT(e) {
 	let t;
 	return e.traverse((e) => {
 		!t && /^Laptop_Seat$/i.test(e.name) && (t = e);
 	}), t;
 }
-function _T(e) {
-	let t = gT(e);
+function gT(e) {
+	let t = hT(e);
 	if (!t) return;
 	let n, r;
 	return t.traverse((e) => {
 		e !== t && (!n && /^Laptop_Root$/i.test(e.name) && (n = e), !r && /^Laptop_Mesh$/i.test(e.name) && (r = e));
 	}), n ?? r;
 }
-function vT(e, t) {
-	let n = bT(e);
+function _T(e, t) {
+	let n = yT(e);
 	t.position.set(0, 0, 0), t.rotation.set(0, 0, 0), t.scale.setScalar(1), t.updateMatrixWorld(!0);
-	let r = yT(t), i = Math.max(n.gapX, .001) * 1.05 / Math.max(r.size.x, 1e-4), a = n.slopeRad, o = Math.PI;
+	let r = vT(t), i = Math.max(n.gapX, .001) * 1.05 / Math.max(r.size.x, 1e-4), a = n.slopeRad, o = Math.PI;
 	t.scale.setScalar(i), t.rotation.set(a, o, 0), t.position.set(0, 0, 0), t.updateMatrixWorld(!0);
-	let s = yT(t), c = Math.abs(s.box.max.z - n.lipZ) <= Math.abs(s.box.min.z - n.lipZ) ? s.box.max.z : s.box.min.z, l = s.box.min.y, u = s.box.getCenter(new I()), d = n.lipZ - c - n.depth * .004, f = u.z + d, p = n.ridgeA + n.ridgeB * f, m = new I(n.midX - u.x, p - l + n.railThickness * .55, d);
+	let s = vT(t), c = Math.abs(s.box.max.z - n.lipZ) <= Math.abs(s.box.min.z - n.lipZ) ? s.box.max.z : s.box.min.z, l = s.box.min.y, u = s.box.getCenter(new I()), d = n.lipZ - c - n.depth * .004, f = u.z + d, p = n.ridgeA + n.ridgeB * f, m = new I(n.midX - u.x, p - l + n.railThickness * .55, d);
 	return t.position.copy(m), t.quaternion.setFromEuler(new Ko(a, o, 0)), t.scale.setScalar(i), t.updateMatrixWorld(!0), {
 		position: m,
 		quaternion: t.quaternion.clone(),
 		scale: i
 	};
 }
-function yT(e) {
+function vT(e) {
 	let t = new uo(), n = new uo(), r = !1, i = !1, a = new I();
 	e.traverse((e) => {
 		if (!(e instanceof H) || !e.geometry) return;
@@ -32057,8 +32053,8 @@ function yT(e) {
 		displayZ: c
 	};
 }
-function bT(e) {
-	let t = dT(e), n = t.getSize(new I()), r = e.map((e) => new uo().setFromObject(e)), i = r.map((e) => e.getCenter(new I())), a = i.length >= 2 ? (i[0].x + i[1].x) * .5 : t.getCenter(new I()).x, o = i.length >= 2 ? Math.abs(i[0].x - i[1].x) : Math.max(n.x * .55, .001), s = n.x, c = r.length > 0 ? r.reduce((e, t) => e + t.getSize(new I()).x, 0) / r.length : n.x * .05, l = xT(e), u = l === void 0 ? !0 : Math.abs(l - t.max.z) <= Math.abs(l - t.min.z), d = u ? t.max.z : t.min.z, f = u ? t.min.z : t.max.z, p = u ? 1 : -1, m = /* @__PURE__ */ new Map(), h = new I(), g = -Infinity;
+function yT(e) {
+	let t = uT(e), n = t.getSize(new I()), r = e.map((e) => new uo().setFromObject(e)), i = r.map((e) => e.getCenter(new I())), a = i.length >= 2 ? (i[0].x + i[1].x) * .5 : t.getCenter(new I()).x, o = i.length >= 2 ? Math.abs(i[0].x - i[1].x) : Math.max(n.x * .55, .001), s = n.x, c = r.length > 0 ? r.reduce((e, t) => e + t.getSize(new I()).x, 0) / r.length : n.x * .05, l = bT(e), u = l === void 0 ? !0 : Math.abs(l - t.max.z) <= Math.abs(l - t.min.z), d = u ? t.max.z : t.min.z, f = u ? t.min.z : t.max.z, p = u ? 1 : -1, m = /* @__PURE__ */ new Map(), h = new I(), g = -Infinity;
 	for (let t of e) t.traverse((e) => {
 		if (!(e instanceof H) || !e.geometry || /ligno|logo/i.test(e.name)) return;
 		let t = e.geometry.attributes.position;
@@ -32092,7 +32088,7 @@ function bT(e) {
 		slopeRad: b
 	};
 }
-function xT(e) {
+function bT(e) {
 	let t = [];
 	for (let n of e) n.traverse((e) => {
 		if (!/ligno|logo/i.test(e.name)) return;
@@ -32101,12 +32097,12 @@ function xT(e) {
 	});
 	if (t.length !== 0) return t.reduce((e, t) => e + t, 0) / t.length;
 }
-function ST(e) {
+function xT(e) {
 	e.traverse((e) => {
 		/hinge/i.test(e.name) && e.rotation.x > .1 && (e.rotation.x = -e.rotation.x);
 	});
 }
-function CT(e) {
+function ST(e) {
 	let t = new If(16775407, 14274496, .85);
 	e.add(t);
 	let n = new Yf(16774376, 2.05);
@@ -32116,7 +32112,7 @@ function CT(e) {
 	let i = new Yf(16775922, .9);
 	i.position.set(.5, 3.5, -4.5), e.add(i);
 }
-async function wT(e, t, n, r, i, a) {
+async function CT(e, t, n, r, i, a) {
 	let o = e.context.loader, s = o.blobs;
 	if (!(s instanceof cg)) throw Error("Expected InMemoryBlobSource");
 	let c = new URL(`./assets/models/${n}`, window.location.href), l = await fetch(c.href);
@@ -32133,7 +32129,7 @@ async function wT(e, t, n, r, i, a) {
 		_version: 1
 	});
 	let d = await o.loadGltfParsed(r, { onProgress: (e) => i(.55 + e * .45) }), f = d.scene;
-	t.add(f), a?.prepareMaterials ? a.prepareMaterials(f) : ET(f);
+	t.add(f), a?.prepareMaterials ? a.prepareMaterials(f) : TT(f);
 	let p = [...d.animations];
 	return {
 		root: f,
@@ -32141,7 +32137,7 @@ async function wT(e, t, n, r, i, a) {
 		clips: p
 	};
 }
-function TT(e) {
+function wT(e) {
 	let t = e.image, n = t?.width ?? 0, r = t?.height ?? 0;
 	if (n > 0 && r > 0) {
 		let t = document.createElement("canvas");
@@ -32159,12 +32155,12 @@ function TT(e) {
 	let i = e.clone();
 	return i.center.set(.5, .5), i.rotation = -Math.PI / 2, i.matrixAutoUpdate = !0, i.updateMatrix(), i.wrapS = jr, i.wrapT = jr, i.needsUpdate = !0, i;
 }
-function ET(e) {
+function TT(e) {
 	let t = /* @__PURE__ */ new WeakMap(), n = (e) => {
 		if (!e) return null;
 		let n = t.get(e);
 		if (n) return n;
-		let r = TT(e);
+		let r = wT(e);
 		return t.set(e, r), r;
 	};
 	e.traverse((e) => {
@@ -32181,7 +32177,7 @@ function ET(e) {
 		}
 	});
 }
-function DT(e) {
+function ET(e) {
 	e.traverse((e) => {
 		if (!(e instanceof H)) return;
 		e.castShadow = !1, e.receiveShadow = !1;
@@ -32194,14 +32190,14 @@ function DT(e) {
 		}
 	});
 }
-function OT(e, t) {
+function DT(e, t) {
 	e.traverse((e) => {
 		if (!(e instanceof H)) return;
 		let n = Array.isArray(e.material) ? e.material : [e.material];
 		for (let e of n) (e instanceof $d || e instanceof ef) && (e.transparent = t < .999, e.opacity = t, e.depthWrite = t > .2, e.needsUpdate = !0);
 	});
 }
-function kT() {
+function OT() {
 	let e = "ligno-krosna-cart-qty", t = document.getElementById("cart-toggle"), n = document.getElementById("cart-drawer"), r = document.getElementById("cart-backdrop"), i = document.getElementById("cart-close"), a = document.getElementById("add-to-cart"), o = document.getElementById("cart-count"), s = document.getElementById("cart-empty"), c = document.getElementById("cart-line"), l = document.getElementById("cart-qty"), u = document.getElementById("cart-total"), d = document.getElementById("cart-total-row"), f = document.getElementById("cart-dec"), p = document.getElementById("cart-inc"), m = Number(sessionStorage.getItem(e) || "0");
 	(!Number.isFinite(m) || m < 0) && (m = 0);
 	let h = () => {
@@ -32223,21 +32219,21 @@ function kT() {
 		m += 1, h();
 	}), h();
 }
-function AT(e) {
+function kT(e) {
 	return Math.max(0, Math.min(1, e));
 }
-function jT(e) {
-	let t = AT(e);
+function AT(e) {
+	let t = kT(e);
 	return t * t * (3 - 2 * t);
 }
-function MT(e) {
-	return 1 - (1 - AT(e)) ** 3;
+function jT(e) {
+	return 1 - (1 - kT(e)) ** 3;
 }
-function NT(e) {
-	let t = AT(e);
+function MT(e) {
+	let t = kT(e);
 	return t < .5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2;
 }
-aT().catch((e) => {
+iT().catch((e) => {
 	console.error("[LIGNO Stand] bootstrap failed", e);
 	let t = document.getElementById("load-text");
 	t && (t.textContent = "Failed to load showcase");
