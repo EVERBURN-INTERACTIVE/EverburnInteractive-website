@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
@@ -39,7 +39,9 @@ import {
 import { FlameCoreR3FHost } from '@/flamecore';
 import { ProjectsTileWorld } from './ProjectsTileWorld';
 
-const GridWorld = dynamic(() => import('./GridWorld').then((m) => m.GridWorld), { ssr: false });
+// DOM overlays can still use next/dynamic. Anything mounted inside FlameCoreR3FHost
+// must use React.lazy: Next 16's BailoutToCSRForNextDynamic calls React.use(browser()),
+// which throws in Fiber's reconciler and leaves the canvas black.
 const OneMoreSecondAttractHost = dynamic(
   () => import('./OneMoreSecondAttractHost').then((m) => m.OneMoreSecondAttractHost),
   { ssr: false },
@@ -48,15 +50,16 @@ const OneMoreSecondLeaderboardOverlay = dynamic(
   () => import('./OneMoreSecondLeaderboardOverlay').then((m) => m.OneMoreSecondLeaderboardOverlay),
   { ssr: false },
 );
-const CyberNeonFlowDriver = dynamic(
-  () => import('./CyberNeonFlowDriver').then((m) => m.CyberNeonFlowDriver),
-  { ssr: false },
-);
 const FocusTreesDecor = dynamic(() => import('./GridWorld').then((m) => m.FocusTreesDecor), { ssr: false });
-const SkyDome = dynamic(() => import('./SkyDome').then((m) => m.SkyDome), { ssr: false });
-const Birds = dynamic(() => import('./Birds').then((m) => m.Birds), { ssr: false });
-const Stars = dynamic(() => import('./Stars').then((m) => m.Stars), { ssr: false });
-const ShootingStars = dynamic(() => import('./ShootingStars').then((m) => m.ShootingStars), { ssr: false });
+
+const GridWorld = lazy(() => import('./GridWorld').then((m) => ({ default: m.GridWorld })));
+const CyberNeonFlowDriver = lazy(() =>
+  import('./CyberNeonFlowDriver').then((m) => ({ default: m.CyberNeonFlowDriver })),
+);
+const SkyDome = lazy(() => import('./SkyDome').then((m) => ({ default: m.SkyDome })));
+const Birds = lazy(() => import('./Birds').then((m) => ({ default: m.Birds })));
+const Stars = lazy(() => import('./Stars').then((m) => ({ default: m.Stars })));
+const ShootingStars = lazy(() => import('./ShootingStars').then((m) => ({ default: m.ShootingStars })));
 
 preloadHomeSceneAssets();
 
@@ -860,69 +863,69 @@ export function SceneCanvas({ isActive }: SceneCanvasProps) {
     <>
       <main className={`scene-root ${isActive ? 'is-active' : 'is-passive'}`}>
         <FlameCoreR3FHost isActive={isActive && !battleArenaRacingActive} camera={flameCamera} onReady={handleFlameCoreReady}>
-          <color attach="background" args={[timePhase.skyColorBottom]} />
-          <fog attach="fog" args={[timePhase.fogColor, 48, 195]} />
-          <SkyDome dimmed={timePhase.phase === 'night'} showClouds={!battleArenaRacingActive} />
-          <ambientLight intensity={ambientIntensity} />
-          <directionalLight
-            position={[8, 18, 3]}
-            intensity={
-              battleArenaRacingActive
-                ? timePhase.phase === 'night'
-                  ? 1.05
-                  : 2.1
-                : projectsTileWorldActive
-                  ? timePhase.phase === 'night'
-                    ? 0.55
-                    : 1.45
-                  : timePhase.phase === 'night'
-                    ? 0.42
-                    : 1.35
-            }
-            castShadow
-            shadow-mapSize-width={1024}
-            shadow-mapSize-height={1024}
-            shadow-camera-near={1}
-            shadow-camera-far={battleArenaRacingActive ? 72 : projectsTileWorldActive ? 48 : 90}
-            shadow-camera-left={battleArenaRacingActive ? -28 : projectsTileWorldActive ? -20 : -14}
-            shadow-camera-right={battleArenaRacingActive ? 28 : projectsTileWorldActive ? 20 : 14}
-            shadow-camera-top={battleArenaRacingActive ? 28 : projectsTileWorldActive ? 20 : 14}
-            shadow-camera-bottom={battleArenaRacingActive ? -28 : projectsTileWorldActive ? -20 : -14}
-            shadow-bias={-0.00008}
-            shadow-normalBias={0.015}
-          />
-          <OrbitControls
-            ref={controlsRef}
-            enabled={orbitControlsEnabled}
-            enableRotate={orbitControlsEnabled}
-            enableZoom={false}
-            enablePan={false}
-            enableDamping
-            dampingFactor={0.14}
-            rotateSpeed={0.5}
-            minPolarAngle={0}
-            maxPolarAngle={Math.PI / 2}
-          />
-          <CameraRig
-            focus={effectiveFocus}
-            resetSignal={resetSignal}
-            baseZoom={sceneBaseZoom}
-            onResetComplete={handleResetComplete}
-            onFocusSettled={() => {
-              if (settleFallbackTimerRef.current !== null) {
-                window.clearTimeout(settleFallbackTimerRef.current);
-              }
-
-              setFocusSettled(true);
-              setShowFocusOverlay(true);
-            }}
-          />
-          <AdaptiveDpr />
-          <CyberNeonFlowDriver />
-          {timePhase.starsActive ? <Stars count={420} reducedMotion={reducedMotion} /> : null}
-          {timePhase.starsActive ? <ShootingStars /> : null}
-          {timePhase.birdsActive && !battleArenaRacingActive ? <Birds count={4} reducedMotion={reducedMotion} /> : null}
           <Suspense fallback={null}>
+            <color attach="background" args={[timePhase.skyColorBottom]} />
+            <fog attach="fog" args={[timePhase.fogColor, 48, 195]} />
+            <SkyDome dimmed={timePhase.phase === 'night'} showClouds={!battleArenaRacingActive} />
+            <ambientLight intensity={ambientIntensity} />
+            <directionalLight
+              position={[8, 18, 3]}
+              intensity={
+                battleArenaRacingActive
+                  ? timePhase.phase === 'night'
+                    ? 1.05
+                    : 2.1
+                  : projectsTileWorldActive
+                    ? timePhase.phase === 'night'
+                      ? 0.55
+                      : 1.45
+                    : timePhase.phase === 'night'
+                      ? 0.42
+                      : 1.35
+              }
+              castShadow
+              shadow-mapSize-width={1024}
+              shadow-mapSize-height={1024}
+              shadow-camera-near={1}
+              shadow-camera-far={battleArenaRacingActive ? 72 : projectsTileWorldActive ? 48 : 90}
+              shadow-camera-left={battleArenaRacingActive ? -28 : projectsTileWorldActive ? -20 : -14}
+              shadow-camera-right={battleArenaRacingActive ? 28 : projectsTileWorldActive ? 20 : 14}
+              shadow-camera-top={battleArenaRacingActive ? 28 : projectsTileWorldActive ? 20 : 14}
+              shadow-camera-bottom={battleArenaRacingActive ? -28 : projectsTileWorldActive ? -20 : -14}
+              shadow-bias={-0.00008}
+              shadow-normalBias={0.015}
+            />
+            <OrbitControls
+              ref={controlsRef}
+              enabled={orbitControlsEnabled}
+              enableRotate={orbitControlsEnabled}
+              enableZoom={false}
+              enablePan={false}
+              enableDamping
+              dampingFactor={0.14}
+              rotateSpeed={0.5}
+              minPolarAngle={0}
+              maxPolarAngle={Math.PI / 2}
+            />
+            <CameraRig
+              focus={effectiveFocus}
+              resetSignal={resetSignal}
+              baseZoom={sceneBaseZoom}
+              onResetComplete={handleResetComplete}
+              onFocusSettled={() => {
+                if (settleFallbackTimerRef.current !== null) {
+                  window.clearTimeout(settleFallbackTimerRef.current);
+                }
+
+                setFocusSettled(true);
+                setShowFocusOverlay(true);
+              }}
+            />
+            <AdaptiveDpr />
+            <CyberNeonFlowDriver />
+            {timePhase.starsActive ? <Stars count={420} reducedMotion={reducedMotion} /> : null}
+            {timePhase.starsActive ? <ShootingStars /> : null}
+            {timePhase.birdsActive && !battleArenaRacingActive ? <Birds count={4} reducedMotion={reducedMotion} /> : null}
             {onProjectsScene ? (
               shouldShowProjectsWorld && !battleArenaRacingActive ? (
                 <ProjectsTileWorld
