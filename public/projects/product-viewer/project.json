@@ -1,0 +1,21 @@
+{
+  "id": "door-viewer",
+  "name": "Funny Door Product Viewer",
+  "runtimeVersion": "0.1.0",
+  "scenes": [
+    {
+      "id": "scene-door",
+      "name": "Door Showcase",
+      "settings": {
+        "background": "#0c0f14",
+        "qualityPreset": "high"
+      },
+      "actors": []
+    }
+  ],
+  "startupSceneId": "scene-door",
+  "assets": [],
+  "folders": [],
+  "siteSlug": "door-viewer",
+  "_version": 3
+}

@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="A deliberately funny portfolio website showcasing real-time 3D web development skills with FlameCore and Three.js." />
+  <title>Door With Frame™ — 3D Product Viewer</title>
+  <link rel="preload" href="/projects/product-viewer/manifest.json" as="fetch" crossorigin />
+  <link rel="preconnect" href="https://dl.polyhaven.org" crossorigin />
+  <style>
+    :root {
+      --dv-bg: #1a0848;
+      --dv-accent: #fbbf24;
+      --dv-accent-alt: #c4b5fd;
+      --dv-text: #f5f3ff;
+      --dv-muted: rgba(216, 208, 240, 0.78);
+      --dv-glass: rgba(22, 0, 50, 0.78);
+      --dv-border: rgba(196, 181, 253, 0.22);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; }
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+      color: var(--dv-text);
+      background: var(--dv-bg);
+      overflow: hidden;
+    }
+    #flamecore-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      touch-action: none;
+      cursor: grab;
+    }
+    #flamecore-canvas:active { cursor: grabbing; }
+    #ui-root {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+    }
+    #ui-root button,
+    #ui-root .dv-panel { pointer-events: auto; }
+    .dv-header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: clamp(1rem, 3vw, 1.75rem);
+      background: linear-gradient(180deg, rgba(22, 0, 50, 0.92), transparent);
+      pointer-events: none;
+    }
+    .dv-brand { pointer-events: none; max-width: min(36rem, 55vw); }
+    .dv-brand h1 {
+      margin: 0;
+      font-size: clamp(1.35rem, 3vw, 1.85rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, var(--dv-accent), var(--dv-accent-alt));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .dv-brand p {
+      margin: 0.35rem 0 0;
+      color: var(--dv-muted);
+      font-size: 0.92rem;
+      line-height: 1.45;
+    }
+    .dv-badge {
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--dv-accent-alt);
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+    }
+    .dv-portfolio-note {
+      position: absolute;
+      top: clamp(1rem, 3vw, 1.75rem);
+      right: clamp(1rem, 3vw, 1.75rem);
+      max-width: min(22rem, 38vw);
+      margin: 0;
+      padding: 0.65rem 0.85rem;
+      font-size: 0.78rem;
+      line-height: 1.45;
+      color: var(--dv-muted);
+      border: 1px solid var(--dv-border);
+      border-right: 2px solid rgba(251, 191, 36, 0.55);
+      background: var(--dv-glass);
+      backdrop-filter: blur(10px);
+      border-radius: 10px 0 0 10px;
+      pointer-events: none;
+    }
+    .dv-controls-hint {
+      position: absolute;
+      bottom: clamp(1rem, 3vw, 1.75rem);
+      left: clamp(1rem, 3vw, 1.75rem);
+      max-width: min(20rem, 55vw);
+      margin: 0;
+      font-size: 0.78rem;
+      color: var(--dv-muted);
+      padding: 0.5rem 0.75rem;
+      border: 1px solid var(--dv-border);
+      border-radius: 999px;
+      background: var(--dv-glass);
+      backdrop-filter: blur(10px);
+      line-height: 1.45;
+      pointer-events: none;
+    }
+    .dv-sidebar {
+      position: absolute;
+      right: clamp(1rem, 3vw, 1.75rem);
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      width: min(13rem, 34vw);
+    }
+    .dv-panel {
+      padding: 1rem 1.1rem;
+      background: var(--dv-glass);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--dv-border);
+      border-radius: 12px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+    }
+    .dv-panel h2 {
+      margin: 0 0 0.35rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--dv-muted);
+      font-weight: 700;
+    }
+    .dv-panel-note {
+      margin: 0 0 0.65rem;
+      font-size: 0.75rem;
+      color: var(--dv-muted);
+      line-height: 1.35;
+    }
+    .dv-finish-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .dv-finish-btn {
+      text-align: left;
+      padding: 0.55rem 0.75rem;
+      border-radius: 8px;
+      border: 1px solid var(--dv-border);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--dv-text);
+      cursor: pointer;
+      font-size: 0.88rem;
+      transition: background 0.2s, border-color 0.2s, transform 0.15s;
+    }
+    .dv-finish-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(196, 181, 253, 0.45);
+    }
+    .dv-finish-btn.is-active {
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.28), rgba(196, 181, 253, 0.22));
+      border-color: rgba(251, 191, 36, 0.55);
+      font-weight: 700;
+    }
+    .dv-action-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+    .dv-action-btn {
+      padding: 0.65rem 0.85rem;
+      border-radius: 8px;
+      border: 1px solid var(--dv-border);
+      background: rgba(196, 181, 253, 0.14);
+      color: var(--dv-text);
+      cursor: pointer;
+      font-size: 0.88rem;
+      font-weight: 600;
+      transition: background 0.2s, transform 0.12s;
+    }
+    .dv-action-btn:hover {
+      background: rgba(196, 181, 253, 0.26);
+      transform: translateY(-1px);
+    }
+    .dv-action-btn.secondary {
+      background: rgba(251, 191, 36, 0.14);
+    }
+    .dv-action-btn.secondary:hover {
+      background: rgba(251, 191, 36, 0.26);
+    }
+    .dv-hotspot-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      font-size: 0.82rem;
+      color: var(--dv-muted);
+      line-height: 1.5;
+    }
+    .dv-hotspot-list li::before {
+      content: '→ ';
+    }
+    #hotspot-card {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      max-width: min(20rem, 82vw);
+      padding: 0.85rem 1rem;
+      background: rgba(22, 0, 50, 0.94);
+      border: 1px solid rgba(251, 191, 36, 0.45);
+      border-radius: 12px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
+      opacity: 0;
+      transform: translate(-50%, -120%) scale(0.96);
+      transition: opacity 0.28s ease, transform 0.28s ease;
+      pointer-events: none;
+      z-index: 20;
+    }
+    #hotspot-card.is-visible {
+      opacity: 1;
+      transform: translate(-50%, -120%) scale(1);
+    }
+    #hotspot-title {
+      margin: 0 0 0.35rem;
+      font-size: 1rem;
+      color: var(--dv-accent);
+    }
+    #hotspot-blurb {
+      margin: 0;
+      font-size: 0.88rem;
+      color: var(--dv-muted);
+      line-height: 1.45;
+    }
+    #flamecore-loading {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: grid;
+      place-items: center;
+      gap: 1rem;
+      background: #020111;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+    #flamecore-loading.is-ready {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .eb-load-logo {
+      width: min(460px, 76vw);
+      height: auto;
+      filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.45));
+    }
+    #load-text {
+      margin: 0;
+      font-size: 0.88rem;
+      color: rgba(255, 214, 165, 0.85);
+      text-align: center;
+    }
+    .dv-load-bar {
+      width: min(320px, 80vw);
+      height: 8px;
+      background: rgba(255, 255, 255, 0.15);
+      overflow: hidden;
+    }
+    #load-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: #ff6a00;
+      transition: width 0.2s linear;
+    }
+    .dv-portfolio-tags {
+      position: absolute;
+      bottom: clamp(1rem, 3vw, 1.75rem);
+      right: clamp(1rem, 3vw, 1.75rem);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      justify-content: flex-end;
+      max-width: min(20rem, 50vw);
+      pointer-events: none;
+    }
+    .dv-tag {
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.35rem 0.55rem;
+      border-radius: 999px;
+      border: 1px solid var(--dv-border);
+      color: var(--dv-muted);
+      background: rgba(0, 0, 0, 0.25);
+    }
+    @media (max-width: 720px) {
+      .dv-brand { max-width: 100%; padding-right: 0; }
+      .dv-portfolio-note {
+        position: static;
+        max-width: 100%;
+        margin-top: 0.75rem;
+        border-radius: 10px;
+        border-right: 1px solid var(--dv-border);
+        border-left: 2px solid rgba(251, 191, 36, 0.55);
+      }
+      .dv-controls-hint { max-width: none; right: clamp(1rem, 3vw, 1.75rem); border-radius: 10px; }
+      .dv-sidebar {
+        top: auto;
+        bottom: 5.5rem;
+        transform: none;
+        width: auto;
+        left: clamp(1rem, 3vw, 1.75rem);
+        right: clamp(1rem, 3vw, 1.75rem);
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+      .dv-panel { flex: 1 1 10rem; }
+      .dv-portfolio-tags { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="flamecore-canvas" aria-label="3D door product viewer"></canvas>
+
+  <div id="flamecore-loading" role="status" aria-live="polite">
+    <img class="eb-load-logo" src="/projects/_brand/EverFlame-with-Name.png" alt="Everburn Interactive" />
+    <div class="dv-load-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Loading progress"><div id="load-bar-fill"></div></div>
+    <p id="load-text">Summoning door…</p>
+  </div>
+
+  <div id="ui-root">
+    <header class="dv-header">
+      <div class="dv-brand">
+        <p class="dv-badge">Humorous Portfolio Demo · FlameCore Engine</p>
+        <h1>Door With Frame™</h1>
+        <p>It opens. It closes. It has opinions. A door. With a frame. We put the frame there so the door would not float away. You are welcome.</p>
+      </div>
+      <p class="dv-portfolio-note">Yes, this is a joke. It is also a portfolio piece: a silly concept executed with real WebGL, GLTF, PBR materials, and interaction design.</p>
+    </header>
+
+    <p class="dv-controls-hint">Drag to spin it · Scroll to zoom · Double-click to un-mess the camera</p>
+
+    <aside class="dv-sidebar">
+      <div class="dv-panel">
+        <h2>Make It Fancy</h2>
+        <p class="dv-panel-note">Pick a frame. The door stays wood. We are not monsters.</p>
+        <div class="dv-finish-grid">
+          <button type="button" class="dv-finish-btn is-active" data-finish="Silver" aria-pressed="true">Silver</button>
+          <button type="button" class="dv-finish-btn" data-finish="Gold" aria-pressed="false">Gold</button>
+          <button type="button" class="dv-finish-btn" data-finish="Black" aria-pressed="false">Black</button>
+        </div>
+      </div>
+      <div class="dv-panel">
+        <h2>Make It Move</h2>
+        <div class="dv-action-row">
+          <button type="button" class="dv-action-btn" id="btn-open-door">Open Door</button>
+          <button type="button" class="dv-action-btn secondary" id="btn-rotate-door">Who needs physics anyway</button>
+        </div>
+      </div>
+      <div class="dv-panel">
+        <h2>Why This Exists</h2>
+        <p class="dv-panel-note">Built to show off browser-based 3D skills in a memorable way. The copy is nonsense on purpose. The rendering, materials, hotspots, and animations are not.</p>
+      </div>
+      <div class="dv-panel">
+        <h2>Click The Door</h2>
+        <ul class="dv-hotspot-list">
+          <li>Click the door</li>
+          <li>Click the knob</li>
+          <li>Click the frame</li>
+        </ul>
+      </div>
+    </aside>
+
+    <div id="hotspot-card" aria-live="polite">
+      <h3 id="hotspot-title"></h3>
+      <p id="hotspot-blurb"></p>
+    </div>
+
+    <div class="dv-portfolio-tags" aria-hidden="true">
+      <span class="dv-tag">Portfolio Demo</span>
+      <span class="dv-tag">GLTF Loading</span>
+      <span class="dv-tag">PBR Materials</span>
+      <span class="dv-tag">Environment Maps</span>
+      <span class="dv-tag">Hotspot UX</span>
+      <span class="dv-tag">WebGL</span>
+    </div>
+  </div>
+
+  <script type="module" src="/projects/product-viewer/runtime.js"></script>
+</body>
+</html>

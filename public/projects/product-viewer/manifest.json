@@ -1,0 +1,14 @@
+{
+  "assets": [],
+  "baseUrl": "/projects/product-viewer/",
+  "bundle": "runtime.js",
+  "project": {
+    "id": "door-viewer",
+    "name": "Funny Door Product Viewer",
+    "runtimeVersion": "0.1.0",
+    "startupSceneId": "scene-door"
+  },
+  "project_json": "project.json",
+  "qualityProfile": "auto",
+  "version": 1
+}

@@ -21,7 +21,8 @@ import { getTargetDpr } from '@/lib/performanceMonitor';
 import { preloadHomeSceneAssets } from '@/lib/scenePreload';
 import { BATTLE_ARENA_ZOOM_SCALE } from '@/lib/battleArenaLayout';
 import {
-  WORLD_PORTFOLIO_URL,
+  MINI_CITY_URL,
+  PRODUCT_VIEWER_URL,
   type ProjectsInnerTileNavigatePayload,
 } from '@/lib/projectInnerTiles';
 import {
@@ -596,8 +597,13 @@ export function SceneCanvas({ isActive }: SceneCanvasProps) {
   ]);
 
   const handleProjectsInnerNavigate = useCallback(({ action }: ProjectsInnerTileNavigatePayload) => {
-    if (action === 'world-portfolio-link') {
-      window.open(WORLD_PORTFOLIO_URL, '_blank', 'noopener,noreferrer');
+    if (action === 'mini-city-link') {
+      window.open(MINI_CITY_URL, '_blank', 'noopener,noreferrer');
+      return;
+    }
+
+    if (action === 'product-viewer-link') {
+      window.open(PRODUCT_VIEWER_URL, '_blank', 'noopener,noreferrer');
       return;
     }
 

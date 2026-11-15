@@ -10,6 +10,7 @@ import {
 import { BattleArenaColosseum } from './BattleArenaColosseum';
 import { PageMarker } from './GridWorld';
 import { MarblePartySphere } from './MarblePartySphere';
+import { ProductViewerDoor } from './ProductViewerDoor';
 import { WorldPortfolioTree } from './WorldPortfolioTree';
 
 interface ProjectsTileWorldProps {
@@ -27,7 +28,7 @@ interface ProjectInnerTile {
   icon: ReactNode;
 }
 
-/** Three portfolio-style tiles shown inside OUR PROJECTS. */
+/** Four portfolio-style tiles in a 2×2 grid inside OUR PROJECTS. */
 const PROJECT_INNER_TILES: ProjectInnerTile[] = [
   {
     x: -1,
@@ -46,12 +47,20 @@ const PROJECT_INNER_TILES: ProjectInnerTile[] = [
     icon: <BattleArenaColosseum />,
   },
   {
-    x: 1,
-    z: 0,
-    label: 'WORLD PORTFOLIO',
+    x: -1,
+    z: 1,
+    label: 'MINI CITY',
     href: '/games',
-    action: 'world-portfolio-link',
+    action: 'mini-city-link',
     icon: <WorldPortfolioTree />,
+  },
+  {
+    x: 0,
+    z: 1,
+    label: 'PRODUCT VIEWER',
+    href: '/games',
+    action: 'product-viewer-link',
+    icon: <ProductViewerDoor />,
   },
 ];
 
