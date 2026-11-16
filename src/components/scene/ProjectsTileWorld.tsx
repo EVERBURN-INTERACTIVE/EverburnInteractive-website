@@ -28,35 +28,38 @@ interface ProjectInnerTile {
   icon: ReactNode;
 }
 
-/** Four portfolio-style tiles in a 2×2 grid inside OUR PROJECTS. */
+/**
+ * Four portfolio-style tiles in a 2×2 grid inside OUR PROJECTS.
+ * Half-tile offsets keep the block centered on the camera look-at (0, 0).
+ */
 const PROJECT_INNER_TILES: ProjectInnerTile[] = [
   {
-    x: -1,
-    z: 0,
+    x: -0.5,
+    z: -0.5,
     label: 'MARBLE PARTY',
     href: '/games',
     action: 'marble-party-overlay',
     icon: <MarblePartySphere />,
   },
   {
-    x: 0,
-    z: 0,
+    x: 0.5,
+    z: -0.5,
     label: 'ONE MORE SECOND',
     href: '/games',
     action: 'battle-arena-racing',
     icon: <BattleArenaColosseum />,
   },
   {
-    x: -1,
-    z: 1,
+    x: -0.5,
+    z: 0.5,
     label: 'MINI CITY',
     href: '/games',
     action: 'mini-city-link',
     icon: <WorldPortfolioTree />,
   },
   {
-    x: 0,
-    z: 1,
+    x: 0.5,
+    z: 0.5,
     label: 'PRODUCT VIEWER',
     href: '/games',
     action: 'product-viewer-link',

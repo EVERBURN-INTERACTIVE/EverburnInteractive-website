@@ -8,8 +8,8 @@ export const SCENE_ONE_MORE_SECOND = '/projects/one-more-second';
 export const SCENE_BATTLE_ARENA_LEGACY = '/projects/battle-arena';
 export const SCENE_MARBLE_PARTY = '/projects/marble-party';
 
-/** World position of the MARBLE PARTY tile in the projects inner grid (x=-1, z=0). */
-export const MARBLE_PARTY_TILE_POSITION: [number, number, number] = [-4, 0, 0];
+/** World position of the MARBLE PARTY tile in the projects inner grid (x=-0.5, z=-0.5). */
+export const MARBLE_PARTY_TILE_POSITION: [number, number, number] = [-2, 0, -2];
 
 /** World position of the OUR PROJECTS tile on the campsite grid (x=0, z=1). */
 export const OUR_PROJECTS_TILE_POSITION: [number, number, number] = [0, 0, 4];
