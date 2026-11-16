@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "name": "Blank Tag Showcase",
+  "assets": [
+    {
+      "id": "mesh-bt-frame-a",
+      "type": "mesh",
+      "path": "assets/models/bt_frame_a.glb"
+    },
+    {
+      "id": "mesh-bt-frame-b",
+      "type": "mesh",
+      "path": "assets/models/bt_frame_b.glb"
+    },
+    {
+      "id": "mesh-bt-frame-c",
+      "type": "mesh",
+      "path": "assets/models/bt_frame_c.glb"
+    }
+  ]
+}
